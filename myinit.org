@@ -1,0 +1,137 @@
+* Use package
+#+BEGIN_SRC emacs-lisp
+(setq use-package-always-ensure t)
+#+END_SRC
+
+* Commands completion
+
+#+BEGIN_SRC emacs-lisp
+; Use which-key
+(use-package which-key
+  :config
+  (which-key-mode))
+
+; Helping IVY with Flx
+(use-package flx)
+
+; Include smex to sort recent commands first in counsel
+(use-package smex)
+
+; Use IVY
+(use-package counsel
+  :init
+  (require 'smex)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq magit-completing-read-function 'ivy-completing-read)
+  (setq projectile-completion-system 'ivy)
+  (setq ivy-re-builders-alist			
+		'((ivy-switch-buffer . ivy--regex-plus)
+		  (swiper . ivy--regex-plus)
+		  (t . ivy--regex-fuzzy)))
+  (setq ivy-initial-inputs-alist nil)
+  :bind
+  ("M-a" . counsel-M-x)
+  :config
+  (ivy-mode 1))
+#+END_SRC
+
+* Generic
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode t)
+(toggle-debug-on-error)
+
+(global-linum-mode t)
+(setq inhibit-splash-screen t)
+(global-subword-mode t)
+
+(use-package visual-regexp
+  :config
+  (require 'visual-regexp))
+
+(use-package elscreen
+  :bind ("C-t" . elscreen-clone)
+  ("<C-next>". elscreen-next)
+  ("<C-prior>" . elscreen-previous)
+  ("C-w" . elscreen-kill)
+  :config
+  (elscreen-start))
+#+END_SRC
+* Input
+#+BEGIN_SRC emacs-lisp
+  (use-package ergoemacs-mode
+    :init
+    (setq ergoemacs-theme nil)
+    (setq ergoemacs-keyboard-layout "de")
+    :config
+    (ergoemacs-mode 1))
+
+  (global-set-key (kbd "M-3") 'delete-other-windows)
+  (global-set-key (kbd "M-4") 'split-window-horizontally)
+  (global-set-key (kbd "M-$") 'split-window-vertically)
+  (global-set-key (kbd "C-S-f") 'swiper)
+
+  ;; Help switching windows
+  (use-package ace-window)
+  (use-package multiple-cursors)
+  (use-package expand-region)
+  (use-package powerline)
+  (use-package boon
+    :init 
+    (require 'boon-qwertz) ;; for qwerty port
+    (require 'boon-powerline)
+    (add-to-list 'load-path "~/.emacs.d/boon-keybinding")
+    (require 'boon-keybinding)
+    :config
+    (boon-powerline-theme) ;; if you want use powerline with Boon
+    (boon-mode)
+    (boon-keybinding-minor-mode)
+    (global-set-key (kbd "M-i") 'previous-line)
+    (global-set-key (kbd "M-o") 'next-line)
+    (add-hook 'dired-mode-hook (lambda () (define-key dired-mode-map (kbd "M-i") 'dired-previous-line)))
+    (add-hook 'dired-mode-hook (lambda () (define-key dired-mode-map (kbd "M-o") 'dired-next-line)))
+    (add-hook 'ivy-mode-hook (lambda () (define-key ivy-minibuffer-map (kbd "M-i") 'ivy-previous-line)))
+    (add-hook 'ivy-mode-hook (lambda () (define-key ivy-minibuffer-map (kbd "M-o") 'ivy-next-line))))
+
+  ;; Define special modes where boon should be used instead
+  (defvar boon-non-special-list
+    '())
+  (defvar boon-new-special-list
+    '(fundamental-mode))
+
+  (defun use-special-mode-p (old-function &rest arguments)
+    "Function to substitute boon-special-mode-p and disallow use of special mode for some major-modes"
+    (or (memq major-mode boon-new-special-list)
+        (and (apply old-function arguments)
+             (not (memq major-mode boon-non-special-list)))))
+
+  (advice-add #'boon-special-mode-p :around #'use-special-mode-p)
+
+  (setq boon-insert-conditions '(t))
+  (global-set-key (kbd "<f9>") 'boon-set-command-state)
+
+#+END_SRC
+
+* C language
+
+#+BEGIN_SRC emacs-lisp
+  (setq c-default-style "k&r"
+        c-basic-offset 4
+        default-tab-width 4
+        ident-tabs-mode t)
+
+  ;; Enable CMake major mode
+  (use-package cmake-mode)
+
+  (use-package cmake-font-lock
+    :init
+    (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
+#+END_SRC
+
+* Debuggers
+
+#+BEGIN_SRC emacs-lisp
+(setq gdb-many-windows t)
+(use-package realgud)
+#+END_SRC
+
