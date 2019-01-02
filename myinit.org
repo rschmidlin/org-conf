@@ -89,7 +89,8 @@
 
   ;; Help switching windows
   (use-package ace-window)
-  (use-package multiple-cursors)
+  (use-package multiple-cursors
+    :bind ("C-d" . mc/mark-next-like-this))
   (use-package expand-region)
   (use-package powerline)
 
@@ -160,16 +161,19 @@
 (use-package smartparens
   :config
   (smartparens-global-mode))
+
+(global-set-key (kbd "C-i") 'imenu)
 #+END_SRC
 
 * Projects
 #+BEGIN_SRC emacs-lisp
-; Keybinding for using MaGit
-(use-package magit
-  :bind ("C-x g" . magit-status))
+  ; Keybinding for using MaGit
+  (use-package magit
+    :bind ("C-x g" . magit-status))
 
-; Projectile to access project files
-(use-package projectile)
+  ; Projectile to access project files
+  (use-package projectile
+    :bind ("C-p" . projectile-find-file))
 #+END_SRC
 
 * Themes
@@ -177,6 +181,14 @@
 (use-package powerline
   :config
   (powerline-default-theme))
+#+END_SRC
+
+* Tools
+#+BEGIN_SRC emacs-lisp
+    (use-package sr-speedbar
+      :bind ("C-b" . sr-speedbar-toggle)
+      :config
+      (require 'sr-speedbar))
 #+END_SRC
 
 * Debuggers
