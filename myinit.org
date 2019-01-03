@@ -121,6 +121,58 @@
            "/usr/local/bin:"
            (getenv "PATH")))
 #+END_SRC
+* Override AltGr
+#+BEGIN_SRC emacs-lisp
+  (defun insert-commercial-at()
+    "Insert a commercial at before point."
+    (interactive)
+    (insert "@"))
+
+  (defun insert-tilde()
+    "Insert a tilde before point."
+    (interactive)
+    (insert "~"))
+
+  (defun insert-left-curly-brace()
+    "Insert a left curly brace before point."
+    (interactive)
+    (insert "{"))
+
+  (defun insert-right-curly-brace()
+    "Insert a right curly brace before point."
+    (interactive)
+    (insert "}"))
+
+  (defun insert-left-squared-bracket()
+    "Insert a left square bracket before point."
+    (interactive)
+    (insert "["))
+
+  (defun insert-right-squared-bracket()
+    "Insert a right square bracket before point."
+    (interactive)
+    (insert "]"))
+
+  (defun insert-backslash()
+    "Insert a backslash before point."
+    (interactive)
+    (insert "\\"))
+
+  (defun insert-pipe()
+    "Insert a pipe before point."
+    (interactive)
+    (insert "|"))
+
+  (global-set-key (kbd "C-M-q") 'insert-commercial-at)
+  (global-set-key (kbd "C-M-+") 'insert-tilde)
+  (global-set-key (kbd "C-M-7") 'insert-left-curly-brace)
+  (global-set-key (kbd "C-M-8") 'insert-left-squared-bracket)
+  (global-set-key (kbd "C-M-9") 'insert-right-squared-bracket)
+  (global-set-key (kbd "C-M-0") 'insert-right-curly-brace)
+  (global-set-key (kbd "C-M-ß") 'insert-backslash)
+  (global-set-key (kbd "C-M-<") 'insert-pipe)
+
+#+END_SRC
 * Input
 #+BEGIN_SRC emacs-lisp
   (use-package ergoemacs-mode
@@ -137,6 +189,7 @@
 
   ;; Help switching windows
   (use-package ace-window)
+    ;; :bind ("M-s" . ace-window))
   (use-package multiple-cursors
     :bind ("C-d" . mc/mark-next-like-this))
   (use-package expand-region)
@@ -147,34 +200,33 @@
 * Commands completion
 
 #+BEGIN_SRC emacs-lisp
-; Use which-key
-(use-package which-key
-  :config
-  (which-key-mode))
+  ; Use which-key
+  (use-package which-key
+    :config
+    (which-key-mode))
 
-; Helping IVY with Flx
-(use-package flx)
+  ; Helping IVY with Flx
+  (use-package flx)
 
-; Include smex to sort recent commands first in counsel
-(use-package smex)
+  ; Include smex to sort recent commands first in counsel
+  (use-package smex)
 
-; Use IVY
-(use-package counsel
-  :init
-  (require 'smex)
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-count-format "(%d/%d) ")
-  (setq magit-completing-read-function 'ivy-completing-read)
-  (setq projectile-completion-system 'ivy)
-  (setq ivy-re-builders-alist			
-		'((ivy-switch-buffer . ivy--regex-plus)
-		  (swiper . ivy--regex-plus)
-		  (t . ivy--regex-fuzzy)))
-  (setq ivy-initial-inputs-alist nil)
-  :bind
-  ("M-a" . counsel-M-x)
-  :config
-  (ivy-mode 1))
+  ; Use IVY
+  (use-package counsel
+    :init
+    (require 'smex)
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (setq magit-completing-read-function 'ivy-completing-read)
+    (setq projectile-completion-system 'ivy)
+    (setq ivy-re-builders-alist           
+          '((ivy-switch-buffer . ivy--regex-plus)
+            (swiper . ivy--regex-plus)
+            (t . ivy--regex-fuzzy)))
+    (setq ivy-initial-inputs-alist nil)
+    (ivy-mode 1)
+    :bind
+    ("M-a" . counsel-M-x))
 #+END_SRC
   
 * C language
@@ -210,7 +262,7 @@
     :config
     (smartparens-global-mode))
 
-  (global-set-key (kbd "C-,") 'imenu)
+  (global-set-key (kbd "C-S-o") 'imenu)
 #+END_SRC
 
 * Projects
@@ -374,9 +426,10 @@
   ;;   (require 'xcscope)
   ;;   (cscope-setup))
 
-  (global-set-key (kbd "M-.") 'raul-find-definitions)
-  (global-set-key (kbd "M-?") 'raul-find-references)
-  (global-set-key (kbd "M-,") 'raul-pop-marker)
+  (global-set-key (kbd "M-<f12>") 'xref-peek-definitions)
+  (global-set-key (kbd "<f12>") 'raul-find-definitions)
+  (global-set-key (kbd "S-<f12>") 'raul-find-references)
+  (global-set-key (kbd "M-<left>") 'raul-pop-marker)
 #+END_SRC
 * Tools
 #+BEGIN_SRC emacs-lisp
