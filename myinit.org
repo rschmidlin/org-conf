@@ -179,8 +179,9 @@
     :init
     (setq ergoemacs-theme nil)
     (setq ergoemacs-keyboard-layout "de")
+    (ergoemacs-mode 1)
     :config
-    (ergoemacs-mode 1))
+    (ergoemacs-require 'swiper))
 
   (global-set-key (kbd "M-3") 'delete-other-windows)
   (global-set-key (kbd "M-4") 'split-window-horizontally)
@@ -194,6 +195,7 @@
     :bind ("C-d" . mc/mark-next-like-this))
   (use-package expand-region)
   (use-package powerline)
+
 
 #+END_SRC
 
@@ -224,9 +226,7 @@
             (swiper . ivy--regex-plus)
             (t . ivy--regex-fuzzy)))
     (setq ivy-initial-inputs-alist nil)
-    (ivy-mode 1)
-    :bind
-    ("M-a" . counsel-M-x))
+    (ivy-mode 1))
 #+END_SRC
   
 * C language
