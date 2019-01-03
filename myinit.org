@@ -62,6 +62,7 @@
         backup-directory-alist `(("." . ,(concat user-emacs-directory
                                                  "backups"))))
 
+  (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 * Generic
@@ -108,7 +109,12 @@
     (interactive)
     (load-file (buffer-file-name)))
 
-  (global-set-key (kbd "C-c C-c") 'load-current-file)
+  (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'load-current-file)
+  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
+                         'compile))
+  (eval-after-load "c++" '(define-key c-mode-map (kbd "C-c C-c")
+                           'compile))
+
 
 #+END_SRC
 * Operating system
@@ -175,26 +181,28 @@
 #+END_SRC
 * Input
 #+BEGIN_SRC emacs-lisp
-  (use-package ergoemacs-mode
-    :init
-    (setq ergoemacs-theme nil)
-    (setq ergoemacs-keyboard-layout "de")
-    (ergoemacs-mode 1)
-    :config
-    (ergoemacs-require 'swiper))
+    (use-package ergoemacs-mode
+      :init
+      (setq ergoemacs-theme nil)
+      (setq ergoemacs-keyboard-layout "de")
+      (ergoemacs-mode 1)
+      :config
+      ;; This ensures that counsel-M-x is used and apply smex (history)
+      ;; By simply mapping M-a to it, org-mode will not have history
+      (ergoemacs-require 'swiper))
 
-  (global-set-key (kbd "M-3") 'delete-other-windows)
-  (global-set-key (kbd "M-4") 'split-window-horizontally)
-  (global-set-key (kbd "M-$") 'split-window-vertically)
-  (global-set-key (kbd "C-S-f") 'swiper)
+    (global-set-key (kbd "M-3") 'delete-other-windows)
+    (global-set-key (kbd "M-4") 'split-window-horizontally)
+    (global-set-key (kbd "M-$") 'split-window-vertically)
+    (global-set-key (kbd "C-S-f") 'grep-find)
 
-  ;; Help switching windows
-  (use-package ace-window)
-    ;; :bind ("M-s" . ace-window))
-  (use-package multiple-cursors
-    :bind ("C-d" . mc/mark-next-like-this))
-  (use-package expand-region)
-  (use-package powerline)
+    ;; Help switching windows
+    (use-package ace-window)
+      ;; :bind ("M-s" . ace-window))
+    (use-package multiple-cursors
+      :bind ("C-d" . mc/mark-next-like-this))
+    (use-package expand-region)
+    (use-package powerline)
 
 
 #+END_SRC
@@ -228,9 +236,21 @@
     (setq ivy-initial-inputs-alist nil)
     (ivy-mode 1))
 #+END_SRC
-  
-* C language
 
+* Org mode
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+  (global-set-key (kbd "C-c c") 'org-capture)
+
+  (custom-set-variables
+   '(org-directory "~/Sync/orgfiles")
+   '(org-default-notes-file (concat org-directory "/notes.org")))
+#+END_SRC
+
+* C language
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "k&r"
         c-basic-offset 4
@@ -245,6 +265,14 @@
     (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
 #+END_SRC
 
+* Emacs lisp
+#+BEGIN_SRC emacs-lisp
+  (use-package elisp-slime-nav
+    :config
+    (require 'elisp-slime-nav)
+    (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+      (add-hook hook 'elisp-slime-nav-mode)))
+#+END_SRC
 
 * Static code analysis
 #+BEGIN_SRC emacs-lisp
@@ -447,3 +475,9 @@
   (use-package realgud)
 #+END_SRC
 
+* Start server
+
+#+BEGIN_SRC emacs-lisp
+  (load "server")
+  (unless (server-running-p) (server-start))
+#+END_SRC
