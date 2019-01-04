@@ -68,55 +68,42 @@
 
 * Generic
 #+BEGIN_SRC emacs-lisp
-    (global-auto-revert-mode t)
-    (toggle-debug-on-error)
+  (global-auto-revert-mode t)
+  (toggle-debug-on-error)
 
-    (global-linum-mode t)
-    (setq inhibit-splash-screen t)
-    (global-subword-mode t)
+  (global-linum-mode t)
+  (setq inhibit-splash-screen t)
+  (global-subword-mode t)
 
-    (use-package visual-regexp
-      :config
-      (require 'visual-regexp))
+  (use-package visual-regexp
+    :config
+    (require 'visual-regexp))
 
-    (use-package elscreen
-      :bind ("C-t" . elscreen-clone)
-      ("<C-next>". elscreen-next)
-      ("<C-prior>" . elscreen-previous)
-      ("C-w" . elscreen-kill)
-      :config
-      (elscreen-start))
+  (use-package elscreen
+    :bind ("C-t" . elscreen-clone)
+    ("<C-next>". elscreen-next)
+    ("<C-prior>" . elscreen-previous)
+    ("C-w" . elscreen-kill)
+    :config
+    (elscreen-start))
 
-    (use-package beacon
-	  :config
-      (beacon-mode t))
+  ;; Configure mouse to be more smooth
+  (setq redisplay-dont-pause t
+        scroll-margin 1
+        scroll-step 1
+        scroll-conservatively 10000
+        scroll-preserve-screen-position 1)
 
-    ;; Configure mouse to be more smooth
-    (setq redisplay-dont-pause t
-          scroll-margin 1
-          scroll-step 1
-          scroll-conservatively 10000
-          scroll-preserve-screen-position 1)
+  (setq mouse-wheel-follow-mouse 't)
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
-    (setq mouse-wheel-follow-mouse 't)
-    (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+  (add-hook 'buffer-list-update-hook (lambda () (auto-fill-mode t)))
 
-    (add-to-list 'default-frame-alist '(font . "Source Code Pro-13"))
-    (set-face-attribute 'default t :font "Source Code Pro-13")
-
-    (add-hook 'buffer-list-update-hook (lambda () (auto-fill-mode t)))
-
-    ;; Load current file
-    (defun load-current-file ()
-      "Execute file corresponding to current buffer"
-      (interactive)
-      (load-file (buffer-file-name)))
-
-    (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'load-current-file)
-    (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
-                           'compile))
-    (eval-after-load "c++" '(define-key c-mode-map (kbd "C-c C-c")
-                             'compile))
+  (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
+  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
+                          'compile))
+  (eval-after-load "c++" '(define-key c-mode-map (kbd "C-c C-c")
+                            'compile))
 
 
 #+END_SRC
@@ -178,7 +165,7 @@
   (global-set-key (kbd "C-M-8") 'insert-left-squared-bracket)
   (global-set-key (kbd "C-M-9") 'insert-right-squared-bracket)
   (global-set-key (kbd "C-M-0") 'insert-right-curly-brace)
-  (global-set-key (kbd "C-M-ß") 'insert-backslash)
+  (global-set-key (kbd "C-M-ÃŸ") 'insert-backslash)
   (global-set-key (kbd "C-M-<") 'insert-pipe)
 
 #+END_SRC
@@ -205,7 +192,6 @@
        (use-package multiple-cursors
          :bind ("C-d" . mc/mark-next-like-this))
        (use-package expand-region)
-       (use-package powerline)
 #+END_SRC
 
 * Commands completion
@@ -306,13 +292,6 @@
       :bind ("C-p" . projectile-find-file)
       :config
       (projectile-mode +1))
-#+END_SRC
-
-* Themes
-#+BEGIN_SRC emacs-lisp
-(use-package powerline
-  :config
-  (powerline-default-theme))
 #+END_SRC
 
 * Indexer build functions
@@ -476,6 +455,23 @@
   (use-package realgud)
 #+END_SRC
 
+* Themes
+#+BEGIN_SRC emacs-lisp
+  (use-package powerline
+    :config
+    (powerline-default-theme))
+
+  (use-package beacon
+    :config
+    (beacon-mode t))
+
+  (add-to-list 'default-frame-alist '(font . "Source Code Pro-13"))
+  (set-face-attribute 'default t :font "Source Code Pro-13")
+
+  (load-theme 'leuven t)
+
+
+#+END_SRC
 * Start server
 
 #+BEGIN_SRC emacs-lisp
