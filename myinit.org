@@ -235,6 +235,27 @@
   (custom-set-variables
    '(org-directory "~/Sync/orgfiles")
    '(org-default-notes-file (concat org-directory "/notes.org")))
+
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (setq org-agenda-files (list org-default-notes-file))
+
+  (setq
+   org-capture-templates
+   '(
+     ("t" "To Do Item" entry (file+headline "" "To Do and Notes")
+      "* TODO %?\n%u" :prepend t)
+     ("n" "Note" entry (file+headline "" "Notes")
+      "* %u %? " :prepend t)
+     ("p" "Personal development" entry (file+headline "" "Personal development")
+      "* TODO %? \n%T" :prepend t)
+     ("s" "Team forming" entry (file+headline "" "Team forming")
+      "* TODO %? \n%T" :prepend t)
+     ("d" "Project development" entry (file+headline "" "Project development")
+      "* TODO %? \n%T" :prepend t)
+     ("i" "Improvements" entry (file+headline "" "Improvements")
+      "* TODO %? \n%T" :prepend t)
+     ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")
+      "* TODO %? \n%T" :prepend t)))
 #+END_SRC
 
 * C language
