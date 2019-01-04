@@ -1,6 +1,7 @@
 * Use package
 #+BEGIN_SRC emacs-lisp
 (setq use-package-always-ensure t)
+(setq use-package-always-pin "melpa")
 #+END_SRC
 
 * Smarter beginning of line
@@ -67,53 +68,54 @@
 
 * Generic
 #+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
-  (toggle-debug-on-error)
+    (global-auto-revert-mode t)
+    (toggle-debug-on-error)
 
-  (global-linum-mode t)
-  (setq inhibit-splash-screen t)
-  (global-subword-mode t)
+    (global-linum-mode t)
+    (setq inhibit-splash-screen t)
+    (global-subword-mode t)
 
-  (use-package visual-regexp
-    :config
-    (require 'visual-regexp))
+    (use-package visual-regexp
+      :config
+      (require 'visual-regexp))
 
-  (use-package elscreen
-    :bind ("C-t" . elscreen-clone)
-    ("<C-next>". elscreen-next)
-    ("<C-prior>" . elscreen-previous)
-    ("C-w" . elscreen-kill)
-    :config
-    (elscreen-start))
+    (use-package elscreen
+      :bind ("C-t" . elscreen-clone)
+      ("<C-next>". elscreen-next)
+      ("<C-prior>" . elscreen-previous)
+      ("C-w" . elscreen-kill)
+      :config
+      (elscreen-start))
 
-  (use-package beacon)
+    (use-package beacon
+      (beacon-mode t))
 
-  ;; Configure mouse to be more smooth
-  (setq redisplay-dont-pause t
-        scroll-margin 1
-        scroll-step 1
-        scroll-conservatively 10000
-        scroll-preserve-screen-position 1)
+    ;; Configure mouse to be more smooth
+    (setq redisplay-dont-pause t
+          scroll-margin 1
+          scroll-step 1
+          scroll-conservatively 10000
+          scroll-preserve-screen-position 1)
 
-  (setq mouse-wheel-follow-mouse 't)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+    (setq mouse-wheel-follow-mouse 't)
+    (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
-  (add-to-list 'default-frame-alist '(font . "Source Code Pro-13"))
-  (set-face-attribute 'default t :font "Source Code Pro-13")
+    (add-to-list 'default-frame-alist '(font . "Source Code Pro-13"))
+    (set-face-attribute 'default t :font "Source Code Pro-13")
 
-  (add-hook 'buffer-list-update-hook (lambda () (auto-fill-mode t)))
+    (add-hook 'buffer-list-update-hook (lambda () (auto-fill-mode t)))
 
-  ;; Load current file
-  (defun load-current-file ()
-    "Execute file corresponding to current buffer"
-    (interactive)
-    (load-file (buffer-file-name)))
+    ;; Load current file
+    (defun load-current-file ()
+      "Execute file corresponding to current buffer"
+      (interactive)
+      (load-file (buffer-file-name)))
 
-  (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'load-current-file)
-  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
-                         'compile))
-  (eval-after-load "c++" '(define-key c-mode-map (kbd "C-c C-c")
+    (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'load-current-file)
+    (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
                            'compile))
+    (eval-after-load "c++" '(define-key c-mode-map (kbd "C-c C-c")
+                             'compile))
 
 
 #+END_SRC
@@ -182,29 +184,27 @@
 * Input
 #+BEGIN_SRC emacs-lisp
     (use-package ergoemacs-mode
-      :init
-      (setq ergoemacs-theme nil)
-      (setq ergoemacs-keyboard-layout "de")
-      (ergoemacs-mode 1)
-      :config
-      ;; This ensures that counsel-M-x is used and apply smex (history)
-      ;; By simply mapping M-a to it, org-mode will not have history
-      (ergoemacs-require 'swiper))
+       :init
+       (setq ergoemacs-theme nil)
+       (setq ergoemacs-keyboard-layout "de")
+       (ergoemacs-mode 1)
+       ;; This ensures that counsel-M-x is used and apply smex (history)
+       ;; By simply mapping M-a to it, org-mode will not have history
+       (ergoemacs-require 'swiper)
+       ;; workaround for bug unrecognized entry in undo list
+       ;; undo-tree-canary
+       (setq undo-tree-enable-undo-in-region nil)
+       ;; Ensure that we are using undo-tree-undo otherwise we can't redo
+       (global-set-key [remap undo] 'undo-tree-undo)
+       (global-set-key (kbd "C-S-f") 'grep-find))
 
-    (global-set-key (kbd "M-3") 'delete-other-windows)
-    (global-set-key (kbd "M-4") 'split-window-horizontally)
-    (global-set-key (kbd "M-$") 'split-window-vertically)
-    (global-set-key (kbd "C-S-f") 'grep-find)
-
-    ;; Help switching windows
-    (use-package ace-window)
-      ;; :bind ("M-s" . ace-window))
-    (use-package multiple-cursors
-      :bind ("C-d" . mc/mark-next-like-this))
-    (use-package expand-region)
-    (use-package powerline)
-
-
+       ;; Help switching windows
+       (use-package ace-window)
+         ;; :bind ("M-s" . ace-window))
+       (use-package multiple-cursors
+         :bind ("C-d" . mc/mark-next-like-this))
+       (use-package expand-region)
+       (use-package powerline)
 #+END_SRC
 
 * Commands completion
