@@ -88,6 +88,7 @@
       (elscreen-start))
 
     (use-package beacon
+	  :config
       (beacon-mode t))
 
     ;; Configure mouse to be more smooth
