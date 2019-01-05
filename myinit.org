@@ -29,9 +29,8 @@
       (when (= orig-point (point))
         (move-beginning-of-line 1))))
 
-  ;; remap C-a to `smarter-move-beginning-of-line'
-  (global-set-key [remap move-beginning-of-line]
-                  'smarter-move-beginning-of-line)
+  ;; remap M-h to `smarter-move-beginning-of-line'
+  (global-set-key (kbd "M-h") 'smarter-move-beginning-of-line)
 
 #+END_SRC
 * Better defaults
