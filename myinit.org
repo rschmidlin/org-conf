@@ -254,14 +254,34 @@
     (setq ivy-initial-inputs-alist nil)
     (ivy-mode 1))
 
-  (defun minibuffer-insert-word-at-point ()
+  (defvar auto-insert-search-or-replace-commands '(query-replace query-replace-regexp swiper grep-find)
+    "Commands to automatically insert selected \"symbol-at-point\".")
+
+  (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
+    "String of commands to automatically insert selected \"symbol-at-point\".")
+
+  (defun auto-insert-search-or-replace-insert-symbol-at-point-hook ()
+    "Insert symbol at point and select it to be immediately substitutable by the user."
+    (when (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings)
+      (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
+
+  (defun auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer ()
     "Get word at point in original buffer and insert it to minibuffer."
     (interactive)
-    (let ((thing nil))
+    (let ((symbol nil))
       (with-current-buffer (window-buffer (minibuffer-selected-window))
-        (setq thing (thing-at-point 'symbol)))
-      (when thing
-        (insert thing))))
+        (setq symbol (thing-at-point 'symbol)))
+      (insert-and-select symbol)))
+
+  (defun insert-and-select (text)
+    "Insert TEXT and selects it."
+    (when text
+      (let ((begin (point)))
+        (insert text)
+        (set-mark begin)
+        (setq deactivate-mark nil))))
+
+  (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
 
   (eval-after-load "ergoemacs"
     (progn
@@ -269,13 +289,10 @@
         "History workaround for Ergoemacs"
         (define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
         (define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
-        (define-key minibuffer-local-map (kbd "M-p") 'minibuffer-insert-word-at-point)
         (define-key vr/minibuffer-keymap (kbd "M-I") 'previous-history-element)
         (define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
-        (define-key vr/minibuffer-keymap (kbd "M-p") 'minibuffer-insert-word-at-point)
         (define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
-        (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element)
-        (define-key ivy-minibuffer-map (kbd "M-p") 'minibuffer-insert-word-at-point))
+        (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element))
       (ergoemacs-require 'history-workaround)))
 #+END_SRC
 
