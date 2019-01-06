@@ -331,6 +331,9 @@
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
+  ;; Do not show bold, italic and underlined markers 
+  (setq org-hide-emphasis-markers t)
+
   (global-set-key (kbd "C-c c") 'org-capture)
 
   (custom-set-variables
