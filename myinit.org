@@ -378,15 +378,10 @@
     :init 
     (add-hook 'after-init-hook 'global-company-mode)
     (setq-default company-dabbrev-other-buffers 'all
-                  company-tooltip-align-annotations t))
-
-  (eval-after-load "ergoemacs"
-    (progn
-      (ergoemacs-component company-keybindings ()
-        "Company keybindings for Ergoemacs"
-        (define-key company-active-map (kbd "M-i") 'company-select-next)
-        (define-key company-active-map (kbd "M-p") 'company-select-previous)
-        (ergoemacs-require 'company-keybindings))))
+                  company-tooltip-align-annotations t)
+    :config
+    (define-key company-active-map (kbd "M-K") 'company-select-next)
+    (define-key company-active-map (kbd "M-I") 'company-select-previous))
 
   (use-package company-quickhelp
     :init
