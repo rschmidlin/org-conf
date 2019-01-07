@@ -624,3 +624,11 @@
     (setq web-mode-enable-auto-closing t))
   (setq web-mode-enable-auto-quoting t)
 #+END_SRC
+
+* Analyze Emacs usage
+#+BEGIN_SRC emacs-lisp
+  (use-package keyfreq
+    :init
+    (keyfreq-mode 1)
+    (keyfreq-autosave-mode 1))
+#+END_SRC
