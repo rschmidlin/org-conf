@@ -109,25 +109,9 @@
   (eval-after-load "c++" '(define-key c-mode-map (kbd "C-c C-c")
                             'compile))
 
-  (defun set-frame-size-according-to-resolution ()
-    (interactive)
-    (if (display-graphic-p)
-        (progn
-          ;; use 120 char wide window for largeish displays
-          ;; and smaller 80 column windows for smaller displays
-          ;; pick whatever numbers make sense for you
-          (if (> (x-display-pixel-width) 768)
-              (add-to-list 'default-frame-alist (cons 'width 100))
-            (add-to-list 'default-frame-alist (cons 'width 60)))
-          ;; for the height, subtract a couple hundred pixels
-          ;; from the screen height (for panels, menubars and
-          ;; whatnot), then divide by the height of a char to
-          ;; get the height we want
-          (add-to-list 'default-frame-alist 
-                       (cons 'height (/ (- (x-display-pixel-height) 45)
-                                        (frame-char-height)))))))
+  (add-to-list 'default-frame-alist (cons 'width 100))
+  (add-to-list 'default-frame-alist (cons 'height 50))
 
-  (set-frame-size-according-to-resolution)
 
 #+END_SRC
 * Operating system
@@ -245,13 +229,15 @@
     (require 'smex)
     (setq ivy-use-virtual-buffers t)
     (setq ivy-count-format "(%d/%d) ")
-    (setq magit-completing-read-function 'ivy-completing-read)
     (setq projectile-completion-system 'ivy)
     (setq ivy-re-builders-alist
           '((ivy-switch-buffer . ivy--regex-plus)
             (swiper . ivy--regex-plus)
             (t . ivy--regex-fuzzy)))
-    (setq ivy-initial-inputs-alist nil)
+    (setq ivy-initial-inputs-alist nil) 
+    (setq ivy-ignore-buffers '("\\` " "\\`\\*"))
+    (setq magit-completing-read-function 'ivy-completing-read)
+    (setq projectile-completion-system 'ivy)
     (ivy-mode 1))
 
   (defvar auto-insert-search-or-replace-commands '(query-replace query-replace-regexp swiper grep-find)
@@ -387,10 +373,24 @@
   (use-package flycheck
     :config (global-flycheck-mode))
 
-  ; Enable text completion
+  ;; Enable text completion
   (use-package company
+    :init 
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq-default company-dabbrev-other-buffers 'all
+                  company-tooltip-align-annotations t))
+
+  (eval-after-load "ergoemacs"
+    (progn
+      (ergoemacs-component company-keybindings ()
+        "Company keybindings for Ergoemacs"
+        (define-key company-active-map (kbd "M-i") 'company-select-next)
+        (define-key company-active-map (kbd "M-p") 'company-select-previous)
+        (ergoemacs-require 'company-keybindings))))
+
+  (use-package company-quickhelp
     :init
-    (add-hook 'after-init-hook 'global-company-mode))
+    (add-hook 'after-init-hook 'company-quickhelp-mode))
 
   (use-package smartparens
     :config
