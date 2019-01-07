@@ -379,9 +379,13 @@
     (add-hook 'after-init-hook 'global-company-mode)
     (setq-default company-dabbrev-other-buffers 'all
                   company-tooltip-align-annotations t)
-    :config
+    :config 
     (define-key company-active-map (kbd "M-K") 'company-select-next)
-    (define-key company-active-map (kbd "M-I") 'company-select-previous))
+    (define-key company-active-map (kbd "M-I") 'company-select-previous)
+    (define-key company-active-map (kbd "C-f") 'company-search-candidates)
+    ;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
+    (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+    (global-set-key (kbd "C-SPC") 'company-complete))
 
   (use-package company-quickhelp
     :init
