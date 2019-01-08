@@ -85,6 +85,12 @@
     (require 'visual-regexp)
     (global-set-key (kbd "M-%") 'vr/query-replace))
 
+  (use-package drag-stuff
+    :init
+    (drag-stuff-global-mode 1)
+    (global-set-key (kbd "M-<up>") 'drag-stuff-up)
+    (global-set-key (kbd "M-<down>") 'drag-stuff-down))
+
   (use-package elscreen
     :bind ("C-t" . elscreen-clone)
     ("<C-next>". elscreen-next)
@@ -122,7 +128,7 @@
   (setenv "PATH"
           (concat
            ;; Change this with your path to MSYS bin directory
-           "C:\\MinGW\\msys\\1.0\\bin;"
+           "C:\\msys64\\usr\\bin;"
            "/usr/local/bin:"
            (getenv "PATH")))
 #+END_SRC
@@ -208,6 +214,7 @@
   (use-package multiple-cursors
     :bind ("C-d" . mc/mark-next-like-this))
   (use-package expand-region)
+
 #+END_SRC
 
 * Commands completion
