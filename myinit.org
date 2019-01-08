@@ -112,6 +112,8 @@
   (add-to-list 'default-frame-alist (cons 'width 100))
   (add-to-list 'default-frame-alist (cons 'height 50))
 
+  ;; Save the bookmark file every time the bookmark list changes
+  (setq bookmark-save-flag 1)
 
 #+END_SRC
 * Operating system
@@ -339,6 +341,9 @@
      ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
      ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
      ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
+
+  (define-key org-mode-map (kbd "C-c t") 'org-edit-special)
+  (global-set-key (kbd "C-c t") 'org-edit-src-exit)
 #+END_SRC
 
 * C language
