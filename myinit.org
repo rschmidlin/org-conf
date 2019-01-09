@@ -1,10 +1,17 @@
 * Use package
+
+  Make use-package calls shorter by automatically ensuring each call (i.e. install package). Also
+  sets standard to melpa (alghough it is by default).
+  
 #+BEGIN_SRC emacs-lisp
 (setq use-package-always-ensure t)
 (setq use-package-always-pin "melpa")
 #+END_SRC
 
-* Smarter beginning of line
+* Smarter beginning of line :keybindings
+
+On beginning of line, move to the beginning of the text on that line not the indented whitespaces. 
+
 #+BEGIN_SRC emacs-lisp
   (defun smarter-move-beginning-of-line (arg)
     "Move point back to indentation of beginning of line.
@@ -36,6 +43,9 @@
 
 #+END_SRC
 * Better defaults
+
+  Copying better default inputs, disable toolbar, scrollbar, ease yes-or-no questions. 
+
 #+BEGIN_SRC emacs-lisp
   (menu-bar-mode -1)
   (when (fboundp 'tool-bar-mode)
@@ -67,7 +77,7 @@
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
-* Generic
+* Generic :keybindings
 
 #+BEGIN_SRC emacs-lisp
   (global-auto-revert-mode t)
@@ -89,7 +99,9 @@
     :init
     (drag-stuff-global-mode 1)
     (global-set-key (kbd "M-<up>") 'drag-stuff-up)
-    (global-set-key (kbd "M-<down>") 'drag-stuff-down))
+    (global-set-key (kbd "M-<down>") 'drag-stuff-down)
+    (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
+    (global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
 
   (use-package elscreen
     :bind ("C-t" . elscreen-clone)
@@ -112,8 +124,15 @@
   (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
   (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
                           'compile))
-  (eval-after-load "c++" '(define-key c-mode-map (kbd "C-c C-c")
+  (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
                             'compile))
+
+  (global-set-key (kbd "M-ö") 'ivy-switch-buffer)
+  (global-set-key (kbd "M-Ö") 'ibuffer)
+
+  (global-set-key (kbd "C-ö") 'counsel-bookmark)
+  (global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
+
 
   (add-to-list 'default-frame-alist (cons 'width 100))
   (add-to-list 'default-frame-alist (cons 'height 50))
