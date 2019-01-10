@@ -143,13 +143,14 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+END_SRC
 * Operating system
 #+BEGIN_SRC emacs-lisp
-  ; Configure Emacs to use find and grep from MSYS
-  (setenv "PATH"
-          (concat
-           ;; Change this with your path to MSYS bin directory
-           "C:\\msys64\\usr\\bin;"
-           "/usr/local/bin:"
-           (getenv "PATH")))
+  ;; Configure Emacs to use find and grep from MSYS
+  (when (eq system-type 'windows-nt)
+    (setenv "PATH"
+            (concat
+             ;; Change this with your path to MSYS bin directory
+             "C:\\msys64\\usr\\bin;"
+             "/usr/local/bin:"
+             (getenv "PATH"))))
 #+END_SRC
 * Override AltGr
 #+BEGIN_SRC emacs-lisp
