@@ -135,7 +135,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
 
   (add-to-list 'default-frame-alist (cons 'width 100))
-  (add-to-list 'default-frame-alist (cons 'height 50))
+  (add-to-list 'default-frame-alist (cons 'height 40))
 
   ;; Save the bookmark file every time the bookmark list changes
   (setq bookmark-save-flag 1)
@@ -663,4 +663,17 @@ On beginning of line, move to the beginning of the text on that line not the ind
     :init
     (keyfreq-mode 1)
     (keyfreq-autosave-mode 1))
+#+END_SRC
+* Python language
+#+BEGIN_SRC emacs-lisp
+  (when (not (eq system-type 'windows-nt))
+    (setq py-python-command "python3")
+    (setq python-shell-interpreter "python3"))
+
+  (use-package anaconda-mode
+    :init
+    (add-hook 'python-mode-hook 'anaconda-mode)
+    (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+  (use-package company-anaconda)
 #+END_SRC
