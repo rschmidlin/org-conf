@@ -248,9 +248,10 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+BEGIN_SRC emacs-lisp
   ;; Workaround - do not use which-key  because which-key interferes with ergoemacs
   ;; Use which-key
-  ;; (use-package which-key
-  ;;   :config
-  ;;   (which-key-mode))
+  (use-package which-key
+	:config
+	(which-key-mode)
+	(setq ergoemacs-handle-ctl-c-or-ctl-x 'only-C-c-and-C-x))
 
   ;; Helping IVY with Flx
   (use-package flx)
