@@ -679,6 +679,16 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   (add-hook 'python-mode-hook (lambda () (define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python)))
 
+  ;; (use-package company-jedi
+  ;;   :config
+  ;;   (eval-after-load "company"
+  ;;     '(add-to-list 'company-backends 'company-jedi)))
+
+  (use-package company-anaconda
+	:config
+	(eval-after-load "company"
+	  '(add-to-list 'company-backends 'company-anaconda)))
+
   (when (eq system-type 'gnu/linux)
 	(setq python-shell-interpreter "/usr/bin/python3"))
 #+END_SRC
