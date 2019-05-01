@@ -664,6 +664,24 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (setq web-mode-enable-auto-quoting t)
 #+END_SRC
 
+* Python mode
+#+BEGIN_SRC emacs-lisp
+  (use-package anaconda-mode
+	:config
+	(add-hook 'python-mode-hook 'anaconda-mode)
+	(add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+  (defun raul-send-buffer-to-python ()
+	"Send complete buffer to Python"
+	(interactive)
+	(python-shell-send-buffer t))
+
+  (add-hook 'python-mode-hook (lambda () (define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python)))
+
+  (when (eq system-type 'gnu/linux)
+	(setq python-shell-interpreter "/usr/bin/python3"))
+#+END_SRC
+
 * Analyze Emacs usage
 #+BEGIN_SRC emacs-lisp
   (use-package keyfreq
