@@ -269,6 +269,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(setq ivy-re-builders-alist
 		  '((ivy-switch-buffer . ivy--regex-plus)
 			(swiper . ivy--regex-plus)
+			(counsel-M-x . ivy--regex-plus)
 			(t . ivy--regex-fuzzy)))
 	(setq ivy-initial-inputs-alist nil)
 	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
