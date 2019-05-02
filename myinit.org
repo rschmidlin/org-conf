@@ -116,9 +116,9 @@ On beginning of line, move to the beginning of the text on that line not the ind
 		scroll-margin 1
 		scroll-step 1
 		scroll-conservatively 10000
-        scroll-preserve-screen-position 1
-        mouse-wheel-progressive-speed nil ; don't accelerate scrolling
-        )
+		scroll-preserve-screen-position 1
+		mouse-wheel-progressive-speed nil ; don't accelerate scrolling
+		)
 
   (setq mouse-wheel-follow-mouse 't)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
@@ -154,12 +154,12 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+BEGIN_SRC emacs-lisp
   ;; Configure Emacs to use find and grep from MSYS
   (when (eq system-type 'windows-nt)
-    (setenv "PATH"
-            (concat
-             ;; Change this with your path to MSYS bin directory
-             "C:\\msys64\\usr\\bin;"
-             "/usr/local/bin:"
-             (getenv "PATH"))))
+	(setenv "PATH"
+			(concat
+			 ;; Change this with your path to MSYS bin directory
+			 "C:\\msys64\\usr\\bin;"
+			 "/usr/local/bin:"
+			 (getenv "PATH"))))
 #+END_SRC
 * Override AltGr
 #+BEGIN_SRC emacs-lisp
@@ -273,6 +273,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
 		  '((ivy-switch-buffer . ivy--regex-plus)
 			(swiper . ivy--regex-plus)
 			(counsel-M-x . ivy--regex-plus)
+			(projectile-find-file . ivy--regex-plus)
 			(t . ivy--regex-fuzzy)))
 	(setq ivy-initial-inputs-alist nil)
 	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
@@ -638,8 +639,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:config
 	(beacon-mode t))
 
-  (add-to-list 'default-frame-alist '(font . "Source Code Pro-13"))
-  (set-face-attribute 'default t :font "Source Code Pro-13")
+  (add-to-list 'default-frame-alist '(font . "Source Code Pro-11"))
+  (set-face-attribute 'default t :font "Source Code Pro-11")
 
   (load-theme 'leuven t)
 
@@ -706,13 +707,23 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * Python language
 #+BEGIN_SRC emacs-lisp
   (when (not (eq system-type 'windows-nt))
-    (setq py-python-command "python3")
-    (setq python-shell-interpreter "python3"))
+	(setq py-python-command "python3")
+	(setq python-shell-interpreter "python3"))
 
   (use-package anaconda-mode
-    :init
-    (add-hook 'python-mode-hook 'anaconda-mode)
-    (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+	:init
+	(add-hook 'python-mode-hook 'anaconda-mode)
+	(add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+  (when url-proxy-services
+	(make-variable-buffer-local 'url-proxy-services))
+
+  (defun disable-proxy-for-python ()
+	"Disable proxy when in python-mode to allow anaconda-mode to work"
+	(when url-proxy-services
+	  (setq url-proxy-services nil)))
+
+  (add-hook 'buffer-list-update-hook 'disable-proxy-for-python)
 
   (use-package company-anaconda)
 #+END_SRC
