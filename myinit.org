@@ -344,7 +344,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	  (set-fill-column fill-column-default))
 	(setq newly-read-buffer t))
 
-  (add-hook 'buffer-list-update-hook 'set-default-fill-column-on-newly-read-buffer)
+  (add-hook 'find-file-hook 'set-default-fill-column-on-newly-read-buffer)
   (use-package aggressive-fill-paragraph
 	:config
 	(afp-setup-recommended-hooks)
@@ -695,6 +695,16 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   (when (eq system-type 'gnu/linux)
 	(setq python-shell-interpreter "/usr/bin/python3"))
+
+  (when url-proxy-services
+	(make-variable-buffer-local 'url-proxy-services))
+
+  (defun disable-proxy-for-python ()
+	"Disable proxy when in python-mode to allow anaconda-mode to work"
+	(when (and url-proxy-services (eq major-mode 'python-mode))
+	  (setq url-proxy-services nil)))
+
+  (add-hook 'find-file-hook 'disable-proxy-for-python)
 #+END_SRC
 
 * Analyze Emacs usage
@@ -703,27 +713,4 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:init
 	(keyfreq-mode 1)
 	(keyfreq-autosave-mode 1))
-#+END_SRC
-* Python language
-#+BEGIN_SRC emacs-lisp
-  (when (not (eq system-type 'windows-nt))
-	(setq py-python-command "python3")
-	(setq python-shell-interpreter "python3"))
-
-  (use-package anaconda-mode
-	:init
-	(add-hook 'python-mode-hook 'anaconda-mode)
-	(add-hook 'python-mode-hook 'anaconda-eldoc-mode))
-
-  (when url-proxy-services
-	(make-variable-buffer-local 'url-proxy-services))
-
-  (defun disable-proxy-for-python ()
-	"Disable proxy when in python-mode to allow anaconda-mode to work"
-	(when url-proxy-services
-	  (setq url-proxy-services nil)))
-
-  (add-hook 'buffer-list-update-hook 'disable-proxy-for-python)
-
-  (use-package company-anaconda)
 #+END_SRC
