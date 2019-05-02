@@ -2,7 +2,7 @@
 
   Make use-package calls shorter by automatically ensuring each call (i.e. install package). Also
   sets standard to melpa (alghough it is by default).
-  
+
 #+BEGIN_SRC emacs-lisp
 (setq use-package-always-ensure t)
 (setq use-package-always-pin "melpa")
@@ -10,11 +10,11 @@
 
 * Smarter beginning of line :keybindings
 
-On beginning of line, move to the beginning of the text on that line not the indented whitespaces. 
+On beginning of line, move to the beginning of the text on that line not the indented whitespaces.
 
 #+BEGIN_SRC emacs-lisp
   (defun smarter-move-beginning-of-line (arg)
-    "Move point back to indentation of beginning of line.
+	"Move point back to indentation of beginning of line.
 
   Move point to the first non-whitespace character on this line.
   If point is already there, move to the beginning of the line.
@@ -23,20 +23,20 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   If ARG is not nil or 1, move forward ARG - 1 lines first.  If
   point reaches the beginning or end of the buffer, stop there."
-    (interactive "^p")
-    (setq arg (or arg 1))
+	(interactive "^p")
+	(setq arg (or arg 1))
 
-    ;; Move lines first
-    (when (/= arg 1)
-      (let ((line-move-visual nil))
-        (forward-line (1- arg))))
+	;; Move lines first
+	(when (/= arg 1)
+	  (let ((line-move-visual nil))
+		(forward-line (1- arg))))
 
-    (let ((orig-point (point)))
-      (back-to-indentation)
-      (when (= orig-point (point))
-        (if (fboundp 'beginning-of-visual-line)
-            (beginning-of-visual-line 1)
-          (beginning-of-line)))))
+	(let ((orig-point (point)))
+	  (back-to-indentation)
+	  (when (= orig-point (point))
+		(if (fboundp 'beginning-of-visual-line)
+			(beginning-of-visual-line 1)
+		  (beginning-of-line)))))
 
   ;; remap M-h to `smarter-move-beginning-of-line'
   (global-set-key (kbd "M-h") 'smarter-move-beginning-of-line)
@@ -44,14 +44,14 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+END_SRC
 * Better defaults
 
-  Copying better default inputs, disable toolbar, scrollbar, ease yes-or-no questions. 
+  Copying better default inputs, disable toolbar, scrollbar, ease yes-or-no questions.
 
 #+BEGIN_SRC emacs-lisp
   (menu-bar-mode -1)
   (when (fboundp 'tool-bar-mode)
-    (tool-bar-mode -1))
+	(tool-bar-mode -1))
   (when (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1))
+	(scroll-bar-mode -1))
 
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'forward)
@@ -62,17 +62,17 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (show-paren-mode 1)
   ;(setq-default indent-tabs-mode nil)
   (setq x-select-enable-clipboard t
-        x-select-enable-primary t
-        save-interprogram-paste-before-kill t
-        apropos-do-all t
-        mouse-yank-at-point t
-        require-final-newline t
-        visible-bell t
-        load-prefer-newer t
-        ediff-window-setup-function 'ediff-setup-windows-plain
-        save-place-file (concat user-emacs-directory "places")
-        backup-directory-alist `(("." . ,(concat user-emacs-directory
-                                                 "backups"))))
+		x-select-enable-primary t
+		save-interprogram-paste-before-kill t
+		apropos-do-all t
+		mouse-yank-at-point t
+		require-final-newline t
+		visible-bell t
+		load-prefer-newer t
+		ediff-window-setup-function 'ediff-setup-windows-plain
+		save-place-file (concat user-emacs-directory "places")
+		backup-directory-alist `(("." . ,(concat user-emacs-directory
+												 "backups"))))
 
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
@@ -91,31 +91,31 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-visual-line-mode 1)
 
   (use-package visual-regexp
-    :config
-    (require 'visual-regexp)
-    (global-set-key (kbd "M-%") 'vr/query-replace))
+	:config
+	(require 'visual-regexp)
+	(global-set-key (kbd "M-%") 'vr/query-replace))
 
   (use-package drag-stuff
-    :init
-    (drag-stuff-global-mode 1)
-    (global-set-key (kbd "M-<up>") 'drag-stuff-up)
-    (global-set-key (kbd "M-<down>") 'drag-stuff-down)
-    (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
-    (global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
+	:init
+	(drag-stuff-global-mode 1)
+	(global-set-key (kbd "M-<up>") 'drag-stuff-up)
+	(global-set-key (kbd "M-<down>") 'drag-stuff-down)
+	(global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
+	(global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
 
   (use-package elscreen
-    :bind ("C-t" . elscreen-clone)
-    ("<C-next>". elscreen-next)
-    ("<C-prior>" . elscreen-previous)
-    ("C-w" . elscreen-kill)
-    :config
-    (elscreen-start))
+	:bind ("C-t" . elscreen-clone)
+	("<C-next>". elscreen-next)
+	("<C-prior>" . elscreen-previous)
+	("C-w" . elscreen-kill)
+	:config
+	(elscreen-start))
 
   ;; Configure mouse to be more smooth
   (setq redisplay-dont-pause t
-        scroll-margin 1
-        scroll-step 1
-        scroll-conservatively 10000
+		scroll-margin 1
+		scroll-step 1
+		scroll-conservatively 10000
         scroll-preserve-screen-position 1
         mouse-wheel-progressive-speed nil ; don't accelerate scrolling
         )
@@ -125,9 +125,9 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
   (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
-                          'compile))
+						  'compile))
   (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
-                            'compile))
+							'compile))
 
   (global-set-key (kbd "M-ö") 'ivy-switch-buffer)
   (global-set-key (kbd "M-Ö") 'ibuffer)
@@ -141,6 +141,13 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   ;; Save the bookmark file every time the bookmark list changes
   (setq bookmark-save-flag 1)
+
+  ;; Show trailing white spaces
+  (setq-default show-trailing-whitespace t)
+
+  ;; Remove useless whitespace before saving a file
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
 
 #+END_SRC
 * Operating system
@@ -157,44 +164,44 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * Override AltGr
 #+BEGIN_SRC emacs-lisp
   (defun insert-commercial-at()
-    "Insert a commercial at before point."
-    (interactive)
-    (insert "@"))
+	"Insert a commercial at before point."
+	(interactive)
+	(insert "@"))
 
   (defun insert-tilde()
-    "Insert a tilde before point."
-    (interactive)
-    (insert "~"))
+	"Insert a tilde before point."
+	(interactive)
+	(insert "~"))
 
   (defun insert-left-curly-brace()
-    "Insert a left curly brace before point."
-    (interactive)
-    (insert "{"))
+	"Insert a left curly brace before point."
+	(interactive)
+	(insert "{"))
 
   (defun insert-right-curly-brace()
-    "Insert a right curly brace before point."
-    (interactive)
-    (insert "}"))
+	"Insert a right curly brace before point."
+	(interactive)
+	(insert "}"))
 
   (defun insert-left-squared-bracket()
-    "Insert a left square bracket before point."
-    (interactive)
-    (insert "["))
+	"Insert a left square bracket before point."
+	(interactive)
+	(insert "["))
 
   (defun insert-right-squared-bracket()
-    "Insert a right square bracket before point."
-    (interactive)
-    (insert "]"))
+	"Insert a right square bracket before point."
+	(interactive)
+	(insert "]"))
 
   (defun insert-backslash()
-    "Insert a backslash before point."
-    (interactive)
-    (insert "\\"))
+	"Insert a backslash before point."
+	(interactive)
+	(insert "\\"))
 
   (defun insert-pipe()
-    "Insert a pipe before point."
-    (interactive)
-    (insert "|"))
+	"Insert a pipe before point."
+	(interactive)
+	(insert "|"))
 
   (global-set-key (kbd "C-M-q") 'insert-commercial-at)
   (global-set-key (kbd "C-M-+") 'insert-tilde)
@@ -209,22 +216,22 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * Input
 #+BEGIN_SRC emacs-lisp
   (use-package ergoemacs-mode
-    :init
-    (setq ergoemacs-theme nil)
-    (setq ergoemacs-keyboard-layout "de")
-    (ergoemacs-mode 1)
-    ;; This ensures that counsel-M-x is used and apply smex (history)
-    ;; By simply mapping M-a to it, org-mode will not have history
-    (ergoemacs-require 'swiper)
-    ;; workaround for bug unrecognized entry in undo list
-    ;; undo-tree-canary
-    (setq undo-tree-enable-undo-in-region nil)
-    ;; Ensure that we are using undo-tree-undo otherwise we can't redo
-    (global-set-key [remap undo] 'undo-tree-undo)
-    (global-set-key (kbd "C-S-f") 'grep-find)
-    ;; Adapt moving commands to use syntax information
-    (global-set-key (kbd "M-O") 'forward-sexp)
-    (global-set-key (kbd "M-U") 'backward-sexp))
+	:init
+	(setq ergoemacs-theme nil)
+	(setq ergoemacs-keyboard-layout "de")
+	(ergoemacs-mode 1)
+	;; This ensures that counsel-M-x is used and apply smex (history)
+	;; By simply mapping M-a to it, org-mode will not have history
+	(ergoemacs-require 'swiper)
+	;; workaround for bug unrecognized entry in undo list
+	;; undo-tree-canary
+	(setq undo-tree-enable-undo-in-region nil)
+	;; Ensure that we are using undo-tree-undo otherwise we can't redo
+	(global-set-key [remap undo] 'undo-tree-undo)
+	(global-set-key (kbd "C-S-f") 'grep-find)
+	;; Adapt moving commands to use syntax information
+	(global-set-key (kbd "M-O") 'forward-sexp)
+	(global-set-key (kbd "M-U") 'backward-sexp))
 
   ;; Workaround to avoid that which-key brings errors everytime timeout would be checked
   ;; (custom-set-variables '(ergoemacs-command-loop-timeout 1)
@@ -234,7 +241,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (use-package ace-window)
   ;; :bind ("M-s" . ace-window))
   (use-package multiple-cursors
-    :bind ("C-d" . mc/mark-next-like-this))
+	:bind ("C-d" . mc/mark-next-like-this))
   (use-package expand-region)
 
 #+END_SRC
@@ -244,9 +251,10 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+BEGIN_SRC emacs-lisp
   ;; Workaround - do not use which-key  because which-key interferes with ergoemacs
   ;; Use which-key
-  ;; (use-package which-key
-  ;;   :config
-  ;;   (which-key-mode))
+  (use-package which-key
+	:config
+	(which-key-mode)
+	(setq ergoemacs-handle-ctl-c-or-ctl-x 'only-C-c-and-C-x))
 
   ;; Helping IVY with Flx
   (use-package flx)
@@ -256,99 +264,100 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   ;; Use IVY
   (use-package counsel
-    :init
-    (require 'smex)
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-count-format "(%d/%d) ")
-    (setq projectile-completion-system 'ivy)
-    (setq ivy-re-builders-alist
-          '((ivy-switch-buffer . ivy--regex-plus)
-            (swiper . ivy--regex-plus)
-            (t . ivy--regex-fuzzy)))
-    (setq ivy-initial-inputs-alist nil) 
-    (setq ivy-ignore-buffers '("\\` " "\\`\\*"))
-    (setq magit-completing-read-function 'ivy-completing-read)
-    (setq projectile-completion-system 'ivy)
-    (ivy-mode 1))
+	:init
+	(require 'smex)
+	(setq ivy-use-virtual-buffers t)
+	(setq ivy-count-format "(%d/%d) ")
+	(setq projectile-completion-system 'ivy)
+	(setq ivy-re-builders-alist
+		  '((ivy-switch-buffer . ivy--regex-plus)
+			(swiper . ivy--regex-plus)
+			(counsel-M-x . ivy--regex-plus)
+			(t . ivy--regex-fuzzy)))
+	(setq ivy-initial-inputs-alist nil)
+	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
+	(setq magit-completing-read-function 'ivy-completing-read)
+	(setq projectile-completion-system 'ivy)
+	(ivy-mode 1))
 
   (defvar auto-insert-search-or-replace-commands '(query-replace query-replace-regexp swiper grep-find)
-    "Commands to automatically insert selected \"symbol-at-point\".")
+	"Commands to automatically insert selected \"symbol-at-point\".")
 
   (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
-    "String of commands to automatically insert selected \"symbol-at-point\".")
+	"String of commands to automatically insert selected \"symbol-at-point\".")
 
   (defun auto-insert-search-or-replace-insert-symbol-at-point-hook ()
-    "Insert symbol at point and select it to be immediately substitutable by the user."
-    (when (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings)
-      (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
+	"Insert symbol at point and select it to be immediately substitutable by the user."
+	(when (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings)
+	  (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
 
   (defun auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer ()
-    "Get word at point in original buffer and insert it to minibuffer."
-    (interactive)
-    (let ((symbol nil))
-      (with-current-buffer (window-buffer (minibuffer-selected-window))
-        (setq symbol (thing-at-point 'symbol)))
-      (insert-and-select symbol)))
+	"Get word at point in original buffer and insert it to minibuffer."
+	(interactive)
+	(let ((symbol nil))
+	  (with-current-buffer (window-buffer (minibuffer-selected-window))
+		(setq symbol (thing-at-point 'symbol)))
+	  (insert-and-select symbol)))
 
   (defun insert-and-select (text)
-    "Insert TEXT and selects it."
-    (when text
-      (let ((begin (point)))
-        (insert text)
-        (set-mark begin)
-        (setq deactivate-mark nil))))
+	"Insert TEXT and selects it."
+	(when text
+	  (let ((begin (point)))
+		(insert text)
+		(set-mark begin)
+		(setq deactivate-mark nil))))
 
   (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
 
   (eval-after-load "ergoemacs"
-    (progn
-      (ergoemacs-component history-workaround ()
-        "History workaround for Ergoemacs"
-        (define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
-        (define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
-        (define-key vr/minibuffer-keymap (kbd "M-I") 'previous-history-element)
-        (define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
-        (define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
-        (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element))
-      (ergoemacs-require 'history-workaround)))
+	(progn
+	  (ergoemacs-component history-workaround ()
+		"History workaround for Ergoemacs"
+		(define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
+		(define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
+		(define-key vr/minibuffer-keymap (kbd "M-I") 'previous-history-element)
+		(define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
+		(define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
+		(define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element))
+	  (ergoemacs-require 'history-workaround)))
 #+END_SRC
 
 * Editing utilities
 #+BEGIN_SRC emacs-lisp
   (use-package browse-kill-ring)
   (use-package aggressive-indent
-    :config
-    (global-aggressive-indent-mode 1)
-    (add-to-list 'aggressive-indent-excluded-modes 'html-mode))
+	:config
+	(global-aggressive-indent-mode 1)
+	(add-to-list 'aggressive-indent-excluded-modes 'html-mode))
 
   (defvar fill-column-default 100
-    "Set a default value for fill-column")
+	"Set a default value for fill-column")
 
   (defvar newly-read-buffer nil
-    "Variable setting if buffer has been read already")
+	"Variable setting if buffer has been read already")
   (make-variable-buffer-local 'newly-read-buffer)
 
   (defun set-default-fill-column-on-newly-read-buffer ()
-    "Set fill level to some default"
-    (unless newly-read-buffer
-      (set-fill-column fill-column-default))
-    (setq newly-read-buffer t))
+	"Set fill level to some default"
+	(unless newly-read-buffer
+	  (set-fill-column fill-column-default))
+	(setq newly-read-buffer t))
 
   (add-hook 'buffer-list-update-hook 'set-default-fill-column-on-newly-read-buffer)
   (use-package aggressive-fill-paragraph
-    :config
-    (afp-setup-recommended-hooks)
-    (add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
+	:config
+	(afp-setup-recommended-hooks)
+	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
 
 
 #+END_SRC
 * Org mode
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+	:config
+	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-  ;; Do not show bold, italic and underlined markers 
+  ;; Do not show bold, italic and underlined markers
   (setq org-hide-emphasis-markers t)
 
   (global-set-key (kbd "C-c c") 'org-capture)
@@ -363,13 +372,13 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (setq
    org-capture-templates
    '(
-     ("t" "To Do Item" entry (file+headline "" "To Do and Notes") "* TODO %?\n%u" :prepend t)
-     ("n" "Note" entry (file+headline "" "Notes") "* %u %? " :prepend t)
-     ("p" "Personal development" entry (file+headline "" "Personal development") "* TODO %? \n%T" :prepend t)
-     ("s" "Team forming" entry (file+headline "" "Team forming") "* TODO %? \n%T" :prepend t)
-     ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
-     ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
-     ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
+	 ("t" "To Do Item" entry (file+headline "" "To Do and Notes") "* TODO %?\n%u" :prepend t)
+	 ("n" "Note" entry (file+headline "" "Notes") "* %u %? " :prepend t)
+	 ("p" "Personal development" entry (file+headline "" "Personal development") "* TODO %? \n%T" :prepend t)
+	 ("s" "Team forming" entry (file+headline "" "Team forming") "* TODO %? \n%T" :prepend t)
+	 ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
+	 ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
+	 ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
 
   (define-key org-mode-map (kbd "C-c t") 'org-edit-special)
   (global-set-key (kbd "C-c t") 'org-edit-src-exit)
@@ -378,220 +387,220 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * C language
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "k&r"
-        c-basic-offset 4
-        default-tab-width 4
-        ident-tabs-mode t)
+		c-basic-offset 4
+		default-tab-width 4
+		ident-tabs-mode t)
 
   ;; Enable CMake major mode
   (use-package cmake-mode)
 
   (use-package cmake-font-lock
-    :init
-    (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
+	:init
+	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
 #+END_SRC
 
 * Emacs lisp
 #+BEGIN_SRC emacs-lisp
   (use-package elisp-slime-nav
-    :config
-    (require 'elisp-slime-nav)
-    (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-      (add-hook hook 'elisp-slime-nav-mode)))
+	:config
+	(require 'elisp-slime-nav)
+	(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+	  (add-hook hook 'elisp-slime-nav-mode)))
 #+END_SRC
 
 * Static code analysis
 #+BEGIN_SRC emacs-lisp
   (dolist (hook '(text-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode 1))))
+	(add-hook hook (lambda () (flyspell-mode 1))))
 
   (use-package flycheck
-    :config (global-flycheck-mode))
+	:config (global-flycheck-mode))
 
   ;; Enable text completion
   (use-package company
-    :init 
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq-default company-dabbrev-other-buffers 'all
-                  company-tooltip-align-annotations t)
-    :config 
-    (define-key company-active-map (kbd "M-K") 'company-select-next)
-    (define-key company-active-map (kbd "M-I") 'company-select-previous)
-    (define-key company-active-map (kbd "C-f") 'company-search-candidates)
-    ;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
-    (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-    (global-set-key (kbd "C-SPC") 'company-complete))
+	:init
+	(add-hook 'after-init-hook 'global-company-mode)
+	(setq-default company-dabbrev-other-buffers 'all
+				  company-tooltip-align-annotations t)
+	:config
+	(define-key company-active-map (kbd "M-K") 'company-select-next)
+	(define-key company-active-map (kbd "M-I") 'company-select-previous)
+	(define-key company-active-map (kbd "C-f") 'company-search-candidates)
+	;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
+	(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+	(global-set-key (kbd "C-SPC") 'company-complete))
 
   (use-package company-quickhelp
-    :init
-    (add-hook 'after-init-hook 'company-quickhelp-mode))
+	:init
+	(add-hook 'after-init-hook 'company-quickhelp-mode))
 
   (use-package smartparens
-    :config
-    ;; Fix single-quotes being automatically ended on lisp
-    (require 'smartparens-config)
-    (smartparens-global-mode))
+	:config
+	;; Fix single-quotes being automatically ended on lisp
+	(require 'smartparens-config)
+	(smartparens-global-mode))
 
   (global-set-key (kbd "C-S-o") 'imenu)
 #+END_SRC
 
 * Projects
 #+BEGIN_SRC emacs-lisp
-    ; Keybinding for using MaGit
-    (use-package magit
-      :bind ("C-x g" . magit-status))
+	; Keybinding for using MaGit
+	(use-package magit
+	  :bind ("C-x g" . magit-status))
 
-    ; Projectile to access project files
-    (use-package projectile
-      :bind ("C-p" . projectile-find-file)
-      :config
-      (projectile-mode +1))
+	; Projectile to access project files
+	(use-package projectile
+	  :bind ("C-p" . projectile-find-file)
+	  :config
+	  (projectile-mode +1))
 #+END_SRC
 
 * Indexer build functions
 #+BEGIN_SRC emacs-lisp
   (defun raul-find-definitions ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (anaconda-mode-find-definitions))
-     ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
-                                    (rtags-find-symbol-at-point)
-                                  (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
-     ((eq major-mode 'c-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
-     (t (xref-find-definitions (xref--read-identifier "Find definitions of: ")))))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (anaconda-mode-find-definitions))
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-find-symbol-at-point)
+								  (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
+	 ((eq major-mode 'c-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
+	 (t (xref-find-definitions (xref--read-identifier "Find definitions of: ")))))
 
   (defun raul-find-references ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (anaconda-mode-find-references))
-     ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
-                                    (rtags-find-references-at-point)
-                                  (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg))))
-     ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
-     (t (xref-find-references (xref--read-identifier "Find references of: ")))))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (anaconda-mode-find-references))
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-find-references-at-point)
+								  (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg))))
+	 ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
+	 (t (xref-find-references (xref--read-identifier "Find references of: ")))))
 
   (defun raul-navigate-backward ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (xref-pop-marker-stack))
-     ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
-                                    (rtags-location-stack-back)
-                                  (ggtags-prev-mark)))
-     ((eq major-mode 'c-mode) (ggtags-prev-mark))
-     (t (xref-pop-marker-stack))))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (xref-pop-marker-stack))
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-location-stack-back)
+								  (ggtags-prev-mark)))
+	 ((eq major-mode 'c-mode) (ggtags-prev-mark))
+	 (t (xref-pop-marker-stack))))
 
   (defun raul-navigate-forward ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) nil)
-     ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
-                                    (rtags-location-stack-front)
-                                  (ggtags-next-mark)))
-     ((eq major-mode 'c-mode) (ggtags-next-mark))
-     (t nil)))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) nil)
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-location-stack-front)
+								  (ggtags-next-mark)))
+	 ((eq major-mode 'c-mode) (ggtags-next-mark))
+	 (t nil)))
 
   (defun make-peek-frame (find-definition-function &rest args)
-    "Make a new frame for peeking definition"
-    (when (or (not (fboundp 'rtags-called-interactively-p)) (rtags-sandbox-id-matches))
-      (let (summary
-            doc-frame
-            x y
-            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            ;; 1. Find the absolute position of the current beginning of the symbol at point, ;;
-            ;; in pixels.                                                                     ;;
-            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            (abs-pixel-pos (save-excursion
-                             (beginning-of-thing 'symbol)
-                             (window-absolute-pixel-position))))
-        (setq x (car abs-pixel-pos))
-        ;; (setq y (cdr abs-pixel-pos))
-        (setq y (+ (cdr abs-pixel-pos) (frame-char-height)))
+	"Make a new frame for peeking definition"
+	(when (or (not (fboundp 'rtags-called-interactively-p)) (rtags-sandbox-id-matches))
+	  (let (summary
+			doc-frame
+			x y
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; 1. Find the absolute position of the current beginning of the symbol at point, ;;
+			;; in pixels.                                                                     ;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			(abs-pixel-pos (save-excursion
+							 (beginning-of-thing 'symbol)
+							 (window-absolute-pixel-position))))
+		(setq x (car abs-pixel-pos))
+		;; (setq y (cdr abs-pixel-pos))
+		(setq y (+ (cdr abs-pixel-pos) (frame-char-height)))
 
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;; 2. Create a new invisible frame, with the current buffer in it. ;;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (setq doc-frame (make-frame '((minibuffer . nil)
-                                      (name . "*RTags Peek*")
-                                      (width . 80)
-                                      (visibility . nil)
-                                      (height . 15))))
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; 2. Create a new invisible frame, with the current buffer in it. ;;
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		(setq doc-frame (make-frame '((minibuffer . nil)
+									  (name . "*RTags Peek*")
+									  (width . 80)
+									  (visibility . nil)
+									  (height . 15))))
 
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;; 3. Position the new frame right under the beginning of the symbol at point. ;;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (set-frame-position doc-frame x y)
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; 3. Position the new frame right under the beginning of the symbol at point. ;;
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		(set-frame-position doc-frame x y)
 
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;; 4. Jump to the symbol at point. ;;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (with-selected-frame doc-frame
-          (apply find-definition-function args)
-          (read-only-mode)
-          (when (boundp 'semantic-stickyfunc-mode) (semantic-stickyfunc-mode -1)))
-        ;; (recenter-top-bottom 0))
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; 4. Jump to the symbol at point. ;;
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		(with-selected-frame doc-frame
+		  (apply find-definition-function args)
+		  (read-only-mode)
+		  (when (boundp 'semantic-stickyfunc-mode) (semantic-stickyfunc-mode -1)))
+		;; (recenter-top-bottom 0))
 
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;; 5. Make frame visible again ;;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (make-frame-visible doc-frame))))
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; 5. Make frame visible again ;;
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		(make-frame-visible doc-frame))))
 
   (defun xref-peek-definitions ()
-    "Peek at definition using xref-find-definitions"
-    (interactive)
-    (let ((func (lambda ()
-                  (raul-find-definitions))))
-      (make-peek-frame func)))
+	"Peek at definition using xref-find-definitions"
+	(interactive)
+	(let ((func (lambda ()
+				  (raul-find-definitions))))
+	  (make-peek-frame func)))
 
   ;; Generate cscope.files from a directory list
   (defun build-cscope-file (directories &optional target-directory)
-    "Generate cscope.file for a list of DIRECTORIES, optionally in TARGET-DIRECTORY."
-    (let
-        (
-         (file (if target-directory
-                   (concat target-directory "/cscope.files")
-                 "cscope.files"))
-         )
-      (shell-command (concat "rm -rf " file))
-      (let ((command ""))
-        (dolist (dir directories)
-          (setq command "")
-          (setq command (concat command "find " dir " -name *.cpp >> " file " && "))
-          (setq command (concat command "find " dir " -name *.hpp >> " file " && "))
-          (setq command (concat command "find " dir " -name *.tpp >> " file " && "))
-          (setq command (concat command "find " dir " -name *.c >> " file " && "))
-          (setq command (concat command "find " dir " -name *.h >> " file " && "))
-          (setq command (substring command 0 -4))
-          (shell-command command))))
-    (message "cscope file generated"))
+	"Generate cscope.file for a list of DIRECTORIES, optionally in TARGET-DIRECTORY."
+	(let
+		(
+		 (file (if target-directory
+				   (concat target-directory "/cscope.files")
+				 "cscope.files"))
+		 )
+	  (shell-command (concat "rm -rf " file))
+	  (let ((command ""))
+		(dolist (dir directories)
+		  (setq command "")
+		  (setq command (concat command "find " dir " -name *.cpp >> " file " && "))
+		  (setq command (concat command "find " dir " -name *.hpp >> " file " && "))
+		  (setq command (concat command "find " dir " -name *.tpp >> " file " && "))
+		  (setq command (concat command "find " dir " -name *.c >> " file " && "))
+		  (setq command (concat command "find " dir " -name *.h >> " file " && "))
+		  (setq command (substring command 0 -4))
+		  (shell-command command))))
+	(message "cscope file generated"))
 
   ;; Functions to create Ctags and Cscope files
   (defun build-ctags-from-list (filename &optional target-directory)
-    (interactive "f")
-    (if target-directory
-        (call-process path-to-ctags nil (get-buffer-create "process-output") t "-e" "--extra=+fq" "-L" filename "-f" (concat target-directory "/TAGS"))
-      (call-process path-to-ctags nil (get-buffer-create "process-output") t "-e" "--extra=+fq" "-L" filename)))
+	(interactive "f")
+	(if target-directory
+		(call-process path-to-ctags nil (get-buffer-create "process-output") t "-e" "--extra=+fq" "-L" filename "-f" (concat target-directory "/TAGS"))
+	  (call-process path-to-ctags nil (get-buffer-create "process-output") t "-e" "--extra=+fq" "-L" filename)))
 
   (defun build-cscope-from-list (filename &optional target-directory)
-    (interactive "f")
-    (if target-directory
-        (let ((default-directory target-directory))
-          (call-process "cscope" nil (get-buffer-create "process-output") t "-U" "-b" "-i" filename))
-      (call-process "cscope" nil (get-buffer-create "process-output") t "-U" "-b" "-i" filename))
-    (message (concat "Cscope file built successfully for " filename)))
+	(interactive "f")
+	(if target-directory
+		(let ((default-directory target-directory))
+		  (call-process "cscope" nil (get-buffer-create "process-output") t "-U" "-b" "-i" filename))
+	  (call-process "cscope" nil (get-buffer-create "process-output") t "-U" "-b" "-i" filename))
+	(message (concat "Cscope file built successfully for " filename)))
 
   (defun build-gtags-from-list (filename &optional target-directory)
-    (interactive "f")
-    (if target-directory
-        (let ((default-directory target-directory))
-          (call-process "gtags" nil (get-buffer-create "process-output") t "-f" filename))
-      (call-process "gtags" nil (get-buffer-create "process-output") t "-f" filename))
-    (message (concat "GNU Global tags built successfully for " filename)))
+	(interactive "f")
+	(if target-directory
+		(let ((default-directory target-directory))
+		  (call-process "gtags" nil (get-buffer-create "process-output") t "-f" filename))
+	  (call-process "gtags" nil (get-buffer-create "process-output") t "-f" filename))
+	(message (concat "GNU Global tags built successfully for " filename)))
 
   (use-package ggtags
-    :config
-    (add-hook 'c-mode-common-hook
-              (lambda ()
-                (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-                  (ggtags-mode 1)))))
+	:config
+	(add-hook 'c-mode-common-hook
+			  (lambda ()
+				(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+				  (ggtags-mode 1)))))
 
   ;; (use-package xcscope
   ;;   :config
@@ -606,10 +615,10 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+END_SRC
 * Tools
 #+BEGIN_SRC emacs-lisp
-    (use-package sr-speedbar
-      :bind ("C-b" . sr-speedbar-toggle)
-      :config
-      (require 'sr-speedbar))
+	(use-package sr-speedbar
+	  :bind ("C-b" . sr-speedbar-toggle)
+	  :config
+	  (require 'sr-speedbar))
 #+END_SRC
 
 * Debuggers
@@ -622,12 +631,12 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * Themes
 #+BEGIN_SRC emacs-lisp
   (use-package powerline
-    :config
-    (powerline-default-theme))
+	:config
+	(powerline-default-theme))
 
   (use-package beacon
-    :config
-    (beacon-mode t))
+	:config
+	(beacon-mode t))
 
   (add-to-list 'default-frame-alist '(font . "Source Code Pro-13"))
   (set-face-attribute 'default t :font "Source Code Pro-13")
@@ -645,26 +654,54 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * Web-mode
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
-    :ensure t
-    :config
-    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
-    (setq web-mode-engines-alist
-          '(("django"    . "\\.html\\'")))
-    (setq web-mode-ac-sources-alist
-          '(("css" . (ac-source-css-property))
-            ("vue" . (ac-source-words-in-buffer ac-source-abbrev))
-            ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-    (setq web-mode-enable-auto-closing t))
+	:ensure t
+	:config
+	(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+	(add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
+	(setq web-mode-engines-alist
+		  '(("django"    . "\\.html\\'")))
+	(setq web-mode-ac-sources-alist
+		  '(("css" . (ac-source-css-property))
+			("vue" . (ac-source-words-in-buffer ac-source-abbrev))
+			("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+	(setq web-mode-enable-auto-closing t))
   (setq web-mode-enable-auto-quoting t)
+#+END_SRC
+
+* Python mode
+#+BEGIN_SRC emacs-lisp
+  (use-package anaconda-mode
+	:config
+	(add-hook 'python-mode-hook 'anaconda-mode)
+	(add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+  (defun raul-send-buffer-to-python ()
+	"Send complete buffer to Python"
+	(interactive)
+	(python-shell-send-buffer t))
+
+  (add-hook 'python-mode-hook (lambda () (define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python)))
+
+  ;; (use-package company-jedi
+  ;;   :config
+  ;;   (eval-after-load "company"
+  ;;     '(add-to-list 'company-backends 'company-jedi)))
+
+  (use-package company-anaconda
+	:config
+	(eval-after-load "company"
+	  '(add-to-list 'company-backends 'company-anaconda)))
+
+  (when (eq system-type 'gnu/linux)
+	(setq python-shell-interpreter "/usr/bin/python3"))
 #+END_SRC
 
 * Analyze Emacs usage
 #+BEGIN_SRC emacs-lisp
   (use-package keyfreq
-    :init
-    (keyfreq-mode 1)
-    (keyfreq-autosave-mode 1))
+	:init
+	(keyfreq-mode 1)
+	(keyfreq-autosave-mode 1))
 #+END_SRC
 * Python language
 #+BEGIN_SRC emacs-lisp
