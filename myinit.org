@@ -454,9 +454,9 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   ;; Projectile to access project files
   (use-package projectile
-	:bind (("C-p" . projectile-find-file)
-		   ("C-P" . projectile-find-dir)
-		   ("M-P" . projectile-switch-project))
+	:bind ("C-S-p" . projectile-find-dir)
+	("C-p" . projectile-find-file)
+	("M-P" . projectile-switch-project)
 	:config
 	(projectile-mode +1))
 #+END_SRC
