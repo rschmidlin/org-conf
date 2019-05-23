@@ -80,74 +80,75 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * Generic :keybindings
 
 #+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
-  ;; (toggle-debug-on-error)
+	(global-auto-revert-mode t)
+	;; (toggle-debug-on-error)
 
-  (global-linum-mode t)
-  (setq inhibit-splash-screen t)
-  (global-subword-mode t)
+	(global-linum-mode t)
+	(setq inhibit-splash-screen t)
+	(global-subword-mode t)
 
-  ;; Word wrap without fringe (the arrows) and without changing the file
-  (global-visual-line-mode 1)
+	;; Word wrap without fringe (the arrows) and without changing the file
+	(global-visual-line-mode 1)
+	(global-set-key (kbd "<f11>") 'visual-line-mode)
 
-  (use-package visual-regexp
-	:config
-	(require 'visual-regexp)
-	(global-set-key (kbd "M-%") 'vr/query-replace))
+	(use-package visual-regexp
+	  :config
+	  (require 'visual-regexp)
+	  (global-set-key (kbd "M-%") 'vr/query-replace))
 
-  (use-package drag-stuff
-	:init
-	(drag-stuff-global-mode 1)
-	(global-set-key (kbd "M-<up>") 'drag-stuff-up)
-	(global-set-key (kbd "M-<down>") 'drag-stuff-down)
-	(global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
-	(global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
+	(use-package drag-stuff
+	  :init
+	  (drag-stuff-global-mode 1)
+	  (global-set-key (kbd "M-<up>") 'drag-stuff-up)
+	  (global-set-key (kbd "M-<down>") 'drag-stuff-down)
+	  (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
+	  (global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
 
-  (use-package elscreen
-	:bind ("C-t" . elscreen-clone)
-	("<C-next>". elscreen-next)
-	("<C-prior>" . elscreen-previous)
-	("C-w" . elscreen-kill)
-	:config
-	(elscreen-start))
+	(use-package elscreen
+	  :bind ("C-t" . elscreen-clone)
+	  ("<C-next>". elscreen-next)
+	  ("<C-prior>" . elscreen-previous)
+	  ("C-w" . elscreen-kill)
+	  :config
+	  (elscreen-start))
 
-  ;; Configure mouse to be more smooth
-  (setq redisplay-dont-pause t
-		scroll-margin 1
-		scroll-step 1
-		scroll-conservatively 10000
-		scroll-preserve-screen-position 1
-		mouse-wheel-progressive-speed nil ; don't accelerate scrolling
-		)
+	;; Configure mouse to be more smooth
+	(setq redisplay-dont-pause t
+		  scroll-margin 1
+		  scroll-step 1
+		  scroll-conservatively 10000
+		  scroll-preserve-screen-position nil
+		  mouse-wheel-progressive-speed t
+		  )
 
-  (setq mouse-wheel-follow-mouse 't)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+	(setq mouse-wheel-follow-mouse 't)
+	(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
-  (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
-  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
-						  'compile))
-  (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
+	(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
+	(eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
 							'compile))
+	(eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
+							  'compile))
 
-  (global-set-key (kbd "M-ö") 'ivy-switch-buffer)
-  (global-set-key (kbd "M-Ö") 'ibuffer)
+	(global-set-key (kbd "M-ö") 'ivy-switch-buffer)
+	(global-set-key (kbd "M-Ö") 'ibuffer)
 
-  (global-set-key (kbd "C-ö") 'counsel-bookmark)
-  (global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
+	(global-set-key (kbd "C-ö") 'counsel-bookmark)
+	(global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
 
 
-  (add-to-list 'default-frame-alist (cons 'width 100))
-  (add-to-list 'default-frame-alist (cons 'height 40))
+	(add-to-list 'default-frame-alist (cons 'width 100))
+	(add-to-list 'default-frame-alist (cons 'height 40))
 
-  ;; Save the bookmark file every time the bookmark list changes
-  (setq bookmark-save-flag 1)
+	;; Save the bookmark file every time the bookmark list changes
+	(setq bookmark-save-flag 1)
 
-  ;; Show trailing white spaces
-  (setq-default show-trailing-whitespace t)
+	;; Show trailing white spaces
+	(setq-default show-trailing-whitespace t)
 
-  ;; Remove useless whitespace before saving a file
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
+	;; Remove useless whitespace before saving a file
+	(add-hook 'before-save-hook 'whitespace-cleanup)
+	(add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
 
 #+END_SRC
 * Operating system
@@ -331,7 +332,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (use-package aggressive-indent
 	:config
 	(global-aggressive-indent-mode 1)
-	(add-to-list 'aggressive-indent-excluded-modes 'html-mode))
+	(add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+	:bind ("<f10>" . aggressive-indent-mode))
 
   (defvar fill-column-default 100
 	"Set a default value for fill-column")
@@ -350,10 +352,20 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (use-package aggressive-fill-paragraph
 	:config
 	(afp-setup-recommended-hooks)
-	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
+	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode)
+	:bind ("<f9>" . aggressive-fill-paragraph-mode))
 
 
 #+END_SRC
+
+* Fundamental mode
+#+BEGIN_SRC emacs-lisp
+
+  (add-hook 'fundamental-mode (lambda() (aggressive-indent-mode -1)))
+  (add-hook 'fundamental-mode (lambda() (aggressive-fill-paragraph-mode -1)))
+  (add-hook 'fundamental-mode (lambda() (electric-indent-mode -1)))
+#+END_SRC
+
 * Org mode
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
