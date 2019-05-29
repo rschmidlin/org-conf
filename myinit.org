@@ -154,6 +154,20 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(sublimity-mode))
 
   (winner-mode 1)
+
+  (use-package highlight-indent-guides
+	:init
+	(setq highlight-indent-guides-method 'character)
+	:config
+	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+
+  (global-hl-line-mode 1)
+
+  (use-package symbol-overlay)
+
+  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+	(add-hook hook 'symbol-overlay-mode))
+
 #+END_SRC
 * Operating system
 #+BEGIN_SRC emacs-lisp
