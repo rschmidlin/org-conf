@@ -83,12 +83,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-auto-revert-mode t)
   ;; (toggle-debug-on-error)
 
-  (global-linum-mode t)
-  (setq inhibit-splash-screen t)
   (global-subword-mode t)
-
-  ;; Word wrap without fringe (the arrows) and without changing the file
-  (global-visual-line-mode 1)
 
   (use-package visual-regexp
 	:config
@@ -103,26 +98,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
 	(global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
 
-  (use-package elscreen
-	:bind ("C-t" . elscreen-clone)
-	("<C-next>". elscreen-next)
-	("<C-prior>" . elscreen-previous)
-	("C-w" . elscreen-kill)
-	:config
-	(elscreen-start))
-
-  ;; Configure mouse to be more smooth
-  ;; (setq redisplay-dont-pause t
-  ;;       scroll-margin 1
-  ;;       scroll-step 1
-  ;;       scroll-conservatively 10000
-  ;;       scroll-preserve-screen-position nil
-  ;;       mouse-wheel-progressive-speed t
-  ;;       )
-
-  ;; (setq mouse-wheel-follow-mouse 't)
-  ;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-
   (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
   (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
 						  'compile))
@@ -135,42 +110,14 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-set-key (kbd "C-ö") 'counsel-bookmark)
   (global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
 
-
-  (add-to-list 'default-frame-alist (cons 'width 100))
-  (add-to-list 'default-frame-alist (cons 'height 40))
-
   ;; Save the bookmark file every time the bookmark list changes
   (setq bookmark-save-flag 1)
-
-  ;; Show trailing white spaces
-  (setq-default show-trailing-whitespace t)
 
   ;; Remove useless whitespace before saving a file
   (add-hook 'before-save-hook 'whitespace-cleanup)
   (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
 
-  (use-package sublimity
-	:init
-	(sublimity-mode))
 
-  (winner-mode 1)
-
-  (use-package highlight-indent-guides
-	:init
-	(setq highlight-indent-guides-method 'character)
-	:config
-	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-
-  (global-hl-line-mode 1)
-
-  (use-package symbol-overlay)
-
-  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-	(add-hook hook 'symbol-overlay-mode))
-
-  (use-package dimmer
-	:config
-	(dimmer-mode t))
 #+END_SRC
 * Operating system
 #+BEGIN_SRC emacs-lisp
@@ -353,7 +300,9 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (use-package aggressive-indent
 	:config
 	(global-aggressive-indent-mode 1)
-	(add-to-list 'aggressive-indent-excluded-modes 'html-mode))
+	(add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+	(add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode)
+	:bind (("<f11>" . aggressive-indent-mode)))
 
   (defvar fill-column-default 100
 	"Set a default value for fill-column")
@@ -372,8 +321,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (use-package aggressive-fill-paragraph
 	:config
 	(afp-setup-recommended-hooks)
-	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
-
+	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode)
+	:bind (("<f9>" . aggressive-fill-paragraph-mode)))
 
 #+END_SRC
 * Org mode
@@ -407,6 +356,67 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   (define-key org-mode-map (kbd "C-c t") 'org-edit-special)
   (global-set-key (kbd "C-c t") 'org-edit-src-exit)
+#+END_SRC
+
+* UI configuration
+
+#+BEGIN_SRC emacs-lisp
+  (global-linum-mode t)
+  (setq inhibit-splash-screen t)
+
+  ;; Word wrap without fringe (the arrows) and without changing the file
+  (global-visual-line-mode 1)
+  (global-set-key (kbd "<f10>") 'visual-line-mode)
+
+  (use-package elscreen
+	:bind ("C-t" . elscreen-clone)
+	("<C-next>". elscreen-next)
+	("<C-prior>" . elscreen-previous)
+	("C-w" . elscreen-kill)
+	:config
+	(elscreen-start))
+
+  ;; Configure mouse to be more smooth
+  ;; (setq redisplay-dont-pause t
+  ;;       scroll-margin 1
+  ;;       scroll-step 1
+  ;;       scroll-conservatively 10000
+  ;;       scroll-preserve-screen-position nil
+  ;;       mouse-wheel-progressive-speed t
+  ;;       )
+
+  ;; (setq mouse-wheel-follow-mouse 't)
+  ;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+
+  (add-to-list 'default-frame-alist (cons 'width 100))
+  (add-to-list 'default-frame-alist (cons 'height 40))
+
+  ;; Show trailing white spaces
+  (setq-default show-trailing-whitespace t)
+
+  (use-package sublimity
+	:init
+	(sublimity-mode))
+
+  (winner-mode 1)
+
+  (use-package highlight-indent-guides
+	:init
+	(setq highlight-indent-guides-method 'character)
+	:config
+	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+
+  (global-hl-line-mode 1)
+
+  (use-package symbol-overlay)
+
+  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+	(add-hook hook 'symbol-overlay-mode))
+
+  (use-package dimmer
+	:config
+	(dimmer-mode t))
+
 #+END_SRC
 
 * C language
@@ -739,6 +749,12 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	  (setq url-proxy-services nil)))
 
   (add-hook 'find-file-hook 'disable-proxy-for-python)
+
+  (if (eq system-type 'gnu/linux)
+	  (setq python-shell-interpreter "ipython3")
+	(setq python-shell-interpreter "ipython"))
+
+  (setq python-shell-interpreter-args "--simple-prompt -i")
 #+END_SRC
 
 * Analyze Emacs usage
