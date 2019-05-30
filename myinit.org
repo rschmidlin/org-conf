@@ -496,6 +496,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:config
 	(yas-reload-all)
 	(add-hook 'prog-mode-hook #'yas-minor-mode))
+
+  (use-package yasnippet-snippets)
 #+END_SRC
 
 * Projects
