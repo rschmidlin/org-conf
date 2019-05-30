@@ -417,6 +417,9 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:config
 	(dimmer-mode t))
 
+  (use-package goto-line-preview
+	:bind ([remap goto-line] . goto-line-preview))
+
 #+END_SRC
 
 * C language
@@ -476,6 +479,15 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(smartparens-global-mode))
 
   (global-set-key (kbd "C-S-o") 'imenu)
+#+END_SRC
+
+* Programming enhancement
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+	:config
+	(yas-reload-all)
+	(add-hook 'prog-mode-hook #'yas-minor-mode))
 #+END_SRC
 
 * Projects
