@@ -80,8 +80,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * Generic :keybindings
 
 #+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
-  ;; (toggle-debug-on-error)
+	(global-auto-revert-mode t)
+	;; (toggle-debug-on-error)
 
   (global-subword-mode t)
 
@@ -103,12 +103,14 @@ On beginning of line, move to the beginning of the text on that line not the ind
 						  'compile))
   (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
 							'compile))
+	(eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
+							  'compile))
 
-  (global-set-key (kbd "M-ö") 'ivy-switch-buffer)
-  (global-set-key (kbd "M-Ö") 'ibuffer)
+	(global-set-key (kbd "M-ö") 'ivy-switch-buffer)
+	(global-set-key (kbd "M-Ö") 'ibuffer)
 
-  (global-set-key (kbd "C-ö") 'counsel-bookmark)
-  (global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
+	(global-set-key (kbd "C-ö") 'counsel-bookmark)
+	(global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
 
   ;; Save the bookmark file every time the bookmark list changes
   (setq bookmark-save-flag 1)
@@ -325,6 +327,12 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:bind (("<f9>" . aggressive-fill-paragraph-mode)))
 
 #+END_SRC
+
+* Fundamental mode
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'fundamental-mode (lambda() (electric-indent-mode -1)))
+#+END_SRC
+
 * Org mode
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
