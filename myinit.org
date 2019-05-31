@@ -129,8 +129,10 @@ On beginning of line, move to the beginning of the text on that line not the ind
 			(concat
 			 ;; Change this with your path to MSYS bin directory
 			 "C:\\msys64\\usr\\bin;"
+			 "C:\\msys64\\mingw64\\bin;"
 			 "/usr/local/bin:"
-			 (getenv "PATH"))))
+			 (getenv "PATH")))
+	(setq ispell-program-name "C:\\msys64\\mingw64\\bin\\aspell.exe"))
 #+END_SRC
 * Override AltGr
 #+BEGIN_SRC emacs-lisp
@@ -369,64 +371,65 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * UI configuration
 
 #+BEGIN_SRC emacs-lisp
-  (global-linum-mode t)
-  (setq inhibit-splash-screen t)
+	(global-linum-mode t)
+	(setq inhibit-splash-screen t)
 
-  ;; Word wrap without fringe (the arrows) and without changing the file
-  (global-visual-line-mode 1)
-  (global-set-key (kbd "<f10>") 'visual-line-mode)
+	;; Word wrap without fringe (the arrows) and without changing the file
+	(global-visual-line-mode 1)
+	(global-set-key (kbd "<f10>") 'visual-line-mode)
 
-  (use-package elscreen
-	:bind ("C-t" . elscreen-clone)
-	("<C-next>". elscreen-next)
-	("<C-prior>" . elscreen-previous)
-	("C-w" . elscreen-kill)
-	:config
-	(elscreen-start))
+	(use-package elscreen
+	  :bind ("C-t" . elscreen-clone)
+	  ("<C-next>". elscreen-next)
+	  ("<C-prior>" . elscreen-previous)
+	  ("C-w" . elscreen-kill)
+	  :config
+	  (elscreen-start))
 
-  ;; Configure mouse to be more smooth
-  ;; (setq redisplay-dont-pause t
-  ;;       scroll-margin 1
-  ;;       scroll-step 1
-  ;;       scroll-conservatively 10000
-  ;;       scroll-preserve-screen-position nil
-  ;;       mouse-wheel-progressive-speed t
-  ;;       )
+	;; Configure mouse to be more smooth
+	;; (setq redisplay-dont-pause t
+	;;       scroll-margin 1
+	;;       scroll-step 1
+	;;       scroll-conservatively 10000
+	;;       scroll-preserve-screen-position nil
+	;;       mouse-wheel-progressive-speed t
+	;;       )
 
-  ;; (setq mouse-wheel-follow-mouse 't)
-  ;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+	;; (setq mouse-wheel-follow-mouse 't)
+	;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
-  (add-to-list 'default-frame-alist (cons 'width 100))
-  (add-to-list 'default-frame-alist (cons 'height 40))
+	(add-to-list 'default-frame-alist (cons 'width 100))
+	(add-to-list 'default-frame-alist (cons 'height 40))
 
-  ;; Show trailing white spaces
-  (setq-default show-trailing-whitespace t)
+	;; Show trailing white spaces
+	(setq-default show-trailing-whitespace t)
 
-  (use-package sublimity
-	:init
-	(sublimity-mode))
+	(use-package sublimity
+	  :config
+	  (sublimity-mode)
+	  (require 'sublimity-scroll))
 
-  (winner-mode 1)
+	(winner-mode 1)
 
-  (use-package highlight-indent-guides
-	:init
-	(setq highlight-indent-guides-method 'character)
-	:config
-	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+	(use-package highlight-indent-guides
+	  :init
+	  (setq highlight-indent-guides-method 'character)
+	  :config
+	  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 
-  (global-hl-line-mode 1)
+	(global-hl-line-mode 1)
 
-  (use-package symbol-overlay)
+	(use-package symbol-overlay)
 
-  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-	(add-hook hook 'symbol-overlay-mode))
+	(dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+	  (add-hook hook 'symbol-overlay-mode))
 
-  (use-package dimmer
-	:config
-	(dimmer-mode t))
+	(use-package dimmer
+	  :config
+	  (dimmer-mode t))
 
-  (use-package goto-line-preview
-	:bind ([remap goto-line] . goto-line-preview))
+	(use-package goto-line-preview
+	  :bind ([remap goto-line] . goto-line-preview))
 
 #+END_SRC
 
