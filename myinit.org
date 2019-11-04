@@ -8,7 +8,7 @@
 (setq use-package-always-pin "melpa")
 #+END_SRC
 
-* Smarter beginning of line :keybindings
+* Smarter beginning of line - possibly substitute by CRUX / ergoemacs-smart-commands
 
 On beginning of line, move to the beginning of the text on that line not the indented whitespaces.
 
@@ -371,20 +371,25 @@ On beginning of line, move to the beginning of the text on that line not the ind
 * UI configuration
 
 #+BEGIN_SRC emacs-lisp
-  (global-linum-mode t)
+  (if (version<= "26.0.50" emacs-version)
+	  (global-display-line-numbers-mode)
+	(global-linum-mode t))
+
   (setq inhibit-splash-screen t)
 
   ;; Word wrap without fringe (the arrows) and without changing the file
   (global-visual-line-mode 1)
   (global-set-key (kbd "<f10>") 'visual-line-mode)
 
-  (use-package elscreen
-	:bind ("C-t" . elscreen-clone)
-	("<C-next>". elscreen-next)
-	("<C-prior>" . elscreen-previous)
-	("C-w" . elscreen-kill)
-	:config
-	(elscreen-start))
+  (if (version<= "27.0.50" emacs-version)
+	  (global-tab-line-mode)
+	(use-package elscreen
+	  :bind ("C-t" . elscreen-clone)
+	  ("<C-next>". elscreen-next)
+	  ("<C-prior>" . elscreen-previous)
+	  ("C-w" . elscreen-kill)
+	  :config
+	  (elscreen-start)))
 
   ;; Configure mouse to be more smooth
   ;; (setq redisplay-dont-pause t
@@ -404,12 +409,21 @@ On beginning of line, move to the beginning of the text on that line not the ind
   ;; Show trailing white spaces
   (setq-default show-trailing-whitespace t)
 
-  (use-package sublimity
-	:init
-	(setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
-	:config
-	(sublimity-mode)
-	(require 'sublimity-scroll))
+  (if (version<= "27.0.50" emacs-version)
+	  (progn
+		(pixel-scroll-mode)
+		(setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
+		(setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
+		(setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
+		(setq mouse-wheel-progressive-speed nil) ; Progressive speed is too fast
+		(setq fast-but-imprecise-scrolling t) ; No (less) lag while scrolling lots.
+		(setq jit-lock-defer-time 0)) ; Just don't even fontify if we're still catching up on user input.
+	(use-package sublimity
+	  :init
+	  (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
+	  :config
+	  (sublimity-mode)
+	  (require 'sublimity-scroll)))
 
   (winner-mode 1)
 
@@ -422,9 +436,9 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-hl-line-mode 1)
 
   (use-package symbol-overlay
-  :config
-  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-	(add-hook hook 'symbol-overlay-mode)))
+	:config
+	(dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+	  (add-hook hook 'symbol-overlay-mode)))
 
   (use-package dimmer
 	:config
@@ -432,6 +446,11 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   (use-package goto-line-preview
 	:bind ([remap goto-line] . goto-line-preview))
+
+  (use-package popwin
+	:init
+	(require 'popwin)
+	(popwin-mode 1))
 
 #+END_SRC
 
