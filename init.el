@@ -6,6 +6,10 @@
 			 '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
+;; Avoid that package signing fails Elpa also reported as bug
+;; because (474F05837FBDEF9B) is indeed not published
+(setq package-check-signature nil)
+
 ;; Initialize proxy configuration
 (load-file "~/.emacs.d/proxy_conf.el")
 
