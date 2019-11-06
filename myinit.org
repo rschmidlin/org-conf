@@ -8,119 +8,6 @@
 (setq use-package-always-pin "melpa")
 #+END_SRC
 
-* Smarter beginning of line - possibly substitute by CRUX / ergoemacs-smart-commands
-
-On beginning of line, move to the beginning of the text on that line not the indented whitespaces.
-
-#+BEGIN_SRC emacs-lisp
-  (defun smarter-move-beginning-of-line (arg)
-	"Move point back to indentation of beginning of line.
-
-  Move point to the first non-whitespace character on this line.
-  If point is already there, move to the beginning of the line.
-  Effectively toggle between the first non-whitespace character and
-  the beginning of the line.
-
-  If ARG is not nil or 1, move forward ARG - 1 lines first.  If
-  point reaches the beginning or end of the buffer, stop there."
-	(interactive "^p")
-	(setq arg (or arg 1))
-
-	;; Move lines first
-	(when (/= arg 1)
-	  (let ((line-move-visual nil))
-		(forward-line (1- arg))))
-
-	(let ((orig-point (point)))
-	  (back-to-indentation)
-	  (when (= orig-point (point))
-		(if (fboundp 'beginning-of-visual-line)
-			(beginning-of-visual-line 1)
-		  (beginning-of-line)))))
-
-  ;; remap M-h to `smarter-move-beginning-of-line'
-  (global-set-key (kbd "M-h") 'smarter-move-beginning-of-line)
-
-#+END_SRC
-* Better defaults
-
-  Copying better default inputs, disable toolbar, scrollbar, ease yes-or-no questions.
-
-#+BEGIN_SRC emacs-lisp
-  (menu-bar-mode -1)
-  (when (fboundp 'tool-bar-mode)
-	(tool-bar-mode -1))
-  (when (fboundp 'scroll-bar-mode)
-	(scroll-bar-mode -1))
-
-  (require 'uniquify)
-  (setq uniquify-buffer-name-style 'forward)
-
-  (require 'saveplace)
-  (setq-default save-place t)
-
-  (show-paren-mode 1)
-  ;(setq-default indent-tabs-mode nil)
-  (setq x-select-enable-clipboard t
-		x-select-enable-primary t
-		save-interprogram-paste-before-kill t
-		apropos-do-all t
-		mouse-yank-at-point t
-		require-final-newline t
-		visible-bell t
-		load-prefer-newer t
-		ediff-window-setup-function 'ediff-setup-windows-plain
-		save-place-file (concat user-emacs-directory "places")
-		backup-directory-alist `(("." . ,(concat user-emacs-directory
-												 "backups"))))
-
-  (fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
-
-* Generic :keybindings
-
-#+BEGIN_SRC emacs-lisp
-	(global-auto-revert-mode t)
-	;; (toggle-debug-on-error)
-
-  (global-subword-mode t)
-
-  (use-package visual-regexp
-	:config
-	(require 'visual-regexp)
-	(global-set-key (kbd "M-%") 'vr/query-replace))
-
-  (use-package drag-stuff
-	:init
-	(drag-stuff-global-mode 1)
-	(global-set-key (kbd "M-<up>") 'drag-stuff-up)
-	(global-set-key (kbd "M-<down>") 'drag-stuff-down)
-	(global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
-	(global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
-
-  (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
-  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
-						  'compile))
-  (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
-							'compile))
-	(eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
-							  'compile))
-
-	(global-set-key (kbd "M-ö") 'ivy-switch-buffer)
-	(global-set-key (kbd "M-Ö") 'ibuffer)
-
-	(global-set-key (kbd "C-ö") 'counsel-bookmark)
-	(global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
-
-  ;; Save the bookmark file every time the bookmark list changes
-  (setq bookmark-save-flag 1)
-
-  ;; Remove useless whitespace before saving a file
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
-
-
-#+END_SRC
 * Operating system
 #+BEGIN_SRC emacs-lisp
   ;; Configure Emacs to use find and grep from MSYS
@@ -134,7 +21,58 @@ On beginning of line, move to the beginning of the text on that line not the ind
 			 (getenv "PATH")))
 	(setq ispell-program-name "C:\\msys64\\mingw64\\bin\\aspell.exe"))
 #+END_SRC
-* Override AltGr
+
+* Keybindings
+
+#+BEGIN_SRC emacs-lisp
+  (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
+  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
+						  'compile))
+  (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
+							'compile))
+
+  (global-set-key (kbd "M-ö") 'ivy-switch-buffer)
+  (global-set-key (kbd "M-Ö") 'ibuffer)
+
+  (global-set-key (kbd "C-ö") 'counsel-bookmark)
+  (global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
+
+  (global-set-key (kbd "C-S-o") 'imenu)
+#+END_SRC
+* Input
+#+BEGIN_SRC emacs-lisp
+  (use-package ergoemacs-mode
+	:init
+	(setq ergoemacs-theme nil)
+	(setq ergoemacs-keyboard-layout "de")
+	(ergoemacs-mode 1)
+	;; This ensures that counsel-M-x is used and apply smex (history)
+	;; By simply mapping M-a to it, org-mode will not have history
+	(ergoemacs-require 'swiper)
+	;; workaround for bug unrecognized entry in undo list
+	;; undo-tree-canary
+	(setq undo-tree-enable-undo-in-region nil)
+	;; Ensure that we are using undo-tree-undo otherwise we can't redo
+	(global-set-key [remap undo] 'undo-tree-undo)
+	(global-set-key (kbd "C-S-f") 'grep-find)
+	;; Adapt moving commands to use syntax information
+	(global-set-key (kbd "M-O") 'forward-sexp)
+	(global-set-key (kbd "M-U") 'backward-sexp))
+
+  ;; Workaround to avoid that which-key brings errors everytime timeout would be checked
+  ;; (custom-set-variables '(ergoemacs-command-loop-timeout 1)
+  ;;                       '(which-key-idle-delay 2.0))
+
+  ;; Help switching windows
+  (use-package ace-window)
+  ;; :bind ("M-s" . ace-window))
+  (use-package multiple-cursors
+	:bind ("C-d" . mc/mark-next-like-this))
+  (use-package expand-region)
+
+#+END_SRC
+
+** Override AltGr
 #+BEGIN_SRC emacs-lisp
   (defun insert-commercial-at()
 	"Insert a commercial at before point."
@@ -186,39 +124,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-set-key (kbd "C-M-<") 'insert-pipe)
 
 #+END_SRC
-* Input
-#+BEGIN_SRC emacs-lisp
-  (use-package ergoemacs-mode
-	:init
-	(setq ergoemacs-theme nil)
-	(setq ergoemacs-keyboard-layout "de")
-	(ergoemacs-mode 1)
-	;; This ensures that counsel-M-x is used and apply smex (history)
-	;; By simply mapping M-a to it, org-mode will not have history
-	(ergoemacs-require 'swiper)
-	;; workaround for bug unrecognized entry in undo list
-	;; undo-tree-canary
-	(setq undo-tree-enable-undo-in-region nil)
-	;; Ensure that we are using undo-tree-undo otherwise we can't redo
-	(global-set-key [remap undo] 'undo-tree-undo)
-	(global-set-key (kbd "C-S-f") 'grep-find)
-	;; Adapt moving commands to use syntax information
-	(global-set-key (kbd "M-O") 'forward-sexp)
-	(global-set-key (kbd "M-U") 'backward-sexp))
-
-  ;; Workaround to avoid that which-key brings errors everytime timeout would be checked
-  ;; (custom-set-variables '(ergoemacs-command-loop-timeout 1)
-  ;;                       '(which-key-idle-delay 2.0))
-
-  ;; Help switching windows
-  (use-package ace-window)
-  ;; :bind ("M-s" . ace-window))
-  (use-package multiple-cursors
-	:bind ("C-d" . mc/mark-next-like-this))
-  (use-package expand-region)
-
-#+END_SRC
-
 * Commands completion
 
 #+BEGIN_SRC emacs-lisp
@@ -298,9 +203,16 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	  (ergoemacs-require 'history-workaround)))
 #+END_SRC
 
-* Editing utilities
+* Buffer view and editing behavior
 #+BEGIN_SRC emacs-lisp
-  (use-package browse-kill-ring)
+  (global-auto-revert-mode t)
+  (global-subword-mode t)
+  (global-set-key (kbd "<f8>") 'subword-mode)
+
+  ;; Word wrap without fringe (the arrows) and without changing the file
+  (global-visual-line-mode 1)
+  (global-set-key (kbd "<f10>") 'visual-line-mode)
+
   (use-package aggressive-indent
 	:config
 	(global-aggressive-indent-mode 1)
@@ -308,6 +220,40 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode)
 	:bind (("<f11>" . aggressive-indent-mode)))
 
+  ;; Show trailing white spaces
+  (setq-default show-trailing-whitespace t)
+
+  ;; Remove useless whitespace before saving a file
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
+
+  ;; Show visual markings about indentation
+  (use-package highlight-indent-guides
+	:init
+	(setq highlight-indent-guides-method 'character)
+	:config
+	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+
+  ;; Mark horizontal line where cursor is
+  (global-hl-line-mode 1)
+
+  ;; Mark all words under cursor in current viewport of buffer
+  (use-package symbol-overlay
+	:config
+	(dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+	  (add-hook hook 'symbol-overlay-mode)))
+
+  (use-package goto-line-preview
+	:bind ([remap goto-line] . goto-line-preview))
+
+  (use-package smartparens
+	:config
+	;; Fix single-quotes being automatically ended on lisp
+	(require 'smartparens-config)
+	(smartparens-global-mode))
+#+END_SRC
+** Auto set fill-paragraph
+#+BEGIN_SRC
   (defvar fill-column-default 100
 	"Set a default value for fill-column")
 
@@ -327,15 +273,215 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(afp-setup-recommended-hooks)
 	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode)
 	:bind (("<f9>" . aggressive-fill-paragraph-mode)))
+#+END_SRC
+
+* Editing utilities
+#+BEGIN_SRC emacs-lisp
+  (use-package browse-kill-ring)
+
+  (use-package visual-regexp
+	:config
+	(require 'visual-regexp)
+	(global-set-key (kbd "M-%") 'vr/query-replace))
+
+  (use-package drag-stuff
+	:init
+	(drag-stuff-global-mode 1)
+	(global-set-key (kbd "M-<up>") 'drag-stuff-up)
+	(global-set-key (kbd "M-<down>") 'drag-stuff-down)
+	(global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
+	(global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
 
 #+END_SRC
 
-* Fundamental mode
+** Smarter beginning of line - possibly substitute by CRUX / ergoemacs-smart-commands
+
+On beginning of line, move to the beginning of the text on that line not the indented whitespaces.
+
+#+BEGIN_SRC emacs-lisp
+  (defun smarter-move-beginning-of-line (arg)
+	"Move point back to indentation of beginning of line.
+
+  Move point to the first non-whitespace character on this line.
+  If point is already there, move to the beginning of the line.
+  Effectively toggle between the first non-whitespace character and
+  the beginning of the line.
+
+  If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+  point reaches the beginning or end of the buffer, stop there."
+	(interactive "^p")
+	(setq arg (or arg 1))
+
+	;; Move lines first
+	(when (/= arg 1)
+	  (let ((line-move-visual nil))
+		(forward-line (1- arg))))
+
+	(let ((orig-point (point)))
+	  (back-to-indentation)
+	  (when (= orig-point (point))
+		(if (fboundp 'beginning-of-visual-line)
+			(beginning-of-visual-line 1)
+		  (beginning-of-line)))))
+
+  ;; remap M-h to `smarter-move-beginning-of-line'
+  (global-set-key (kbd "M-h") 'smarter-move-beginning-of-line)
+
+#+END_SRC
+
+* UI configuration
+
+#+BEGIN_SRC emacs-lisp
+  (if (version<= "26.0.50" emacs-version)
+	  (global-display-line-numbers-mode)
+	(global-linum-mode t))
+
+  (setq inhibit-splash-screen t)
+
+  (if (version<= "27.0.50" emacs-version)
+	  (global-tab-line-mode)
+	(use-package elscreen
+	  :bind ("C-t" . elscreen-clone)
+	  ("<C-next>". elscreen-next)
+	  ("<C-prior>" . elscreen-previous)
+	  ("C-w" . elscreen-kill)
+	  :config
+	  (elscreen-start)))
+
+  ;; Configure mouse to be more smooth
+  ;; (setq redisplay-dont-pause t
+  ;;       scroll-margin 1
+  ;;       scroll-step 1
+  ;;       scroll-conservatively 10000
+  ;;       scroll-preserve-screen-position nil
+  ;;       mouse-wheel-progressive-speed t
+  ;;       )
+
+  ;; (setq mouse-wheel-follow-mouse 't)
+  ;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+
+  (add-to-list 'default-frame-alist (cons 'width 100))
+  (add-to-list 'default-frame-alist (cons 'height 40))
+
+  (if (version<= "27.0.50" emacs-version)
+	  (progn
+		(pixel-scroll-mode)
+		(setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
+		(setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
+		(setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
+		(setq mouse-wheel-progressive-speed nil) ; Progressive speed is too fast
+		(setq fast-but-imprecise-scrolling t) ; No (less) lag while scrolling lots.
+		(setq jit-lock-defer-time 0)) ; Just don't even fontify if we're still catching up on user input.
+	(use-package sublimity
+	  :init
+	  (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
+	  :config
+	  (sublimity-mode)
+	  (require 'sublimity-scroll)))
+
+  ;; Return to previous window configuration with C-<
+  (winner-mode 1)
+
+  ;; Dimm windows (frames) that are not in focus
+  (use-package dimmer
+	:config
+	(dimmer-mode t))
+
+  ;; Popwin takes care that helper buffers do not take much space
+  (use-package popwin
+	:init
+	(require 'popwin)
+	(popwin-mode 1))
+
+#+END_SRC
+
+** Better defaults
+
+  Copying better default inputs, disable toolbar, scrollbar, ease yes-or-no questions.
+
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode -1)
+  (when (fboundp 'tool-bar-mode)
+	(tool-bar-mode -1))
+  (when (fboundp 'scroll-bar-mode)
+	(scroll-bar-mode -1))
+
+  (require 'uniquify)
+  (setq uniquify-buffer-name-style 'forward)
+
+  (require 'saveplace)
+  (setq-default save-place t)
+
+  (show-paren-mode 1)
+  ;(setq-default indent-tabs-mode nil)
+  (setq x-select-enable-clipboard t
+		x-select-enable-primary t
+		save-interprogram-paste-before-kill t
+		apropos-do-all t
+		mouse-yank-at-point t
+		require-final-newline t
+		visible-bell t
+		load-prefer-newer t
+		ediff-window-setup-function 'ediff-setup-windows-plain
+		save-place-file (concat user-emacs-directory "places")
+		backup-directory-alist `(("." . ,(concat user-emacs-directory
+												 "backups"))))
+
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+** Themes
+#+BEGIN_SRC emacs-lisp
+  (use-package powerline
+	:config
+	(powerline-default-theme))
+
+  ;; (use-package beacon
+  ;;   :config
+  ;;   (beacon-mode t))
+
+  (add-to-list 'default-frame-alist '(font . "Source Code Pro-11"))
+  (set-face-attribute 'default t :font "Source Code Pro-11")
+
+  (load-theme 'leuven t)
+
+
+#+END_SRC
+
+* Text correction and completion
+#+BEGIN_SRC emacs-lisp
+  (dolist (hook '(text-mode-hook))
+	(add-hook hook (lambda () (flyspell-mode 1))))
+
+  (use-package flycheck
+	:config (global-flycheck-mode))
+
+  ;; Enable text completion
+  (use-package company
+	:init
+	(add-hook 'after-init-hook 'global-company-mode)
+	(setq-default company-dabbrev-other-buffers 'all
+				  company-tooltip-align-annotations t)
+	:config
+	(define-key company-active-map (kbd "M-K") 'company-select-next)
+	(define-key company-active-map (kbd "M-I") 'company-select-previous)
+	(define-key company-active-map (kbd "C-f") 'company-search-candidates)
+	;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
+	(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+	(global-set-key (kbd "C-SPC") 'company-complete))
+
+  (use-package company-quickhelp
+	:init
+	(add-hook 'after-init-hook 'company-quickhelp-mode))
+
+#+END_SRC
+* Major modes
+** Fundamental mode
 #+BEGIN_SRC emacs-lisp
   (add-hook 'fundamental-mode (lambda() (electric-indent-mode -1)))
 #+END_SRC
 
-* Org mode
+** Org mode
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
 	:config
@@ -368,162 +514,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-set-key (kbd "C-c t") 'org-edit-src-exit)
 #+END_SRC
 
-* UI configuration
-
-#+BEGIN_SRC emacs-lisp
-  (if (version<= "26.0.50" emacs-version)
-	  (global-display-line-numbers-mode)
-	(global-linum-mode t))
-
-  (setq inhibit-splash-screen t)
-
-  ;; Word wrap without fringe (the arrows) and without changing the file
-  (global-visual-line-mode 1)
-  (global-set-key (kbd "<f10>") 'visual-line-mode)
-
-  (if (version<= "27.0.50" emacs-version)
-	  (global-tab-line-mode)
-	(use-package elscreen
-	  :bind ("C-t" . elscreen-clone)
-	  ("<C-next>". elscreen-next)
-	  ("<C-prior>" . elscreen-previous)
-	  ("C-w" . elscreen-kill)
-	  :config
-	  (elscreen-start)))
-
-  ;; Configure mouse to be more smooth
-  ;; (setq redisplay-dont-pause t
-  ;;       scroll-margin 1
-  ;;       scroll-step 1
-  ;;       scroll-conservatively 10000
-  ;;       scroll-preserve-screen-position nil
-  ;;       mouse-wheel-progressive-speed t
-  ;;       )
-
-  ;; (setq mouse-wheel-follow-mouse 't)
-  ;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-
-  (add-to-list 'default-frame-alist (cons 'width 100))
-  (add-to-list 'default-frame-alist (cons 'height 40))
-
-  ;; Show trailing white spaces
-  (setq-default show-trailing-whitespace t)
-
-  (if (version<= "27.0.50" emacs-version)
-	  (progn
-		(pixel-scroll-mode)
-		(setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
-		(setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
-		(setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
-		(setq mouse-wheel-progressive-speed nil) ; Progressive speed is too fast
-		(setq fast-but-imprecise-scrolling t) ; No (less) lag while scrolling lots.
-		(setq jit-lock-defer-time 0)) ; Just don't even fontify if we're still catching up on user input.
-	(use-package sublimity
-	  :init
-	  (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
-	  :config
-	  (sublimity-mode)
-	  (require 'sublimity-scroll)))
-
-  (winner-mode 1)
-
-  (use-package highlight-indent-guides
-	:init
-	(setq highlight-indent-guides-method 'character)
-	:config
-	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-
-  (global-hl-line-mode 1)
-
-  (use-package symbol-overlay
-	:config
-	(dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-	  (add-hook hook 'symbol-overlay-mode)))
-
-  (use-package dimmer
-	:config
-	(dimmer-mode t))
-
-  (use-package goto-line-preview
-	:bind ([remap goto-line] . goto-line-preview))
-
-  (use-package popwin
-	:init
-	(require 'popwin)
-	(popwin-mode 1))
-
-#+END_SRC
-
-* C language
-#+BEGIN_SRC emacs-lisp
-  (setq c-default-style "k&r"
-		c-basic-offset 4
-		default-tab-width 4
-		ident-tabs-mode t)
-
-  ;; Enable CMake major mode
-  (use-package cmake-mode)
-
-  (use-package cmake-font-lock
-	:init
-	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
-#+END_SRC
-
-* Emacs lisp
-#+BEGIN_SRC emacs-lisp
-  (use-package elisp-slime-nav
-	:config
-	(require 'elisp-slime-nav)
-	(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-	  (add-hook hook 'elisp-slime-nav-mode)))
-#+END_SRC
-
-* Static code analysis
-#+BEGIN_SRC emacs-lisp
-  (dolist (hook '(text-mode-hook))
-	(add-hook hook (lambda () (flyspell-mode 1))))
-
-  (use-package flycheck
-	:config (global-flycheck-mode))
-
-  ;; Enable text completion
-  (use-package company
-	:init
-	(add-hook 'after-init-hook 'global-company-mode)
-	(setq-default company-dabbrev-other-buffers 'all
-				  company-tooltip-align-annotations t)
-	:config
-	(define-key company-active-map (kbd "M-K") 'company-select-next)
-	(define-key company-active-map (kbd "M-I") 'company-select-previous)
-	(define-key company-active-map (kbd "C-f") 'company-search-candidates)
-	;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
-	(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-	(global-set-key (kbd "C-SPC") 'company-complete))
-
-  (use-package company-quickhelp
-	:init
-	(add-hook 'after-init-hook 'company-quickhelp-mode))
-
-  (use-package smartparens
-	:config
-	;; Fix single-quotes being automatically ended on lisp
-	(require 'smartparens-config)
-	(smartparens-global-mode))
-
-  (global-set-key (kbd "C-S-o") 'imenu)
-#+END_SRC
-
-* Programming enhancement
-
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-	:config
-	(yas-reload-all)
-	(add-hook 'prog-mode-hook #'yas-minor-mode))
-
-  (use-package yasnippet-snippets)
-#+END_SRC
-
 * Projects
 #+BEGIN_SRC emacs-lisp
   ;; Keybinding for using MaGit
@@ -539,6 +529,117 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(projectile-mode +1))
 #+END_SRC
 
+* Programming
+
+** Programming languages
+*** Emacs lisp
+#+BEGIN_SRC emacs-lisp
+  (use-package elisp-slime-nav
+	:config
+	(require 'elisp-slime-nav)
+	(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+	  (add-hook hook 'elisp-slime-nav-mode)))
+#+END_SRC
+
+*** C language
+#+BEGIN_SRC emacs-lisp
+  (setq c-default-style "k&r"
+		c-basic-offset 4
+		default-tab-width 4
+		ident-tabs-mode t)
+
+  ;; Enable CMake major mode
+  (use-package cmake-mode)
+
+  (use-package cmake-font-lock
+	:init
+	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
+#+END_SRC
+
+*** Python mode
+#+BEGIN_SRC emacs-lisp
+  (use-package anaconda-mode
+	:config
+	(add-hook 'python-mode-hook 'anaconda-mode)
+	(add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+  (defun raul-send-buffer-to-python ()
+	"Send complete buffer to Python"
+	(interactive)
+	(python-shell-send-buffer t))
+
+  (defun python-send-buffer-with-my-args (args)
+	(interactive "sPython arguments: ")
+	(let ((source-buffer (current-buffer)))
+	  (with-temp-buffer
+		(insert "import sys; sys.argv = '''" args "'''.split()\n")
+		(insert-buffer-substring source-buffer)
+		(raul-send-buffer-to-python))))
+
+  (add-hook 'python-mode-hook (lambda () (define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python)))
+
+  ;; (use-package company-jedi
+  ;;   :config
+  ;;   (eval-after-load "company"
+  ;;     '(add-to-list 'company-backends 'company-jedi)))
+
+  (use-package company-anaconda
+	:config
+	(eval-after-load "company"
+	  '(add-to-list 'company-backends 'company-anaconda)))
+
+  (when (eq system-type 'gnu/linux)
+	(setq python-shell-interpreter "/usr/bin/python3"))
+
+  (when url-proxy-services
+	(make-variable-buffer-local 'url-proxy-services))
+
+  (defun disable-proxy-for-python ()
+	"Disable proxy when in python-mode to allow anaconda-mode to work"
+	(when (and url-proxy-services (eq major-mode 'python-mode))
+	  (setq url-proxy-services nil)))
+
+  (add-hook 'find-file-hook 'disable-proxy-for-python)
+
+  (if (eq system-type 'gnu/linux)
+	  (setq python-shell-interpreter "ipython3")
+	(setq python-shell-interpreter "ipython"))
+
+  (setq python-shell-interpreter-args "--simple-prompt -i")
+#+END_SRC
+
+*** Groovy
+
+#+BEGIN_SRC emacs-lisp
+(use-package groovy-mode)
+#+END_SRC
+
+*** Web-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+	:ensure t
+	:config
+	(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+	(add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
+	(setq web-mode-engines-alist
+		  '(("django"    . "\\.html\\'")))
+	(setq web-mode-ac-sources-alist
+		  '(("css" . (ac-source-css-property))
+			("vue" . (ac-source-words-in-buffer ac-source-abbrev))
+			("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+	(setq web-mode-enable-auto-closing t))
+  (setq web-mode-enable-auto-quoting t)
+#+END_SRC
+** Programming enhancement
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+	:config
+	(yas-reload-all)
+	(add-hook 'prog-mode-hook #'yas-minor-mode))
+
+  (use-package yasnippet-snippets)
+#+END_SRC
 * Indexer build functions
 #+BEGIN_SRC emacs-lisp
   (defun raul-find-definitions ()
@@ -710,103 +811,16 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (setq gdb-many-windows t)
   (use-package realgud)
 #+END_SRC
-
-* Themes
-#+BEGIN_SRC emacs-lisp
-  (use-package powerline
-	:config
-	(powerline-default-theme))
-
-  ;; (use-package beacon
-  ;;   :config
-  ;;   (beacon-mode t))
-
-  (add-to-list 'default-frame-alist '(font . "Source Code Pro-11"))
-  (set-face-attribute 'default t :font "Source Code Pro-11")
-
-  (load-theme 'leuven t)
-
-
-#+END_SRC
 * Start server
 
 #+BEGIN_SRC emacs-lisp
   (load "server")
   (unless (server-running-p) (server-start))
 #+END_SRC
-* Web-mode
-#+BEGIN_SRC emacs-lisp
-  (use-package web-mode
-	:ensure t
-	:config
-	(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-	(add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
-	(setq web-mode-engines-alist
-		  '(("django"    . "\\.html\\'")))
-	(setq web-mode-ac-sources-alist
-		  '(("css" . (ac-source-css-property))
-			("vue" . (ac-source-words-in-buffer ac-source-abbrev))
-			("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-	(setq web-mode-enable-auto-closing t))
-  (setq web-mode-enable-auto-quoting t)
-#+END_SRC
-
-* Python mode
-#+BEGIN_SRC emacs-lisp
-  (use-package anaconda-mode
-	:config
-	(add-hook 'python-mode-hook 'anaconda-mode)
-	(add-hook 'python-mode-hook 'anaconda-eldoc-mode))
-
-  (defun raul-send-buffer-to-python ()
-	"Send complete buffer to Python"
-	(interactive)
-	(python-shell-send-buffer t))
-
-  (defun python-send-buffer-with-my-args (args)
-	(interactive "sPython arguments: ")
-	(let ((source-buffer (current-buffer)))
-	  (with-temp-buffer
-		(insert "import sys; sys.argv = '''" args "'''.split()\n")
-		(insert-buffer-substring source-buffer)
-		(raul-send-buffer-to-python))))
-
-  (add-hook 'python-mode-hook (lambda () (define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python)))
-
-  ;; (use-package company-jedi
-  ;;   :config
-  ;;   (eval-after-load "company"
-  ;;     '(add-to-list 'company-backends 'company-jedi)))
-
-  (use-package company-anaconda
-	:config
-	(eval-after-load "company"
-	  '(add-to-list 'company-backends 'company-anaconda)))
-
-  (when (eq system-type 'gnu/linux)
-	(setq python-shell-interpreter "/usr/bin/python3"))
-
-  (when url-proxy-services
-	(make-variable-buffer-local 'url-proxy-services))
-
-  (defun disable-proxy-for-python ()
-	"Disable proxy when in python-mode to allow anaconda-mode to work"
-	(when (and url-proxy-services (eq major-mode 'python-mode))
-	  (setq url-proxy-services nil)))
-
-  (add-hook 'find-file-hook 'disable-proxy-for-python)
-
-  (if (eq system-type 'gnu/linux)
-	  (setq python-shell-interpreter "ipython3")
-	(setq python-shell-interpreter "ipython"))
-
-  (setq python-shell-interpreter-args "--simple-prompt -i")
-#+END_SRC
-
-* Groovy
-
-#+BEGIN_SRC emacs-lisp
-(use-package groovy-mode)
+** Adapt for Emacs server
+#+BEGIN_SRC
+  ;; Save the bookmark file every time the bookmark list changes
+  (setq bookmark-save-flag 1)
 #+END_SRC
 
 * Analyze Emacs usage
