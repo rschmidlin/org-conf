@@ -6,6 +6,9 @@
 #+BEGIN_SRC emacs-lisp
 (setq use-package-always-ensure t)
 (setq use-package-always-pin "melpa")
+  (use-package delight
+	:ensure t
+	:pin gnu)
 #+END_SRC
 
 * Operating system
@@ -59,16 +62,8 @@
 	(global-set-key (kbd "M-O") 'forward-sexp)
 	(global-set-key (kbd "M-U") 'backward-sexp))
 
-  ;; Workaround to avoid that which-key brings errors everytime timeout would be checked
-  ;; (custom-set-variables '(ergoemacs-command-loop-timeout 1)
-  ;;                       '(which-key-idle-delay 2.0))
-
-  ;; Help switching windows
-  (use-package ace-window)
-  ;; :bind ("M-s" . ace-window))
   (use-package multiple-cursors
 	:bind ("C-d" . mc/mark-next-like-this))
-  (use-package expand-region)
 
 #+END_SRC
 
@@ -127,40 +122,48 @@
 * Commands completion
 
 #+BEGIN_SRC emacs-lisp
-  ;; Workaround - do not use which-key  because which-key interferes with ergoemacs
-  ;; Use which-key
-  (use-package which-key
-	:config
-	(which-key-mode)
-	(setq ergoemacs-handle-ctl-c-or-ctl-x 'only-C-c-and-C-x))
+	  ;; Use which-key
+	  (use-package which-key
+		:config
+		(which-key-mode)
+		;; Avoid that ergoemacs interfere with which-key
+		(setq ergoemacs-handle-ctl-c-or-ctl-x 'only-C-c-and-C-x)
+		:delight which-key-mode)
 
-  ;; Helping IVY with Flx
-  (use-package flx)
+	  ;; Helping IVY with Flx
+	  (use-package flx)
 
-  ;; Include smex to sort recent commands first in counsel
-  (use-package smex)
+	  ;; Include smex to sort recent commands first in counsel
+	  (use-package smex)
 
-  ;; Use IVY
-  (use-package counsel
-	:init
-	(require 'smex)
-	(setq ivy-use-virtual-buffers t)
-	(setq ivy-count-format "(%d/%d) ")
-	(setq projectile-completion-system 'ivy)
-	(setq ivy-re-builders-alist
-		  '((ivy-switch-buffer . ivy--regex-plus)
-			(swiper . ivy--regex-plus)
-			(counsel-M-x . ivy--regex-plus)
-			(projectile-find-file . ivy--regex-plus)
-			(projectile-find-dir . ivy--regex-plus)
-			(projectile-switch-project . ivy--regex-plus)
-			(t . ivy--regex-fuzzy)))
-	(setq ivy-initial-inputs-alist nil)
-	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
-	(setq magit-completing-read-function 'ivy-completing-read)
-	(setq projectile-completion-system 'ivy)
-	(ivy-mode 1))
+	  ;; Use IVY
+	  (use-package counsel
+		:init
+		(require 'smex)
+		(setq ivy-use-virtual-buffers t)
+		(setq ivy-count-format "(%d/%d) ")
+		(setq projectile-completion-system 'ivy)
+		(setq ivy-re-builders-alist
+			  '((ivy-switch-buffer . ivy--regex-plus)
+				(swiper . ivy--regex-plus)
+				(counsel-M-x . ivy--regex-plus)
+				(projectile-find-file . ivy--regex-plus)
+				(projectile-find-dir . ivy--regex-plus)
+				(projectile-switch-project . ivy--regex-plus)
+				(t . ivy--regex-fuzzy)))
+		(setq ivy-initial-inputs-alist nil)
+		(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
+		(setq magit-completing-read-function 'ivy-completing-read)
+		(setq projectile-completion-system 'ivy)
+		(ivy-mode 1)
+		:delight ivy-mode)
 
+
+#+END_SRC
+
+** Complete searchs with symbol under point and rebind history keybindings
+
+#+BEGIN_SRC emacs-lisp
   (defvar auto-insert-search-or-replace-commands '(query-replace query-replace-regexp swiper grep-find)
 	"Commands to automatically insert selected \"symbol-at-point\".")
 
@@ -205,55 +208,63 @@
 
 * Buffer view and editing behavior
 #+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
-  (global-subword-mode t)
-  (global-set-key (kbd "<f8>") 'subword-mode)
+	(global-auto-revert-mode t)
+	(global-subword-mode t)
+	(global-set-key (kbd "<f8>") 'subword-mode)
+	(delight 'subword-mode nil t)
 
-  ;; Word wrap without fringe (the arrows) and without changing the file
-  (global-visual-line-mode 1)
-  (global-set-key (kbd "<f10>") 'visual-line-mode)
+	;; Word wrap without fringe (the arrows) and without changing the file
+	(global-visual-line-mode 1)
+	(global-set-key (kbd "<f10>") 'visual-line-mode)
+	(delight 'visual-line-mode nil t)
 
-  (use-package aggressive-indent
-	:config
-	(global-aggressive-indent-mode 1)
-	(add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-	(add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode)
-	:bind (("<f11>" . aggressive-indent-mode)))
+	(use-package aggressive-indent
+	  :config
+	  (global-aggressive-indent-mode 1)
+	  (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+	  (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode)
+	  :bind (("<f11>" . aggressive-indent-mode))
+	  :delight aggressive-indent-mode)
 
-  ;; Show trailing white spaces
-  (setq-default show-trailing-whitespace t)
+	;; Show trailing white spaces
+	(setq-default show-trailing-whitespace t)
 
-  ;; Remove useless whitespace before saving a file
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
+	;; Remove useless whitespace before saving a file
+	(add-hook 'before-save-hook 'whitespace-cleanup)
+	(add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
 
-  ;; Show visual markings about indentation
-  (use-package highlight-indent-guides
-	:init
-	(setq highlight-indent-guides-method 'character)
-	:config
-	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+	;; Show visual markings about indentation
+	(use-package highlight-indent-guides
+	  :init
+	  (setq highlight-indent-guides-method 'character)
+	  :config
+	  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+	  :delight highlight-indent-guides-mode)
 
-  ;; Mark horizontal line where cursor is
-  (global-hl-line-mode 1)
+	;; Mark horizontal line where cursor is
+	(global-hl-line-mode 1)
+	(delight 'hl-line-mode nil t)
 
-  ;; Mark all words under cursor in current viewport of buffer
-  (use-package symbol-overlay
-	:config
-	(dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-	  (add-hook hook 'symbol-overlay-mode)))
 
-  (use-package goto-line-preview
-	:bind ([remap goto-line] . goto-line-preview))
+	;; Mark all words under cursor in current viewport of buffer
+	(use-package symbol-overlay
+	  :config
+	  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+		(add-hook hook 'symbol-overlay-mode))
+	  :delight symbol-overlay-mode)
 
-  (use-package smartparens
-	:config
-	;; Fix single-quotes being automatically ended on lisp
-	(require 'smartparens-config)
-	(smartparens-global-mode))
+	(use-package goto-line-preview
+	  :bind ([remap goto-line] . goto-line-preview))
+
+	(use-package smartparens
+	  :config
+	  ;; Fix single-quotes being automatically ended on lisp
+	  (require 'smartparens-config)
+	  (smartparens-global-mode)
+	  :delight smartparens-mode)
 #+END_SRC
 ** Auto set fill-paragraph
-#+BEGIN_SRC
+#+BEGIN_SRC emacs-lisp
   (defvar fill-column-default 100
 	"Set a default value for fill-column")
 
@@ -272,25 +283,27 @@
 	:config
 	(afp-setup-recommended-hooks)
 	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode)
-	:bind (("<f9>" . aggressive-fill-paragraph-mode)))
+	:bind (("<f9>" . aggressive-fill-paragraph-mode))
+	:delight aggressive-fill-paragraph-mode)
 #+END_SRC
 
 * Editing utilities
 #+BEGIN_SRC emacs-lisp
-  (use-package browse-kill-ring)
+	(use-package browse-kill-ring)
 
-  (use-package visual-regexp
-	:config
-	(require 'visual-regexp)
-	(global-set-key (kbd "M-%") 'vr/query-replace))
+	(use-package visual-regexp
+	  :config
+	  (require 'visual-regexp)
+	  (global-set-key (kbd "M-%") 'vr/query-replace))
 
-  (use-package drag-stuff
-	:init
-	(drag-stuff-global-mode 1)
-	(global-set-key (kbd "M-<up>") 'drag-stuff-up)
-	(global-set-key (kbd "M-<down>") 'drag-stuff-down)
-	(global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
-	(global-set-key (kbd "M-S-<left>") 'drag-stuff-left))
+	(use-package drag-stuff
+	  :init
+	  (drag-stuff-global-mode 1)
+	  (global-set-key (kbd "M-<up>") 'drag-stuff-up)
+	  (global-set-key (kbd "M-<down>") 'drag-stuff-down)
+	  (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
+	  (global-set-key (kbd "M-S-<left>") 'drag-stuff-left)
+	  :delight drag-stuff-mode)
 
 #+END_SRC
 
@@ -333,13 +346,19 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
 #+BEGIN_SRC emacs-lisp
   (if (version<= "26.0.50" emacs-version)
-	  (global-display-line-numbers-mode)
-	(global-linum-mode t))
+	  (progn
+		(global-display-line-numbers-mode)
+		(delight 'display-line-numbers-mode nil t))
+	(progn
+	  (global-linum-mode t)
+	  (delight 'linum-mode nil t)))
 
   (setq inhibit-splash-screen t)
 
   (if (version<= "27.0.50" emacs-version)
-	  (global-tab-line-mode)
+	  (progn
+		(global-tab-line-mode)
+		(delight tab-line-mode nil t))
 	(use-package elscreen
 	  :bind ("C-t" . elscreen-clone)
 	  ("<C-next>". elscreen-next)
@@ -348,24 +367,13 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	  :config
 	  (elscreen-start)))
 
-  ;; Configure mouse to be more smooth
-  ;; (setq redisplay-dont-pause t
-  ;;       scroll-margin 1
-  ;;       scroll-step 1
-  ;;       scroll-conservatively 10000
-  ;;       scroll-preserve-screen-position nil
-  ;;       mouse-wheel-progressive-speed t
-  ;;       )
-
-  ;; (setq mouse-wheel-follow-mouse 't)
-  ;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-
   (add-to-list 'default-frame-alist (cons 'width 100))
   (add-to-list 'default-frame-alist (cons 'height 40))
 
   (if (version<= "27.0.50" emacs-version)
 	  (progn
 		(pixel-scroll-mode)
+		(delight 'pixel-scroll-mode nil t)
 		(setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
 		(setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
 		(setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
@@ -377,21 +385,19 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	  (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
 	  :config
 	  (sublimity-mode)
-	  (require 'sublimity-scroll)))
+	  (require 'sublimity-scroll)
+	  :delight sublimity-mode))
 
   ;; Return to previous window configuration with C-<
   (winner-mode 1)
-
-  ;; Dimm windows (frames) that are not in focus
-  (use-package dimmer
-	:config
-	(dimmer-mode t))
+  (delight 'winner-mode nil t)
 
   ;; Popwin takes care that helper buffers do not take much space
   (use-package popwin
 	:init
 	(require 'popwin)
-	(popwin-mode 1))
+	(popwin-mode 1)
+	:delight popwin-mode)
 
 #+END_SRC
 
@@ -413,6 +419,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (setq-default save-place t)
 
   (show-paren-mode 1)
+  (delight 'show-paren-mode nil t)
+
   ;(setq-default indent-tabs-mode nil)
   (setq x-select-enable-clipboard t
 		x-select-enable-primary t
@@ -436,10 +444,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:config
 	(powerline-default-theme))
 
-  ;; (use-package beacon
-  ;;   :config
-  ;;   (beacon-mode t))
-
   (add-to-list 'default-frame-alist '(font . "Source Code Pro-11"))
   (set-face-attribute 'default t :font "Source Code Pro-11")
 
@@ -452,6 +456,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+BEGIN_SRC emacs-lisp
   (dolist (hook '(text-mode-hook))
 	(add-hook hook (lambda () (flyspell-mode 1))))
+  (delight 'flyspell-mode nil t)
 
   (use-package flycheck
 	:config (global-flycheck-mode))
@@ -468,7 +473,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	(define-key company-active-map (kbd "C-f") 'company-search-candidates)
 	;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
 	(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-	(global-set-key (kbd "C-SPC") 'company-complete))
+	(global-set-key (kbd "C-SPC") 'company-complete)
+	:delight company-mode)
 
   (use-package company-quickhelp
 	:init
@@ -538,7 +544,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:config
 	(require 'elisp-slime-nav)
 	(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-	  (add-hook hook 'elisp-slime-nav-mode)))
+	  (add-hook hook 'elisp-slime-nav-mode))
+	:delight elisp-slime-nav-mode)
 #+END_SRC
 
 *** C language
@@ -577,11 +584,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 		(raul-send-buffer-to-python))))
 
   (add-hook 'python-mode-hook (lambda () (define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python)))
-
-  ;; (use-package company-jedi
-  ;;   :config
-  ;;   (eval-after-load "company"
-  ;;     '(add-to-list 'company-backends 'company-jedi)))
 
   (use-package company-anaconda
 	:config
@@ -682,58 +684,23 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	 ((eq major-mode 'c-mode) (ggtags-next-mark))
 	 (t nil)))
 
-  (defun make-peek-frame (find-definition-function &rest args)
-	"Make a new frame for peeking definition"
-	(when (or (not (fboundp 'rtags-called-interactively-p)) (rtags-sandbox-id-matches))
-	  (let (summary
-			doc-frame
-			x y
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			;; 1. Find the absolute position of the current beginning of the symbol at point, ;;
-			;; in pixels.                                                                     ;;
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			(abs-pixel-pos (save-excursion
-							 (beginning-of-thing 'symbol)
-							 (window-absolute-pixel-position))))
-		(setq x (car abs-pixel-pos))
-		;; (setq y (cdr abs-pixel-pos))
-		(setq y (+ (cdr abs-pixel-pos) (frame-char-height)))
+  (use-package ggtags
+	:config
+	(add-hook 'c-mode-common-hook
+			  (lambda ()
+				(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+				  (ggtags-mode 1)))))
 
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		;; 2. Create a new invisible frame, with the current buffer in it. ;;
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		(setq doc-frame (make-frame '((minibuffer . nil)
-									  (name . "*RTags Peek*")
-									  (width . 80)
-									  (visibility . nil)
-									  (height . 15))))
+  (global-set-key (kbd "M-<f12>") 'xref-peek-definitions)
+  (global-set-key (kbd "<f12>") 'raul-find-definitions)
+  (global-set-key (kbd "S-<f12>") 'raul-find-references)
+  (global-set-key (kbd "M-<left>") 'raul-navigate-backward)
+  (global-set-key (kbd "M-<right>") 'raul-navigate-forward)
+#+END_SRC
 
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		;; 3. Position the new frame right under the beginning of the symbol at point. ;;
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		(set-frame-position doc-frame x y)
+** Building tag files
 
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		;; 4. Jump to the symbol at point. ;;
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		(with-selected-frame doc-frame
-		  (apply find-definition-function args)
-		  (read-only-mode)
-		  (when (boundp 'semantic-stickyfunc-mode) (semantic-stickyfunc-mode -1)))
-		;; (recenter-top-bottom 0))
-
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		;; 5. Make frame visible again ;;
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		(make-frame-visible doc-frame))))
-
-  (defun xref-peek-definitions ()
-	"Peek at definition using xref-find-definitions"
-	(interactive)
-	(let ((func (lambda ()
-				  (raul-find-definitions))))
-	  (make-peek-frame func)))
-
+#+BEGIN_SRC emacs-lisp
   ;; Generate cscope.files from a directory list
   (defun build-cscope-file (directories &optional target-directory)
 	"Generate cscope.file for a list of DIRECTORIES, optionally in TARGET-DIRECTORY."
@@ -778,24 +745,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 		  (call-process "gtags" nil (get-buffer-create "process-output") t "-f" filename))
 	  (call-process "gtags" nil (get-buffer-create "process-output") t "-f" filename))
 	(message (concat "GNU Global tags built successfully for " filename)))
-
-  (use-package ggtags
-	:config
-	(add-hook 'c-mode-common-hook
-			  (lambda ()
-				(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-				  (ggtags-mode 1)))))
-
-  ;; (use-package xcscope
-  ;;   :config
-  ;;   (require 'xcscope)
-  ;;   (cscope-setup))
-
-  (global-set-key (kbd "M-<f12>") 'xref-peek-definitions)
-  (global-set-key (kbd "<f12>") 'raul-find-definitions)
-  (global-set-key (kbd "S-<f12>") 'raul-find-references)
-  (global-set-key (kbd "M-<left>") 'raul-navigate-backward)
-  (global-set-key (kbd "M-<right>") 'raul-navigate-forward)
 #+END_SRC
 * Tools
 #+BEGIN_SRC emacs-lisp
@@ -818,7 +767,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (unless (server-running-p) (server-start))
 #+END_SRC
 ** Adapt for Emacs server
-#+BEGIN_SRC
+#+BEGIN_SRC emacs-lisp
   ;; Save the bookmark file every time the bookmark list changes
   (setq bookmark-save-flag 1)
 #+END_SRC
