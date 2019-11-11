@@ -138,7 +138,7 @@
 
   ;; Use IVY
   (use-package counsel
-	:load-path "/home/raul/dev/swiper"
+	:load-path "swiper"
 	:pin manual
 	:init
 	(require 'smex)
