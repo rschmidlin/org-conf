@@ -122,41 +122,44 @@
 * Commands completion
 
 #+BEGIN_SRC emacs-lisp
-	  ;; Use which-key
-	  (use-package which-key
-		:config
-		(which-key-mode)
-		;; Avoid that ergoemacs interfere with which-key
-		(setq ergoemacs-handle-ctl-c-or-ctl-x 'only-C-c-and-C-x)
-		:delight which-key-mode)
+  ;; Use which-key
+  (use-package which-key
+	:config
+	(which-key-mode)
+	;; Avoid that ergoemacs interfere with which-key
+	(setq ergoemacs-handle-ctl-c-or-ctl-x 'only-C-c-and-C-x)
+	:delight which-key-mode)
 
-	  ;; Helping IVY with Flx
-	  (use-package flx)
+  ;; Helping IVY with Flx
+  (use-package flx)
 
-	  ;; Include smex to sort recent commands first in counsel
-	  (use-package smex)
+  ;; Include smex to sort recent commands first in counsel
+  (use-package smex)
 
-	  ;; Use IVY
-	  (use-package counsel
-		:init
-		(require 'smex)
-		(setq ivy-use-virtual-buffers t)
-		(setq ivy-count-format "(%d/%d) ")
-		(setq projectile-completion-system 'ivy)
-		(setq ivy-re-builders-alist
-			  '((ivy-switch-buffer . ivy--regex-plus)
-				(swiper . ivy--regex-plus)
-				(counsel-M-x . ivy--regex-plus)
-				(projectile-find-file . ivy--regex-plus)
-				(projectile-find-dir . ivy--regex-plus)
-				(projectile-switch-project . ivy--regex-plus)
-				(t . ivy--regex-fuzzy)))
-		(setq ivy-initial-inputs-alist nil)
-		(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
-		(setq magit-completing-read-function 'ivy-completing-read)
-		(setq projectile-completion-system 'ivy)
-		(ivy-mode 1)
-		:delight ivy-mode)
+  ;; Use IVY
+  (use-package counsel
+	:load-path "/home/raul/dev/swiper"
+	:pin manual
+	:init
+	(require 'smex)
+	(setq ivy-use-virtual-buffers t)
+	(setq ivy-count-format "(%d/%d) ")
+	(setq projectile-completion-system 'ivy)
+	(setq ivy-re-builders-alist
+		  '((ivy-switch-buffer . ivy--regex-plus)
+			(swiper . ivy--regex-plus)
+			(counsel-M-x . ivy--regex-plus)
+			(projectile-find-file . ivy--regex-plus)
+			(projectile-find-dir . ivy--regex-plus)
+			(projectile-switch-project . ivy--regex-plus)
+			(t . ivy--regex-fuzzy)))
+	(setq ivy-initial-inputs-alist nil)
+	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
+	(setq magit-completing-read-function 'ivy-completing-read)
+	(setq projectile-completion-system 'ivy)
+	:config
+	(ivy-mode 1)
+	:delight ivy-mode)
 
 
 #+END_SRC
@@ -180,7 +183,7 @@
 	(interactive)
 	(let ((symbol nil))
 	  (with-current-buffer (window-buffer (minibuffer-selected-window))
-		(setq symbol (thing-at-point 'symbol)))
+		(setq symbol (thing-at-point 'symbol t)))
 	  (insert-and-select symbol)))
 
   (defun insert-and-select (text)
