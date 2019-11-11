@@ -193,17 +193,18 @@
 
   (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
 
-  (eval-after-load "ergoemacs"
-	(progn
-	  (ergoemacs-component history-workaround ()
-		"History workaround for Ergoemacs"
-		(define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
-		(define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
-		(define-key vr/minibuffer-keymap (kbd "M-I") 'previous-history-element)
-		(define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
-		(define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
-		(define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element))
-	  (ergoemacs-require 'history-workaround)))
+  (when (featurep 'ergoemacs-mode)
+	(eval-after-load "ergoemacs"
+	  (progn
+		(ergoemacs-component history-workaround ()
+		  "History workaround for Ergoemacs"
+		  (define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
+		  (define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
+		  (define-key vr/minibuffer-keymap (kbd "M-I") 'previous-history-element)
+		  (define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
+		  (define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
+		  (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element))
+		(ergoemacs-require 'history-workaround))))
 #+END_SRC
 
 * Buffer view and editing behavior
