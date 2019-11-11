@@ -1,3 +1,6 @@
 [submodule "swiper"]
 	path = swiper
 	url = https://github.com/abo-abo/swiper.git
+[submodule "ergoemacs-mode"]
+	path = ergoemacs-mode
+	url = https://github.com/ergoemacs/ergoemacs-mode.git

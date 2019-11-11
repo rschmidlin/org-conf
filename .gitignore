@@ -7,7 +7,6 @@ server
 bookmarks
 recentf*
 projectile*
-ergoemacs-mode
 .mc-lists.el
 myinit.el
 anaconda-mode
