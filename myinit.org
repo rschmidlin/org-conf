@@ -751,6 +751,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (define-key ergoemacs-light-mode-map (kbd "M-$") 'split-window-right)
   (define-key ergoemacs-light-mode-map (kbd "M-3") 'delete-other-windows)
   (define-key ergoemacs-light-mode-map (kbd "M-2") 'delete-window)
+  (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
 
   ;; Find files
   (define-key ergoemacs-light-mode-map (kbd "M-ö") 'ivy-switch-buffer)
