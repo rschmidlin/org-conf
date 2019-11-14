@@ -92,16 +92,6 @@
 	"Insert a pipe before point."
 	(interactive)
 	(insert "|"))
-
-
-
-
-
-
-
-
-
-
 #+END_SRC
 * Commands completion
 
@@ -142,8 +132,6 @@
 	(setq projectile-completion-system 'ivy)
 	:config
 	(ivy-mode 1))
-
-
 #+END_SRC
 
 ** Complete searchs with symbol under point and rebind history keybindings
@@ -177,7 +165,6 @@
 		(setq deactivate-mark nil))))
 
   (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
-
 #+END_SRC
 
 * Buffer view and editing behavior
@@ -210,7 +197,6 @@
 
 	;; Mark horizontal line where cursor is
 	(global-hl-line-mode 1)
-
 
 	;; Mark all words under cursor in current viewport of buffer
 	(use-package symbol-overlay
@@ -254,17 +240,11 @@
 
 	(use-package visual-regexp
 	  :config
-	  (require 'visual-regexp)
-	  )
+	  (require 'visual-regexp))
 
 	(use-package drag-stuff
 	  :init
-	  (drag-stuff-global-mode 1)
-
-
-
-)
-
+	  (drag-stuff-global-mode 1))
 #+END_SRC
 
 ** Smarter beginning of line - possibly substitute by CRUX / ergoemacs-smart-commands
@@ -296,10 +276,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 		(if (fboundp 'beginning-of-visual-line)
 			(beginning-of-visual-line 1)
 		  (beginning-of-line)))))
-
-  ;; remap M-h to `smarter-move-beginning-of-line'
-
-
 #+END_SRC
 
 * UI configuration
@@ -347,7 +323,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	:init
 	(require 'popwin)
 	(popwin-mode 1))
-
 #+END_SRC
 
 ** Better defaults
@@ -396,8 +371,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (set-face-attribute 'default t :font "Source Code Pro-11")
 
   (load-theme 'leuven t)
-
-
 #+END_SRC
 
 * Text correction and completion
@@ -418,7 +391,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (use-package company-quickhelp
 	:init
 	(add-hook 'after-init-hook 'company-quickhelp-mode))
-
 #+END_SRC
 * Major modes
 ** Fundamental mode
@@ -435,12 +407,9 @@ On beginning of line, move to the beginning of the text on that line not the ind
   ;; Do not show bold, italic and underlined markers
   (setq org-hide-emphasis-markers t)
 
-
-
   (custom-set-variables
    '(org-directory "~/Sync/orgfiles")
    '(org-default-notes-file (concat org-directory "/notes.org")))
-
 
   (setq org-agenda-files (list org-default-notes-file))
 
@@ -454,8 +423,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	 ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
 	 ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
 	 ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
-
-
 #+END_SRC
 
 * Projects
@@ -621,12 +588,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 			  (lambda ()
 				(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
 				  (ggtags-mode 1)))))
-
-
-
-
-
-
 #+END_SRC
 
 ** Building tag files
@@ -725,8 +686,10 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-set-key (kbd "C-ö") 'counsel-bookmark)
   (global-set-key (kbd "C-Ö") 'bookmark-bmenu-list)
   (global-set-key (kbd "C-S-o") 'imenu)
+  ;; Ensure that we are using undo-tree-undo otherwise we can't redo
   (global-set-key [remap undo] 'undo-tree-undo)
   (global-set-key (kbd "C-S-f") 'grep-find)
+  ;; Adapt moving commands to use syntax information
   (global-set-key (kbd "M-O") 'forward-sexp)
   (global-set-key (kbd "M-U") 'backward-sexp)
   (global-set-key (kbd "<f8>") 'subword-mode)
@@ -736,6 +699,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (global-set-key (kbd "M-<down>") 'drag-stuff-down)
   (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
   (global-set-key (kbd "M-S-<left>") 'drag-stuff-left)
+  ;; remap M-h to `smarter-move-beginning-of-line'
   (global-set-key (kbd "M-h") 'smarter-move-beginning-of-line)
   (global-set-key (kbd "C-SPC") 'company-complete)
   (global-set-key (kbd "C-c c") 'org-capture)
@@ -762,14 +726,14 @@ On beginning of line, move to the beginning of the text on that line not the ind
 		  (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element))
 		(ergoemacs-require 'history-workaround))))
 
-  (when (featurep 'company-mode)
+  (when (featurep 'company)
 	(define-key company-active-map (kbd "M-K") 'company-select-next)
 	(define-key company-active-map (kbd "M-I") 'company-select-previous)
 	(define-key company-active-map (kbd "C-f") 'company-search-candidates)
 	;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
 	(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle))
 
-  (when (featurep 'org-mode)
+  (when (featurep 'org)
 	(define-key org-mode-map (kbd "C-c t") 'org-edit-special))
 
   (eval-after-load "emacs-lisp-mode" '(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer))
