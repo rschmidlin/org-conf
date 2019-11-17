@@ -78,9 +78,7 @@
   ;; Use which-key
   (use-package which-key
 	:config
-	(which-key-mode)
-	;; Avoid that ergoemacs interfere with which-key
-	(setq ergoemacs-handle-ctl-c-or-ctl-x 'only-C-c-and-C-x))
+	(which-key-mode))
 
   ;; Helping IVY with Flx
   (use-package flx)
@@ -237,47 +235,20 @@
   (use-package drag-stuff
     :init
     (drag-stuff-global-mode 1))
-#+END_SRC
 
-** Smarter beginning of line - possibly substitute by CRUX / ergoemacs-smart-commands
+  (use-package string-inflection
+    :config
+    (require 'string-inflection))
 
-On beginning of line, move to the beginning of the text on that line not the indented whitespaces.
-
-#+BEGIN_SRC emacs-lisp
-  (defun smarter-move-beginning-of-line (arg)
-	"Move point back to indentation of beginning of line.
-
-  Move point to the first non-whitespace character on this line.
-  If point is already there, move to the beginning of the line.
-  Effectively toggle between the first non-whitespace character and
-  the beginning of the line.
-
-  If ARG is not nil or 1, move forward ARG - 1 lines first.  If
-  point reaches the beginning or end of the buffer, stop there."
-	(interactive "^p")
-	(setq arg (or arg 1))
-
-	;; Move lines first
-	(when (/= arg 1)
-	  (let ((line-move-visual nil))
-		(forward-line (1- arg))))
-
-	(let ((orig-point (point)))
-	  (back-to-indentation)
-	  (when (= orig-point (point))
-		(if (fboundp 'beginning-of-visual-line)
-			(beginning-of-visual-line 1)
-		  (beginning-of-line)))))
+  (use-package crux)
 #+END_SRC
 
 * UI configuration
 
 #+BEGIN_SRC emacs-lisp
   (if (version<= "26.0.50" emacs-version)
-	  (progn
-		(global-display-line-numbers-mode))
-	(progn
-	  (global-linum-mode t))
+      (global-display-line-numbers-mode)
+    (global-linum-mode t))
 
   (setq inhibit-splash-screen t)
 
@@ -308,7 +279,7 @@ On beginning of line, move to the beginning of the text on that line not the ind
 	  (require 'sublimity-scroll))
 
   ;; Return to previous window configuration with C-<
-  (winner-mode 1))
+  (winner-mode 1)
 
   ;; Popwin takes care that helper buffers do not take much space
   (use-package popwin
@@ -354,15 +325,18 @@ On beginning of line, move to the beginning of the text on that line not the ind
 #+END_SRC
 
 ** Themes
+
+   Themes make Emacs respond slower hence disabled.
+
 #+BEGIN_SRC emacs-lisp
-  (use-package powerline
-	:config
-	(powerline-default-theme))
+  ;; (use-package powerline
+  ;;   :config
+  ;;   (powerline-default-theme))
 
-  (add-to-list 'default-frame-alist '(font . "Source Code Pro-11"))
-  (set-face-attribute 'default t :font "Source Code Pro-11")
+  ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro-11"))
+  ;; (set-face-attribute 'default t :font "Source Code Pro-11")
 
-  (load-theme 'leuven t)
+  ;; (load-theme 'leuven t)
 #+END_SRC
 
 * Text correction and completion
@@ -688,12 +662,13 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (define-key ergoemacs-light-mode-map (kbd "M-O") 'forward-sexp)
   (define-key ergoemacs-light-mode-map (kbd "M-U") 'backward-sexp)
 
-  ;; Movement commands for paging
+  ;; Additional movement commands
   (define-key ergoemacs-light-mode-map (kbd "M-I") 'scroll-down)
   (define-key ergoemacs-light-mode-map (kbd "M-K") 'scroll-up)
   (define-key ergoemacs-light-mode-map (kbd "M-H") 'end-of-line)
-  ;; remap M-h to `smarter-move-beginning-of-line'
-  (define-key ergoemacs-light-mode-map (kbd "M-h") 'smarter-move-beginning-of-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-h") 'crux-move-beginning-of-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-n") 'beginning-of-buffer)
+  (define-key ergoemacs-light-mode-map (kbd "M-N") 'end-of-buffer)
 
   ;; Editing commands
   (define-key ergoemacs-light-mode-map (kbd "M-e") 'backward-kill-word)
@@ -705,11 +680,36 @@ On beginning of line, move to the beginning of the text on that line not the ind
 						     (interactive)
 						     (kill-visual-line -1)))
   (define-key ergoemacs-light-mode-map (kbd "M-ä") 'comment-dwim)
+  (define-key ergoemacs-light-mode-map (kbd "M-w") 'just-one-space)
+  (define-key ergoemacs-light-mode-map (kbd "M--") 'string-inflection-all-cycle)
+  (define-key ergoemacs-light-mode-map (kbd "M-_") 'string-inflection-all-cycle)
+  (define-key ergoemacs-light-mode-map (kbd "<C-return>") 'crux-smart-open-line)
+  (define-key ergoemacs-light-mode-map (kbd "<C-S-return>") 'crux-smart-open-line-above)
+  (define-key ergoemacs-light-mode-map (kbd "<M-return>") 'crux-smart-open-line)
+  (define-key ergoemacs-light-mode-map (kbd "<M-S-return>") 'crux-smart-open-line-above)
+  (define-key ergoemacs-light-mode-map (kbd "s-j") 'crux-top-join-line)
 
   ;; Buffer navigation
   (define-key ergoemacs-light-mode-map (kbd "C-f") 'swiper)
   (define-key ergoemacs-light-mode-map (kbd "C-l") 'goto-line-preview)
   (define-key ergoemacs-light-mode-map (kbd "M-p") 'recenter-top-bottom)
+  (defun xah-new-empty-buffer ()
+    "Create a new empty buffer.
+       New buffer will be named “untitled” or “untitled<2>”,
+       “untitled<3>”, etc.
+       URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
+       Version 2016-12-27"
+    (interactive)
+    (let (($buf (generate-new-buffer "untitled")))
+      (switch-to-buffer $buf)
+      (funcall initial-major-mode)
+      (setq buffer-offer-save t)))
+  (define-key ergoemacs-light-mode-map (kbd "C-n") 'xah-new-empty-buffer)
+  (define-key ergoemacs-light-mode-map (kbd "C-c o") 'crux-open-with)
+
+  ;; Control UI
+  (define-key ergoemacs-light-mode-map (kbd "C--") 'text-scale-adjust)
+  (define-key ergoemacs-light-mode-map (kbd "C-+") 'text-scale-adjust)
 
   ;; Copy, paste
   (defun ergoemacs-light-kill-line-or-region ()
@@ -723,9 +723,8 @@ On beginning of line, move to the beginning of the text on that line not the ind
   (define-key ergoemacs-light-mode-map (kbd "M-x") 'ergoemacs-light-kill-line-or-region)
   (define-key ergoemacs-light-mode-map (kbd "M-c") (lambda ()
 						     (interactive)
-						     (save-excursion
-						       (ergoemacs-light-kill-line-or-region)
-						       (yank))))
+						     (ergoemacs-light-kill-line-or-region)
+						     (yank)))
   (define-key ergoemacs-light-mode-map (kbd "M-v") 'yank)
   (define-key ergoemacs-light-mode-map (kbd "M-V") 'browse-kill-ring)
   (define-key ergoemacs-light-mode-map (kbd "M-SPC") 'set-mark-command)
@@ -778,7 +777,6 @@ On beginning of line, move to the beginning of the text on that line not the ind
 
   (global-set-key (kbd "C-c c") 'org-capture)
   (global-set-key (kbd "C-c a") 'org-agenda)
-  (define-key org-mode-map (kbd "C-c t") 'org-edit-special)
   (global-set-key (kbd "C-c t") 'org-edit-src-exit)
 
   (global-set-key (kbd "M-<f12>") 'xref-peek-definitions)
