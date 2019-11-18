@@ -501,12 +501,12 @@
 ** Programming enhancement
 
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-	:config
-	(yas-reload-all)
-	(add-hook 'prog-mode-hook #'yas-minor-mode))
+  ;; (use-package yasnippet
+  ;;       :config
+  ;;       (yas-reload-all)
+  ;;       (add-hook 'prog-mode-hook #'yas-minor-mode))
 
-  (use-package yasnippet-snippets)
+  ;; (use-package yasnippet-snippets)
 #+END_SRC
 * Indexer build functions
 #+BEGIN_SRC emacs-lisp
@@ -641,6 +641,8 @@
 
 * Keybindings
 #+BEGIN_SRC emacs-lisp
+  (cua-mode t)
+
   (defvar ergoemacs-light-mode-map (make-sparse-keymap))
 
   (global-set-key (kbd "C-M-q") 'insert-commercial-at)
@@ -699,8 +701,8 @@
   (define-key ergoemacs-light-mode-map (kbd "M-p") 'recenter-top-bottom)
   (defun xah-new-empty-buffer ()
     "Create a new empty buffer.
-       New buffer will be named “untitled” or “untitled<2>”,
-       “untitled<3>”, etc.
+       New buffer will be named untitled or untitled<2>,
+       untitled<3>, etc.
        URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
        Version 2016-12-27"
     (interactive)
@@ -750,11 +752,13 @@
   ;; Undo commands
   ;; Ensure that we are using undo-tree-undo otherwise we can't redo
   (global-set-key [remap undo] 'undo-tree-undo)
+  (define-key ergoemacs-light-mode-map (kbd "C-z") 'undo-tree-undo)
+  (define-key ergoemacs-light-mode-map (kbd "C-y") 'undo-tree-redo)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-z") 'undo-tree-redo)
+
   (define-key ergoemacs-light-mode-map (kbd "M-y") 'undo-tree-undo)
   (define-key ergoemacs-light-mode-map (kbd "M-Y") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-z") 'undo-tree-undo)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-z") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-y") 'undo-tree-visualize)
+  (define-key ergoemacs-light-mode-map (kbd "C-M-y") 'undo-tree-visualize)
 
   ;; File open, save
   (define-key ergoemacs-light-mode-map (kbd "C-s") 'save-buffer)
