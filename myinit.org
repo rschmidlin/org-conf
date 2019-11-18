@@ -716,6 +716,7 @@
   ;; Control UI
   (define-key ergoemacs-light-mode-map (kbd "C--") 'text-scale-adjust)
   (define-key ergoemacs-light-mode-map (kbd "C-+") 'text-scale-adjust)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-n") 'make-frame)
 
   ;; Copy, paste
   (defun ergoemacs-light-kill-line-or-region ()
