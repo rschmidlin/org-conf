@@ -125,7 +125,7 @@
 
   (defun auto-insert-search-or-replace-insert-symbol-at-point-hook ()
     "Insert symbol at point and select it to be immediately substitutable by the user."
-    (when (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings)
+    (when (and (symbolp this-command) (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings))
       (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
 
   (defun auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer ()
@@ -137,12 +137,12 @@
       (insert-and-select symbol)))
 
   (defun insert-and-select (text)
-    "Insert TEXT and selects it."
-    (when text
-      (let ((begin (point)))
-	(insert text)
-	(set-mark begin)
-	(setq deactivate-mark nil))))
+  "Insert TEXT and selects it."
+  (when text
+    (let ((begin (point)))
+      (insert text)
+      (set-mark begin)
+      (setq deactivate-mark nil))))
 
   (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
 #+END_SRC
@@ -782,11 +782,15 @@
   (define-key ergoemacs-light-mode-map (kbd "M-a") 'counsel-M-x)
 
   ;; Multiple cursors
-  (global-set-key (kbd "C-d") (lambda()
-				(interactive)
-				(if (region-active-p)
-				    (mc/mark-next-like-this)
-				  (er/mark-symbol))))
+  (global-unset-key (kbd "M-<down-mouse-1>"))
+  (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
+  (defun mark-and-multiple-select (arg)
+    (interactive "p")
+    (if (region-active-p)
+	(mc/mark-next-like-this arg))
+    (er/mark-symbol))
+  (global-set-key (kbd "C-d") 'mark-and-multiple-select)
+  (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-S-l") (lambda()
 				  (interactive)
 				  (er/mark-symbol)
