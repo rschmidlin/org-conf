@@ -246,7 +246,7 @@
 * UI configuration
 
 #+BEGIN_SRC emacs-lisp
-  (if (version<= "26.0.50" emacs-version)
+  (if (version<= "26.3" emacs-version)
       (global-display-line-numbers-mode)
     (global-linum-mode t))
 
@@ -262,21 +262,21 @@
   (add-to-list 'default-frame-alist (cons 'width 100))
   (add-to-list 'default-frame-alist (cons 'height 40))
 
-  (if (version<= "27.0.50" emacs-version)
-	  (progn
-		(pixel-scroll-mode))
-		(setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
-		(setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
-		(setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
-		(setq mouse-wheel-progressive-speed nil) ; Progressive speed is too fast
-		(setq fast-but-imprecise-scrolling t) ; No (less) lag while scrolling lots.
-		(setq jit-lock-defer-time 0)) ; Just don't even fontify if we're still catching up on user input.
-	(use-package sublimity
-	  :init
-	  (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
-	  :config
-	  (sublimity-mode)
-	  (require 'sublimity-scroll))
+  ;; (if (version<= "26.3" emacs-version)
+  ;;     (progn
+  ;;       (pixel-scroll-mode)
+  ;;       (setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
+  ;;       (setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
+  ;;       (setq mouse-wheel-scroll-amount '(3)) ; Distance in pixel-resolution to scroll each mouse wheel event.
+  ;;       (setq mouse-wheel-progressive-speed nil) ; Progressive speed is too fast
+  ;;       (setq fast-but-imprecise-scrolling t) ; No (less) lag while scrolling lots.
+  ;;       (setq jit-lock-defer-time 0)) ; Just don't even fontify if we're still catching up on user input.
+  ;;   (use-package sublimity
+  ;;     :init
+  ;;     (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
+  ;;     :config
+  ;;     (sublimity-mode)
+  ;;     (require 'sublimity-scroll)))
 
   ;; Return to previous window configuration with C-<
   (winner-mode 1)
@@ -617,7 +617,6 @@
 
 #+BEGIN_SRC emacs-lisp
   (setq gdb-many-windows t)
-  (use-package realgud)
 #+END_SRC
 * Start server
 
@@ -641,8 +640,6 @@
 
 * Keybindings
 #+BEGIN_SRC emacs-lisp
-  (cua-mode t)
-
   (defvar ergoemacs-light-mode-map (make-sparse-keymap))
 
   (global-set-key (kbd "C-M-q") 'insert-commercial-at)
@@ -691,7 +688,7 @@
   (define-key ergoemacs-light-mode-map (kbd "<C-S-return>") 'crux-smart-open-line-above)
   (define-key ergoemacs-light-mode-map (kbd "<M-return>") 'crux-smart-open-line)
   (define-key ergoemacs-light-mode-map (kbd "<M-S-return>") 'crux-smart-open-line-above)
-  (define-key ergoemacs-light-mode-map (kbd "s-j") 'crux-top-join-line)
+  (define-key ergoemacs-light-mode-map (kbd "C-M-f") 'crux-top-join-line)
   (define-key ergoemacs-light-mode-map (kbd "M-5") 'vr/query-replace)
   (define-key ergoemacs-light-mode-map (kbd "M-%") 'dired-do-query-replace-regexp)
 
@@ -784,6 +781,17 @@
 
   (define-key ergoemacs-light-mode-map (kbd "M-a") 'counsel-M-x)
 
+  ;; Multiple cursors
+  (global-set-key (kbd "C-d") (lambda()
+				(interactive)
+				(if (region-active-p)
+				    (mc/mark-next-like-this)
+				  (er/mark-symbol))))
+  (global-set-key (kbd "C-S-l") (lambda()
+				  (interactive)
+				  (er/mark-symbol)
+				  (mc/mark-all-like-this)))
+
   (global-set-key (kbd "<f8>") 'subword-mode)
   (global-set-key (kbd "<f10>") 'visual-line-mode)
   (global-set-key (kbd "M-%") 'vr/query-replace)
@@ -828,7 +836,6 @@
   (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
 			    'compile))
 
-  (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-x g") 'magit-status)
   (global-set-key (kbd "C-S-p") 'projectile-find-dir)
   (global-set-key (kbd "C-p") 'projectile-find-file)
