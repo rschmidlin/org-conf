@@ -861,6 +861,8 @@
   (global-set-key (kbd "<C-prior>") 'elscreen-previous)
   (global-set-key (kbd "C-w") 'elscreen-kill)
 
+  (customize-set-variable 'mouse-drag-and-drop-region t)
+
   (define-minor-mode ergoemacs-light-mode
     "Minor mode using a minimal subset of ErgoEmacs keybindings"
     :init-value t
