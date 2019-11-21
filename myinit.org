@@ -257,8 +257,7 @@
 	(afp-setup-recommended-hooks)
 	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
 #+END_SRC
-* Input
-** Override AltGr
+* Create AltGr alternatives
 #+BEGIN_SRC emacs-lisp
   (defun insert-commercial-at()
 	"Insert a commercial at before point."
