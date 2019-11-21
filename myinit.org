@@ -24,54 +24,6 @@
 			 (getenv "PATH")))
 	(setq ispell-program-name "C:\\msys64\\mingw64\\bin\\aspell.exe"))
 #+END_SRC
-
-* Input
-#+BEGIN_SRC emacs-lisp
-  (use-package multiple-cursors)
-#+END_SRC
-
-** Override AltGr
-#+BEGIN_SRC emacs-lisp
-  (defun insert-commercial-at()
-	"Insert a commercial at before point."
-	(interactive)
-	(insert "@"))
-
-  (defun insert-tilde()
-	"Insert a tilde before point."
-	(interactive)
-	(insert "~"))
-
-  (defun insert-left-curly-brace()
-	"Insert a left curly brace before point."
-	(interactive)
-	(insert "{"))
-
-  (defun insert-right-curly-brace()
-	"Insert a right curly brace before point."
-	(interactive)
-	(insert "}"))
-
-  (defun insert-left-squared-bracket()
-	"Insert a left square bracket before point."
-	(interactive)
-	(insert "["))
-
-  (defun insert-right-squared-bracket()
-	"Insert a right square bracket before point."
-	(interactive)
-	(insert "]"))
-
-  (defun insert-backslash()
-	"Insert a backslash before point."
-	(interactive)
-	(insert "\\"))
-
-  (defun insert-pipe()
-	"Insert a pipe before point."
-	(interactive)
-	(insert "|"))
-#+END_SRC
 * Commands completion
 
 #+BEGIN_SRC emacs-lisp
@@ -146,51 +98,73 @@
 
   (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
 #+END_SRC
+* Text correction and completion
+#+BEGIN_SRC emacs-lisp
+  (dolist (hook '(text-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode 1))))
+
+  (setq ispell-extra-args '("--sug-mode=ultra"))
+
+  (use-package flycheck
+    :config (global-flycheck-mode))
+
+  ;; Enable text completion
+  (use-package company
+	:init
+	(add-hook 'after-init-hook 'global-company-mode)
+	(setq-default company-dabbrev-other-buffers 'all
+				  company-tooltip-align-annotations t))
+
+  (use-package company-quickhelp
+	:init
+	(add-hook 'after-init-hook 'company-quickhelp-mode))
+#+END_SRC
 
 * Buffer view and editing behavior
 #+BEGIN_SRC emacs-lisp
-	(global-auto-revert-mode t)
-	(global-subword-mode t)
+  (global-auto-revert-mode t)
+  (global-subword-mode t)
 
-	;; Word wrap without fringe (the arrows) and without changing the file
-	(global-visual-line-mode 1)
+  ;; Word wrap without fringe (the arrows) and without changing the file
+  (global-visual-line-mode 1)
 
-	(use-package aggressive-indent
-	  :config
-	  (global-aggressive-indent-mode 1)
-	  (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-	  (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode))
+  (use-package aggressive-indent
+    :config
+    (global-aggressive-indent-mode 1)
+    (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+    (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode))
 
-	;; Show trailing white spaces
-	(setq-default show-trailing-whitespace t)
+  ;; Show trailing white spaces
+  (setq-default show-trailing-whitespace t)
 
-	;; Remove useless whitespace before saving a file
-	(add-hook 'before-save-hook 'whitespace-cleanup)
-	(add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
+  ;; Remove useless whitespace before saving a file
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
 
-	;; Show visual markings about indentation
-	(use-package highlight-indent-guides
-	  :init
-	  (setq highlight-indent-guides-method 'character)
-	  :config
-	  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+  ;; Show visual markings about indentation
+  (use-package highlight-indent-guides
+    :init
+    (setq highlight-indent-guides-method 'character)
+    :config
+    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 
-	;; Mark horizontal line where cursor is
-	(global-hl-line-mode 1)
+  ;; Mark horizontal line where cursor is
+  (global-hl-line-mode 1)
+  (set-face-background hl-line-face "grey95")
 
-	;; Mark all words under cursor in current viewport of buffer
-	(use-package symbol-overlay
-	  :config
-	  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-		(add-hook hook 'symbol-overlay-mode)))
+  ;; Mark all words under cursor in current viewport of buffer
+  (use-package symbol-overlay
+    :config
+    (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+      (add-hook hook 'symbol-overlay-mode)))
 
-	(use-package goto-line-preview)
+  (use-package goto-line-preview)
 
-	(use-package smartparens
-	  :config
-	  ;; Fix single-quotes being automatically ended on lisp
-	  (require 'smartparens-config)
-	  (smartparens-global-mode))
+  (use-package smartparens
+    :config
+    ;; Fix single-quotes being automatically ended on lisp
+    (require 'smartparens-config)
+    (smartparens-global-mode))
 #+END_SRC
 ** Auto set fill-paragraph
 #+BEGIN_SRC emacs-lisp
@@ -213,7 +187,6 @@
 	(afp-setup-recommended-hooks)
 	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
 #+END_SRC
-
 * Editing utilities
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
@@ -241,8 +214,327 @@
     (require 'string-inflection))
 
   (use-package crux)
+
+  (use-package multiple-cursors)
+
+  (customize-set-variable 'mouse-drag-and-drop-region t)
+#+END_SRC
+* Projects
+#+BEGIN_SRC emacs-lisp
+  ;; Keybinding for using MaGit
+  (use-package magit)
+
+  ;; Projectile to access project files
+  (use-package projectile
+	:config
+	(projectile-mode +1))
+#+END_SRC
+* Major modes
+** Fundamental mode
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'fundamental-mode (lambda() (electric-indent-mode -1)))
 #+END_SRC
 
+** Org mode
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+	:config
+	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+  ;; Do not show bold, italic and underlined markers
+  (setq org-hide-emphasis-markers t)
+
+  (custom-set-variables
+   '(org-directory "~/Sync/orgfiles")
+   '(org-default-notes-file (concat org-directory "/notes.org")))
+
+  (setq org-agenda-files (list org-default-notes-file))
+
+  (setq
+   org-capture-templates
+   '(
+	 ("t" "To Do Item" entry (file+headline "" "To Do and Notes") "* TODO %?\n%u" :prepend t)
+	 ("n" "Note" entry (file+headline "" "Notes") "* %u %? " :prepend t)
+	 ("p" "Personal development" entry (file+headline "" "Personal development") "* TODO %? \n%T" :prepend t)
+	 ("s" "Team forming" entry (file+headline "" "Team forming") "* TODO %? \n%T" :prepend t)
+	 ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
+	 ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
+	 ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
+#+END_SRC
+* Input
+** Override AltGr
+#+BEGIN_SRC emacs-lisp
+  (defun insert-commercial-at()
+	"Insert a commercial at before point."
+	(interactive)
+	(insert "@"))
+
+  (defun insert-tilde()
+	"Insert a tilde before point."
+	(interactive)
+	(insert "~"))
+
+  (defun insert-left-curly-brace()
+	"Insert a left curly brace before point."
+	(interactive)
+	(insert "{"))
+
+  (defun insert-right-curly-brace()
+	"Insert a right curly brace before point."
+	(interactive)
+	(insert "}"))
+
+  (defun insert-left-squared-bracket()
+	"Insert a left square bracket before point."
+	(interactive)
+	(insert "["))
+
+  (defun insert-right-squared-bracket()
+	"Insert a right square bracket before point."
+	(interactive)
+	(insert "]"))
+
+  (defun insert-backslash()
+	"Insert a backslash before point."
+	(interactive)
+	(insert "\\"))
+
+  (defun insert-pipe()
+	"Insert a pipe before point."
+	(interactive)
+	(insert "|"))
+#+END_SRC
+* Keybindings
+#+BEGIN_SRC emacs-lisp
+  (defvar ergoemacs-light-mode-map (make-sparse-keymap))
+
+  (global-set-key (kbd "C-M-q") 'insert-commercial-at)
+  (global-set-key (kbd "C-M-+") 'insert-tilde)
+  (global-set-key (kbd "C-M-7") 'insert-left-curly-brace)
+  (global-set-key (kbd "C-M-8") 'insert-left-squared-bracket)
+  (global-set-key (kbd "C-M-9") 'insert-right-squared-bracket)
+  (global-set-key (kbd "C-M-0") 'insert-right-curly-brace)
+  (global-set-key (kbd "C-M-ß") 'insert-backslash)
+  (global-set-key (kbd "C-M-<") 'insert-pipe)
+
+  ;; Movement command
+  (define-key ergoemacs-light-mode-map (kbd "M-o") 'forward-word)
+  (define-key ergoemacs-light-mode-map (kbd "M-u") 'backward-word)
+  (define-key ergoemacs-light-mode-map (kbd "M-l") 'forward-char)
+  (define-key ergoemacs-light-mode-map (kbd "M-j") 'backward-char)
+  (define-key ergoemacs-light-mode-map (kbd "M-i") 'previous-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-k") 'next-line)
+
+  ;; Adapt movement commands to use syntax information
+  (define-key ergoemacs-light-mode-map (kbd "M-O") 'forward-sexp)
+  (define-key ergoemacs-light-mode-map (kbd "M-U") 'backward-sexp)
+
+  ;; Additional movement commands
+  (define-key ergoemacs-light-mode-map (kbd "M-I") 'scroll-down)
+  (define-key ergoemacs-light-mode-map (kbd "M-K") 'scroll-up)
+  (define-key ergoemacs-light-mode-map (kbd "M-H") 'end-of-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-h") 'crux-move-beginning-of-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-n") 'beginning-of-buffer)
+  (define-key ergoemacs-light-mode-map (kbd "M-N") 'end-of-buffer)
+
+  ;; Editing commands
+  (define-key ergoemacs-light-mode-map (kbd "M-e") 'backward-kill-word)
+  (define-key ergoemacs-light-mode-map (kbd "M-r") 'kill-word)
+  (define-key ergoemacs-light-mode-map (kbd "M-f") 'delete-char)
+  (define-key ergoemacs-light-mode-map (kbd "M-d") 'delete-backward-char)
+  (define-key ergoemacs-light-mode-map (kbd "M-g") 'kill-visual-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-G") (lambda ()
+						     (interactive)
+						     (kill-visual-line -1)))
+  (define-key ergoemacs-light-mode-map (kbd "M-ä") 'comment-dwim)
+  (define-key ergoemacs-light-mode-map (kbd "M-w") 'just-one-space)
+  (define-key ergoemacs-light-mode-map (kbd "M--") 'string-inflection-all-cycle)
+  (define-key ergoemacs-light-mode-map (kbd "M-_") 'string-inflection-all-cycle)
+  (define-key ergoemacs-light-mode-map (kbd "<C-return>") 'crux-smart-open-line)
+  (define-key ergoemacs-light-mode-map (kbd "<C-S-return>") 'crux-smart-open-line-above)
+  (define-key ergoemacs-light-mode-map (kbd "<M-return>") 'crux-smart-open-line)
+  (define-key ergoemacs-light-mode-map (kbd "<M-S-return>") 'crux-smart-open-line-above)
+  (define-key ergoemacs-light-mode-map (kbd "C-M-f") 'crux-top-join-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-5") 'vr/query-replace)
+  (define-key ergoemacs-light-mode-map (kbd "M-%") 'dired-do-query-replace-regexp)
+
+  ;; Buffer navigation
+  (define-key ergoemacs-light-mode-map (kbd "C-f") 'swiper)
+  (define-key ergoemacs-light-mode-map (kbd "C-l") 'goto-line-preview)
+  (define-key ergoemacs-light-mode-map (kbd "M-p") 'recenter-top-bottom)
+  (defun xah-new-empty-buffer ()
+    "Create a new empty buffer.
+       New buffer will be named untitled or untitled<2>,
+       untitled<3>, etc.
+       URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
+       Version 2016-12-27"
+    (interactive)
+    (let (($buf (generate-new-buffer "untitled")))
+      (switch-to-buffer $buf)
+      (funcall initial-major-mode)
+      (setq buffer-offer-save t)))
+  (define-key ergoemacs-light-mode-map (kbd "C-n") 'xah-new-empty-buffer)
+  (define-key ergoemacs-light-mode-map (kbd "C-c o") 'crux-open-with)
+
+  ;; Control UI
+  (define-key ergoemacs-light-mode-map (kbd "C--") 'text-scale-adjust)
+  (define-key ergoemacs-light-mode-map (kbd "C-+") 'text-scale-adjust)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-n") 'make-frame)
+
+  ;; Copy, paste
+  (defun ergoemacs-light-kill-line-or-region ()
+    (interactive)
+    (if (region-active-p)
+	(kill-region (mark) (point))
+      (progn
+	(beginning-of-line)
+	(kill-visual-line 1))))
+
+  (define-key ergoemacs-light-mode-map (kbd "M-x") 'ergoemacs-light-kill-line-or-region)
+  (define-key ergoemacs-light-mode-map (kbd "M-c") (lambda ()
+						     (interactive)
+						     (ergoemacs-light-kill-line-or-region)
+						     (yank)))
+  (define-key ergoemacs-light-mode-map (kbd "C-M-c") (lambda ()
+						       (interactive)
+						       (if (region-active-p)
+							   (kill-ring-save (mark) (point))
+							 (save-excursion
+							   (end-of-line)
+							   (push-mark)
+							   (beginning-of-line)
+							   (kill-ring-save (point) (mark))))))
+  (define-key ergoemacs-light-mode-map (kbd "M-v") 'yank)
+  (define-key ergoemacs-light-mode-map (kbd "M-V") 'browse-kill-ring)
+  (define-key ergoemacs-light-mode-map (kbd "M-SPC") 'set-mark-command)
+  (define-key ergoemacs-light-mode-map (kbd "M-8") (lambda ()
+						     (interactive)
+						     (if (region-active-p)
+							 (er/expand-region 1)
+						       (er/mark-symbol))))
+
+  ;; Undo commands
+  ;; Ensure that we are using undo-tree-undo otherwise we can't redo
+  (global-set-key [remap undo] 'undo-tree-undo)
+  (define-key ergoemacs-light-mode-map (kbd "C-z") 'undo-tree-undo)
+  (define-key ergoemacs-light-mode-map (kbd "C-y") 'undo-tree-redo)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-z") 'undo-tree-redo)
+
+  (define-key ergoemacs-light-mode-map (kbd "M-y") 'undo-tree-undo)
+  (define-key ergoemacs-light-mode-map (kbd "M-Y") 'undo-tree-redo)
+  (define-key ergoemacs-light-mode-map (kbd "C-M-y") 'undo-tree-visualize)
+
+  ;; File open, save
+  (define-key ergoemacs-light-mode-map (kbd "C-s") 'save-buffer)
+  (define-key ergoemacs-light-mode-map (kbd "C-o") 'counsel-find-file)
+
+  ;; Windows
+  (define-key ergoemacs-light-mode-map (kbd "M-4") 'split-window-below)
+  (define-key ergoemacs-light-mode-map (kbd "M-$") 'split-window-right)
+  (define-key ergoemacs-light-mode-map (kbd "M-3") 'delete-other-windows)
+  (define-key ergoemacs-light-mode-map (kbd "M-2") 'delete-window)
+  (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
+
+  ;; Find files
+  (define-key ergoemacs-light-mode-map (kbd "M-ö") 'ivy-switch-buffer)
+  (define-key ergoemacs-light-mode-map (kbd "M-Ö") 'ibuffer)
+  (define-key ergoemacs-light-mode-map (kbd "C-ö") 'counsel-bookmark)
+  (define-key ergoemacs-light-mode-map (kbd "C-Ö") 'bookmark-bmenu-list)
+
+  ;; Find symbol
+  (define-key ergoemacs-light-mode-map (kbd "C-S-o") 'imenu)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-f") 'grep-find)
+
+  (define-key ergoemacs-light-mode-map (kbd "M-a") 'counsel-M-x)
+
+  ;; Multiple cursors
+  (global-unset-key (kbd "M-<down-mouse-1>"))
+  (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
+  (defun mark-and-multiple-select (arg)
+    (interactive "p")
+    (if (region-active-p)
+	(mc/mark-next-like-this arg))
+    (er/mark-symbol))
+  (global-set-key (kbd "C-d") 'mark-and-multiple-select)
+  (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-S-l") (lambda()
+				  (interactive)
+				  (er/mark-symbol)
+				  (mc/mark-all-like-this)))
+
+  (global-set-key (kbd "<f8>") 'subword-mode)
+  (global-set-key (kbd "<f10>") 'visual-line-mode)
+  (global-set-key (kbd "M-%") 'vr/query-replace)
+  (global-set-key (kbd "M-<up>") 'drag-stuff-up)
+  (global-set-key (kbd "M-<down>") 'drag-stuff-down)
+  (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
+  (global-set-key (kbd "M-S-<left>") 'drag-stuff-left)
+  (global-set-key (kbd "C-SPC") 'company-complete)
+
+  (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c t") 'org-edit-src-exit)
+
+  (global-set-key (kbd "M-<f12>") 'xref-peek-definitions)
+  (global-set-key (kbd "<f12>") 'raul-find-definitions)
+  (global-set-key (kbd "S-<f12>") 'raul-find-references)
+  (global-set-key (kbd "M-<left>") 'raul-navigate-backward)
+  (global-set-key (kbd "M-<right>") 'raul-navigate-forward)
+
+  (define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
+  (define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
+  (define-key vr/minibuffer-keymap (kbd "M-I") 'previous-history-element)
+  (define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
+  (define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
+  (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element)
+
+  (when (featurep 'company)
+    (define-key company-active-map (kbd "M-K") 'company-select-next)
+    (define-key company-active-map (kbd "M-I") 'company-select-previous)
+    (define-key company-active-map (kbd "C-f") 'company-search-candidates)
+    ;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
+    (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle))
+
+  (when (featurep 'org)
+    (define-key org-mode-map (kbd "C-c t") 'org-edit-special))
+
+  (eval-after-load "emacs-lisp-mode" '(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer))
+  (eval-after-load "python-mode" '(define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python))
+
+  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
+			  'compile))
+  (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
+			    'compile))
+
+  (global-set-key (kbd "C-x g") 'magit-status)
+  (global-set-key (kbd "C-S-p") 'projectile-find-dir)
+  (global-set-key (kbd "C-p") 'projectile-find-file)
+  (global-set-key (kbd "M-P") 'projectile-switch-project)
+  (global-set-key (kbd "C-b") 'sr-speedbar-toggle)
+  (global-set-key (kbd "<f11>") (lambda()
+				  (interactive)
+				  (if (bound-and-true-p aggressive-indent-mode)
+				      (progn
+					(aggressive-indent-mode -1)
+					(message "Aggressive indent mode deactivated"))
+				    (progn
+				      (aggressive-indent-mode 1)
+				      (message "Aggressive indent mode activated")))))
+  (global-set-key [remap goto-line] 'goto-line-preview)
+  (global-set-key (kbd "<f9>") 'aggressive-fill-paragraph-mode)
+  (global-set-key (kbd "C-t") 'elscreen-clone)
+  (global-set-key (kbd "<C-next>") 'elscreen-next)
+  (global-set-key (kbd "<C-prior>") 'elscreen-previous)
+  (global-set-key (kbd "C-w") 'elscreen-kill)
+
+  (define-minor-mode ergoemacs-light-mode
+    "Minor mode using a minimal subset of ErgoEmacs keybindings"
+    :init-value t
+    :lighter ergoemacs-light-mode " elm"
+    :keymap ergoemacs-light-mode-map)
+
+  (ergoemacs-light-mode t)
+#+END_SRC
 * UI configuration
 
 #+BEGIN_SRC emacs-lisp
@@ -338,72 +630,6 @@
 
   ;; (load-theme 'leuven t)
 #+END_SRC
-
-* Text correction and completion
-#+BEGIN_SRC emacs-lisp
-  (dolist (hook '(text-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode 1))))
-
-  (setq ispell-extra-args '("--sug-mode=ultra"))
-
-  (use-package flycheck
-    :config (global-flycheck-mode))
-
-  ;; Enable text completion
-  (use-package company
-	:init
-	(add-hook 'after-init-hook 'global-company-mode)
-	(setq-default company-dabbrev-other-buffers 'all
-				  company-tooltip-align-annotations t))
-
-  (use-package company-quickhelp
-	:init
-	(add-hook 'after-init-hook 'company-quickhelp-mode))
-#+END_SRC
-* Major modes
-** Fundamental mode
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'fundamental-mode (lambda() (electric-indent-mode -1)))
-#+END_SRC
-
-** Org mode
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-	:config
-	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-  ;; Do not show bold, italic and underlined markers
-  (setq org-hide-emphasis-markers t)
-
-  (custom-set-variables
-   '(org-directory "~/Sync/orgfiles")
-   '(org-default-notes-file (concat org-directory "/notes.org")))
-
-  (setq org-agenda-files (list org-default-notes-file))
-
-  (setq
-   org-capture-templates
-   '(
-	 ("t" "To Do Item" entry (file+headline "" "To Do and Notes") "* TODO %?\n%u" :prepend t)
-	 ("n" "Note" entry (file+headline "" "Notes") "* %u %? " :prepend t)
-	 ("p" "Personal development" entry (file+headline "" "Personal development") "* TODO %? \n%T" :prepend t)
-	 ("s" "Team forming" entry (file+headline "" "Team forming") "* TODO %? \n%T" :prepend t)
-	 ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
-	 ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
-	 ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
-#+END_SRC
-
-* Projects
-#+BEGIN_SRC emacs-lisp
-  ;; Keybinding for using MaGit
-  (use-package magit)
-
-  ;; Projectile to access project files
-  (use-package projectile
-	:config
-	(projectile-mode +1))
-#+END_SRC
-
 * Programming
 
 ** Programming languages
@@ -629,247 +855,12 @@
   ;; Save the bookmark file every time the bookmark list changes
   (setq bookmark-save-flag 1)
 #+END_SRC
-
 * Analyze Emacs usage
 #+BEGIN_SRC emacs-lisp
   (use-package keyfreq
 	:init
 	(keyfreq-mode 1)
 	(keyfreq-autosave-mode 1))
-#+END_SRC
-
-* Keybindings
-#+BEGIN_SRC emacs-lisp
-  (defvar ergoemacs-light-mode-map (make-sparse-keymap))
-
-  (global-set-key (kbd "C-M-q") 'insert-commercial-at)
-  (global-set-key (kbd "C-M-+") 'insert-tilde)
-  (global-set-key (kbd "C-M-7") 'insert-left-curly-brace)
-  (global-set-key (kbd "C-M-8") 'insert-left-squared-bracket)
-  (global-set-key (kbd "C-M-9") 'insert-right-squared-bracket)
-  (global-set-key (kbd "C-M-0") 'insert-right-curly-brace)
-  (global-set-key (kbd "C-M-ß") 'insert-backslash)
-  (global-set-key (kbd "C-M-<") 'insert-pipe)
-
-  ;; Movement command
-  (define-key ergoemacs-light-mode-map (kbd "M-o") 'forward-word)
-  (define-key ergoemacs-light-mode-map (kbd "M-u") 'backward-word)
-  (define-key ergoemacs-light-mode-map (kbd "M-l") 'forward-char)
-  (define-key ergoemacs-light-mode-map (kbd "M-j") 'backward-char)
-  (define-key ergoemacs-light-mode-map (kbd "M-i") 'previous-line)
-  (define-key ergoemacs-light-mode-map (kbd "M-k") 'next-line)
-
-  ;; Adapt movement commands to use syntax information
-  (define-key ergoemacs-light-mode-map (kbd "M-O") 'forward-sexp)
-  (define-key ergoemacs-light-mode-map (kbd "M-U") 'backward-sexp)
-
-  ;; Additional movement commands
-  (define-key ergoemacs-light-mode-map (kbd "M-I") 'scroll-down)
-  (define-key ergoemacs-light-mode-map (kbd "M-K") 'scroll-up)
-  (define-key ergoemacs-light-mode-map (kbd "M-H") 'end-of-line)
-  (define-key ergoemacs-light-mode-map (kbd "M-h") 'crux-move-beginning-of-line)
-  (define-key ergoemacs-light-mode-map (kbd "M-n") 'beginning-of-buffer)
-  (define-key ergoemacs-light-mode-map (kbd "M-N") 'end-of-buffer)
-
-  ;; Editing commands
-  (define-key ergoemacs-light-mode-map (kbd "M-e") 'backward-kill-word)
-  (define-key ergoemacs-light-mode-map (kbd "M-r") 'kill-word)
-  (define-key ergoemacs-light-mode-map (kbd "M-f") 'delete-char)
-  (define-key ergoemacs-light-mode-map (kbd "M-d") 'delete-backward-char)
-  (define-key ergoemacs-light-mode-map (kbd "M-g") 'kill-visual-line)
-  (define-key ergoemacs-light-mode-map (kbd "M-G") (lambda ()
-						     (interactive)
-						     (kill-visual-line -1)))
-  (define-key ergoemacs-light-mode-map (kbd "M-ä") 'comment-dwim)
-  (define-key ergoemacs-light-mode-map (kbd "M-w") 'just-one-space)
-  (define-key ergoemacs-light-mode-map (kbd "M--") 'string-inflection-all-cycle)
-  (define-key ergoemacs-light-mode-map (kbd "M-_") 'string-inflection-all-cycle)
-  (define-key ergoemacs-light-mode-map (kbd "<C-return>") 'crux-smart-open-line)
-  (define-key ergoemacs-light-mode-map (kbd "<C-S-return>") 'crux-smart-open-line-above)
-  (define-key ergoemacs-light-mode-map (kbd "<M-return>") 'crux-smart-open-line)
-  (define-key ergoemacs-light-mode-map (kbd "<M-S-return>") 'crux-smart-open-line-above)
-  (define-key ergoemacs-light-mode-map (kbd "C-M-f") 'crux-top-join-line)
-  (define-key ergoemacs-light-mode-map (kbd "M-5") 'vr/query-replace)
-  (define-key ergoemacs-light-mode-map (kbd "M-%") 'dired-do-query-replace-regexp)
-
-  ;; Buffer navigation
-  (define-key ergoemacs-light-mode-map (kbd "C-f") 'swiper)
-  (define-key ergoemacs-light-mode-map (kbd "C-l") 'goto-line-preview)
-  (define-key ergoemacs-light-mode-map (kbd "M-p") 'recenter-top-bottom)
-  (defun xah-new-empty-buffer ()
-    "Create a new empty buffer.
-       New buffer will be named untitled or untitled<2>,
-       untitled<3>, etc.
-       URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
-       Version 2016-12-27"
-    (interactive)
-    (let (($buf (generate-new-buffer "untitled")))
-      (switch-to-buffer $buf)
-      (funcall initial-major-mode)
-      (setq buffer-offer-save t)))
-  (define-key ergoemacs-light-mode-map (kbd "C-n") 'xah-new-empty-buffer)
-  (define-key ergoemacs-light-mode-map (kbd "C-c o") 'crux-open-with)
-
-  ;; Control UI
-  (define-key ergoemacs-light-mode-map (kbd "C--") 'text-scale-adjust)
-  (define-key ergoemacs-light-mode-map (kbd "C-+") 'text-scale-adjust)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-n") 'make-frame)
-
-  ;; Copy, paste
-  (defun ergoemacs-light-kill-line-or-region ()
-    (interactive)
-    (if (region-active-p)
-	(kill-region (mark) (point))
-      (progn
-	(beginning-of-line)
-	(kill-visual-line 1))))
-
-  (define-key ergoemacs-light-mode-map (kbd "M-x") 'ergoemacs-light-kill-line-or-region)
-  (define-key ergoemacs-light-mode-map (kbd "M-c") (lambda ()
-						     (interactive)
-						     (ergoemacs-light-kill-line-or-region)
-						     (yank)))
-  (define-key ergoemacs-light-mode-map (kbd "C-M-c") (lambda ()
-						       (interactive)
-						       (if (region-active-p)
-							   (kill-ring-save (mark) (point))
-							 (save-excursion
-							   (end-of-line)
-							   (push-mark)
-							   (beginning-of-line)
-							   (kill-ring-save (point) (mark))))))
-  (define-key ergoemacs-light-mode-map (kbd "M-v") 'yank)
-  (define-key ergoemacs-light-mode-map (kbd "M-V") 'browse-kill-ring)
-  (define-key ergoemacs-light-mode-map (kbd "M-SPC") 'set-mark-command)
-  (define-key ergoemacs-light-mode-map (kbd "M-8") (lambda ()
-						     (interactive)
-						     (if (region-active-p)
-							 (er/expand-region 1)
-						       (er/mark-symbol))))
-
-  ;; Undo commands
-  ;; Ensure that we are using undo-tree-undo otherwise we can't redo
-  (global-set-key [remap undo] 'undo-tree-undo)
-  (define-key ergoemacs-light-mode-map (kbd "C-z") 'undo-tree-undo)
-  (define-key ergoemacs-light-mode-map (kbd "C-y") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-z") 'undo-tree-redo)
-
-  (define-key ergoemacs-light-mode-map (kbd "M-y") 'undo-tree-undo)
-  (define-key ergoemacs-light-mode-map (kbd "M-Y") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-M-y") 'undo-tree-visualize)
-
-  ;; File open, save
-  (define-key ergoemacs-light-mode-map (kbd "C-s") 'save-buffer)
-  (define-key ergoemacs-light-mode-map (kbd "C-o") 'counsel-find-file)
-
-  ;; Windows
-  (define-key ergoemacs-light-mode-map (kbd "M-4") 'split-window-below)
-  (define-key ergoemacs-light-mode-map (kbd "M-$") 'split-window-right)
-  (define-key ergoemacs-light-mode-map (kbd "M-3") 'delete-other-windows)
-  (define-key ergoemacs-light-mode-map (kbd "M-2") 'delete-window)
-  (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
-
-  ;; Find files
-  (define-key ergoemacs-light-mode-map (kbd "M-ö") 'ivy-switch-buffer)
-  (define-key ergoemacs-light-mode-map (kbd "M-Ö") 'ibuffer)
-  (define-key ergoemacs-light-mode-map (kbd "C-ö") 'counsel-bookmark)
-  (define-key ergoemacs-light-mode-map (kbd "C-Ö") 'bookmark-bmenu-list)
-
-  ;; Find symbol
-  (define-key ergoemacs-light-mode-map (kbd "C-S-o") 'imenu)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-f") 'grep-find)
-
-  (define-key ergoemacs-light-mode-map (kbd "M-a") 'counsel-M-x)
-
-  ;; Multiple cursors
-  (global-unset-key (kbd "M-<down-mouse-1>"))
-  (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
-  (defun mark-and-multiple-select (arg)
-    (interactive "p")
-    (if (region-active-p)
-	(mc/mark-next-like-this arg))
-    (er/mark-symbol))
-  (global-set-key (kbd "C-d") 'mark-and-multiple-select)
-  (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-S-l") (lambda()
-				  (interactive)
-				  (er/mark-symbol)
-				  (mc/mark-all-like-this)))
-
-  (global-set-key (kbd "<f8>") 'subword-mode)
-  (global-set-key (kbd "<f10>") 'visual-line-mode)
-  (global-set-key (kbd "M-%") 'vr/query-replace)
-  (global-set-key (kbd "M-<up>") 'drag-stuff-up)
-  (global-set-key (kbd "M-<down>") 'drag-stuff-down)
-  (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
-  (global-set-key (kbd "M-S-<left>") 'drag-stuff-left)
-  (global-set-key (kbd "C-SPC") 'company-complete)
-
-  (global-set-key (kbd "C-c c") 'org-capture)
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  (global-set-key (kbd "C-c t") 'org-edit-src-exit)
-
-  (global-set-key (kbd "M-<f12>") 'xref-peek-definitions)
-  (global-set-key (kbd "<f12>") 'raul-find-definitions)
-  (global-set-key (kbd "S-<f12>") 'raul-find-references)
-  (global-set-key (kbd "M-<left>") 'raul-navigate-backward)
-  (global-set-key (kbd "M-<right>") 'raul-navigate-forward)
-
-  (define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
-  (define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
-  (define-key vr/minibuffer-keymap (kbd "M-I") 'previous-history-element)
-  (define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
-  (define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
-  (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element)
-
-  (when (featurep 'company)
-    (define-key company-active-map (kbd "M-K") 'company-select-next)
-    (define-key company-active-map (kbd "M-I") 'company-select-previous)
-    (define-key company-active-map (kbd "C-f") 'company-search-candidates)
-    ;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
-    (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle))
-
-  (when (featurep 'org)
-    (define-key org-mode-map (kbd "C-c t") 'org-edit-special))
-
-  (eval-after-load "emacs-lisp-mode" '(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer))
-  (eval-after-load "python-mode" '(define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python))
-
-  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
-			  'compile))
-  (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
-			    'compile))
-
-  (global-set-key (kbd "C-x g") 'magit-status)
-  (global-set-key (kbd "C-S-p") 'projectile-find-dir)
-  (global-set-key (kbd "C-p") 'projectile-find-file)
-  (global-set-key (kbd "M-P") 'projectile-switch-project)
-  (global-set-key (kbd "C-b") 'sr-speedbar-toggle)
-  (global-set-key (kbd "<f11>") (lambda()
-				  (interactive)
-				  (if (bound-and-true-p aggressive-indent-mode)
-				      (progn
-					(aggressive-indent-mode -1)
-					(message "Aggressive indent mode deactivated"))
-				    (progn
-				      (aggressive-indent-mode 1)
-				      (message "Aggressive indent mode activated")))))
-  (global-set-key [remap goto-line] 'goto-line-preview)
-  (global-set-key (kbd "<f9>") 'aggressive-fill-paragraph-mode)
-  (global-set-key (kbd "C-t") 'elscreen-clone)
-  (global-set-key (kbd "<C-next>") 'elscreen-next)
-  (global-set-key (kbd "<C-prior>") 'elscreen-previous)
-  (global-set-key (kbd "C-w") 'elscreen-kill)
-
-  (customize-set-variable 'mouse-drag-and-drop-region t)
-
-  (define-minor-mode ergoemacs-light-mode
-    "Minor mode using a minimal subset of ErgoEmacs keybindings"
-    :init-value t
-    :lighter ergoemacs-light-mode " elm"
-    :keymap ergoemacs-light-mode-map)
-
-  (ergoemacs-light-mode t)
 #+END_SRC
 
 * Hide minor-modes from mode-line
