@@ -202,7 +202,7 @@
 
   (use-package aggressive-indent
     :init
-    (setq-default 'fill-column 100)
+    (setq-default fill-column 100)
     :config
     (global-aggressive-indent-mode 1)
     (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
