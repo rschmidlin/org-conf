@@ -119,74 +119,6 @@
 	:init
 	(add-hook 'after-init-hook 'company-quickhelp-mode))
 #+END_SRC
-
-* Buffer view and editing behavior
-#+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
-  (global-subword-mode t)
-
-  ;; Word wrap without fringe (the arrows) and without changing the file
-  (global-visual-line-mode 1)
-
-  (use-package aggressive-indent
-    :config
-    (global-aggressive-indent-mode 1)
-    (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-    (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode))
-
-  ;; Show trailing white spaces
-  (setq-default show-trailing-whitespace t)
-
-  ;; Remove useless whitespace before saving a file
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
-
-  ;; Show visual markings about indentation
-  (use-package highlight-indent-guides
-    :init
-    (setq highlight-indent-guides-method 'character)
-    :config
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-
-  ;; Mark horizontal line where cursor is
-  (global-hl-line-mode 1)
-  (set-face-background hl-line-face "grey95")
-
-  ;; Mark all words under cursor in current viewport of buffer
-  (use-package symbol-overlay
-    :config
-    (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-      (add-hook hook 'symbol-overlay-mode)))
-
-  (use-package goto-line-preview)
-
-  (use-package smartparens
-    :config
-    ;; Fix single-quotes being automatically ended on lisp
-    (require 'smartparens-config)
-    (smartparens-global-mode))
-#+END_SRC
-** Auto set fill-paragraph
-#+BEGIN_SRC emacs-lisp
-  (defvar fill-column-default 100
-	"Set a default value for fill-column")
-
-  (defvar newly-read-buffer nil
-	"Variable setting if buffer has been read already")
-  (make-variable-buffer-local 'newly-read-buffer)
-
-  (defun set-default-fill-column-on-newly-read-buffer ()
-	"Set fill level to some default"
-	(unless newly-read-buffer
-	  (set-fill-column fill-column-default))
-	(setq newly-read-buffer t))
-
-  (add-hook 'find-file-hook 'set-default-fill-column-on-newly-read-buffer)
-  (use-package aggressive-fill-paragraph
-	:config
-	(afp-setup-recommended-hooks)
-	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
-#+END_SRC
 * Editing utilities
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
@@ -204,6 +136,8 @@
   (use-package expand-region
     :config
     (require 'expand-region))
+
+  (use-package goto-line-preview)
 
   (use-package drag-stuff
     :init
@@ -260,6 +194,68 @@
 	 ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
 	 ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
 	 ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
+#+END_SRC
+* Text format - enforce and visualize
+#+BEGIN_SRC emacs-lisp
+  ;; Word wrap without fringe (the arrows) and without changing the file
+  (global-visual-line-mode 1)
+
+  (use-package aggressive-indent
+    :config
+    (global-aggressive-indent-mode 1)
+    (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+    (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode))
+
+  ;; Show trailing white spaces
+  (setq-default show-trailing-whitespace t)
+
+  ;; Remove useless whitespace before saving a file
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
+
+  ;; Show visual markings about indentation
+  (use-package highlight-indent-guides
+    :init
+    (setq highlight-indent-guides-method 'character)
+    :config
+    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+
+  ;; Mark horizontal line where cursor is
+  (global-hl-line-mode 1)
+  (set-face-background hl-line-face "grey95")
+
+  ;; Mark all words under cursor in current viewport of buffer
+  (use-package symbol-overlay
+    :config
+    (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+      (add-hook hook 'symbol-overlay-mode)))
+
+  (use-package smartparens
+    :config
+    ;; Fix single-quotes being automatically ended on lisp
+    (require 'smartparens-config)
+    (smartparens-global-mode))
+#+END_SRC
+** Auto set fill-paragraph
+#+BEGIN_SRC emacs-lisp
+  (defvar fill-column-default 100
+	"Set a default value for fill-column")
+
+  (defvar newly-read-buffer nil
+	"Variable setting if buffer has been read already")
+  (make-variable-buffer-local 'newly-read-buffer)
+
+  (defun set-default-fill-column-on-newly-read-buffer ()
+	"Set fill level to some default"
+	(unless newly-read-buffer
+	  (set-fill-column fill-column-default))
+	(setq newly-read-buffer t))
+
+  (add-hook 'find-file-hook 'set-default-fill-column-on-newly-read-buffer)
+  (use-package aggressive-fill-paragraph
+	:config
+	(afp-setup-recommended-hooks)
+	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
 #+END_SRC
 * Input
 ** Override AltGr
@@ -534,6 +530,11 @@
     :keymap ergoemacs-light-mode-map)
 
   (ergoemacs-light-mode t)
+#+END_SRC
+* Buffer configuration
+#+BEGIN_SRC emacs-lisp
+  (global-auto-revert-mode t)
+  (global-subword-mode t)
 #+END_SRC
 * UI configuration
 
