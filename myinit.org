@@ -353,6 +353,7 @@
   (define-key ergoemacs-light-mode-map (kbd "C-M-f") 'crux-top-join-line)
   (define-key ergoemacs-light-mode-map (kbd "M-5") 'vr/query-replace)
   (define-key ergoemacs-light-mode-map (kbd "M-%") 'dired-do-query-replace-regexp)
+  (define-key ergoemacs-light-mode-map (kbd "C-a") 'mark-whole-buffer)
 
   ;; Buffer navigation
   (define-key ergoemacs-light-mode-map (kbd "C-f") 'swiper)
