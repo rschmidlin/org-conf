@@ -201,6 +201,8 @@
   (global-visual-line-mode 1)
 
   (use-package aggressive-indent
+    :init
+    (setq-default 'fill-column 100)
     :config
     (global-aggressive-indent-mode 1)
     (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
@@ -235,27 +237,6 @@
     ;; Fix single-quotes being automatically ended on lisp
     (require 'smartparens-config)
     (smartparens-global-mode))
-#+END_SRC
-** Auto set fill-paragraph
-#+BEGIN_SRC emacs-lisp
-  (defvar fill-column-default 100
-	"Set a default value for fill-column")
-
-  (defvar newly-read-buffer nil
-	"Variable setting if buffer has been read already")
-  (make-variable-buffer-local 'newly-read-buffer)
-
-  (defun set-default-fill-column-on-newly-read-buffer ()
-	"Set fill level to some default"
-	(unless newly-read-buffer
-	  (set-fill-column fill-column-default))
-	(setq newly-read-buffer t))
-
-  (add-hook 'find-file-hook 'set-default-fill-column-on-newly-read-buffer)
-  (use-package aggressive-fill-paragraph
-	:config
-	(afp-setup-recommended-hooks)
-	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
 #+END_SRC
 * Create AltGr alternatives
 #+BEGIN_SRC emacs-lisp
@@ -539,41 +520,6 @@
 #+BEGIN_SRC emacs-lisp
   (global-auto-revert-mode t)
   (global-subword-mode t)
-#+END_SRC
-* UI configuration
-
-#+BEGIN_SRC emacs-lisp
-  (if (version<= "26.3" emacs-version)
-      (global-display-line-numbers-mode)
-    (global-linum-mode t))
-
-  (setq inhibit-splash-screen t)
-
-  (if (version<= "27.0.50" emacs-version)
-	  (progn
-		(global-tab-line-mode))
-	(use-package elscreen
-	  :config
-	  (elscreen-start)))
-
-  (add-to-list 'default-frame-alist (cons 'width 100))
-  (add-to-list 'default-frame-alist (cons 'height 40))
-
-  ;; (if (version<= "26.3" emacs-version)
-  ;;     (progn
-  ;;       (pixel-scroll-mode)
-  ;;       (setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
-  ;;       (setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
-  ;;       (setq mouse-wheel-scroll-amount '(3)) ; Distance in pixel-resolution to scroll each mouse wheel event.
-  ;;       (setq mouse-wheel-progressive-speed nil) ; Progressive speed is too fast
-  ;;       (setq fast-but-imprecise-scrolling t) ; No (less) lag while scrolling lots.
-  ;;       (setq jit-lock-defer-time 0)) ; Just don't even fontify if we're still catching up on user input.
-  ;;   (use-package sublimity
-  ;;     :init
-  ;;     (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
-  ;;     :config
-  ;;     (sublimity-mode)
-  ;;     (require 'sublimity-scroll)))
 
   ;; Return to previous window configuration with C-<
   (winner-mode 1)
@@ -583,18 +529,6 @@
 	:init
 	(require 'popwin)
 	(popwin-mode 1))
-#+END_SRC
-
-** Better defaults
-
-  Copying better default inputs, disable toolbar, scrollbar, ease yes-or-no questions.
-
-#+BEGIN_SRC emacs-lisp
-  (menu-bar-mode 1)
-  (when (fboundp 'tool-bar-mode)
-	(tool-bar-mode -1))
-  (when (fboundp 'scroll-bar-mode)
-	(scroll-bar-mode -1))
 
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'forward)
@@ -619,6 +553,57 @@
 												 "backups"))))
 
   (fset 'yes-or-no-p 'y-or-n-p)
+
+  (setq-default ediff-ignore-similar-regions t)
+  (setq-default ediff-highlight-all-diffs nil)
+#+END_SRC
+* UI configuration
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-splash-screen t)
+
+  (column-number-mode t)
+
+  (if (version<= "26.3" emacs-version)
+      (global-display-line-numbers-mode)
+    (global-linum-mode t))
+
+  (if (version<= "27.0.50" emacs-version)
+	  (progn
+		(global-tab-line-mode))
+	(use-package elscreen
+	  :config
+	  (elscreen-start)))
+
+  (add-to-list 'default-frame-alist (cons 'width 100))
+  (add-to-list 'default-frame-alist (cons 'height 40))
+
+  ;; (if (version<= "26.3" emacs-version)
+  ;;	 (progn
+  ;;	   (pixel-scroll-mode)
+  ;;	   (setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
+  ;;	   (setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
+  ;;	   (setq mouse-wheel-scroll-amount '(3)) ; Distance in pixel-resolution to scroll each mouse wheel event.
+  ;;	   (setq mouse-wheel-progressive-speed nil) ; Progressive speed is too fast
+  ;;	   (setq fast-but-imprecise-scrolling t) ; No (less) lag while scrolling lots.
+  ;;	   (setq jit-lock-defer-time 0)) ; Just don't even fontify if we're still catching up on user input.
+  ;;   (use-package sublimity
+  ;;	 :init
+  ;;	 (setq scroll-preserve-screen-position t) ;; otherwise scroll gets disturbed by point not moving
+  ;;	 :config
+  ;;	 (sublimity-mode)
+  ;;	 (require 'sublimity-scroll)))
+#+END_SRC
+
+** Better defaults
+
+  Copying better default inputs, disable toolbar, scrollbar, ease yes-or-no questions.
+
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode 1)
+  (when (fboundp 'tool-bar-mode)
+	(tool-bar-mode -1))
+  (when (fboundp 'scroll-bar-mode)
+	(scroll-bar-mode -1))
 #+END_SRC
 
 ** Themes
