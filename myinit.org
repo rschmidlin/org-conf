@@ -103,6 +103,10 @@
   (dolist (hook '(text-mode-hook))
     (add-hook hook (lambda () (flyspell-mode 1))))
 
+  (use-package flyspell-correct-ivy
+    :init
+    (setq flyspell-correct-interface #'flyspell-correct-ivy))
+
   (setq ispell-extra-args '("--sug-mode=ultra"))
 
   (use-package flycheck
@@ -500,6 +504,8 @@
   (global-set-key (kbd "C-p") 'projectile-find-file)
   (global-set-key (kbd "M-P") 'projectile-switch-project)
   (global-set-key (kbd "C-b") 'sr-speedbar-toggle)
+  (define-key ergoemacs-light-mode-map (kbd "C-;") 'flyspell-correct-wrapper)
+
   (global-set-key (kbd "<f11>") (lambda()
 				  (interactive)
 				  (if (bound-and-true-p aggressive-indent-mode)
