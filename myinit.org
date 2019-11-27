@@ -89,14 +89,21 @@
       (insert-and-select symbol)))
 
   (defun insert-and-select (text)
-  "Insert TEXT and selects it."
-  (when text
-    (let ((begin (point)))
-      (insert text)
-      (set-mark begin)
-      (setq deactivate-mark nil))))
+    "Insert TEXT and selects it."
+    (when text
+      (let ((begin (point)))
+	(insert text)
+	(set-mark begin)
+	(setq deactivate-mark nil))))
 
   (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
+
+  (defun isearch-hook ()
+    (setq symbol (thing-at-point 'symbol t))
+    (isearch-edit-string)
+    (insert-and-select symbol))
+
+  (add-hook 'isearch-pre-command-hook 'isearch-hook)
 #+END_SRC
 * Text correction and completion
 #+BEGIN_SRC emacs-lisp
@@ -293,6 +300,9 @@
 * Keybindings
 #+BEGIN_SRC emacs-lisp
   (defvar ergoemacs-light-mode-map (make-sparse-keymap))
+
+  (add-to-list 'load-path "~/.emacs.d/emacs-dokey")
+  (require 'dokey)
 
   (global-set-key (kbd "C-M-q") 'insert-commercial-at)
   (global-set-key (kbd "C-M-+") 'insert-tilde)
