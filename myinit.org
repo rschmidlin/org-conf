@@ -69,7 +69,7 @@
   (delete-selection-mode 1)
 
   (defvar auto-insert-search-or-replace-commands
-    '(isearch-forward query-replace query-replace-regexp swiper grep-find)
+    '(query-replace query-replace-regexp swiper grep-find)
     "Commands to automatically insert selected \"symbol-at-point\".")
 
   (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
@@ -335,7 +335,7 @@
   (define-key ergoemacs-light-mode-map (kbd "M-ä") (lambda (arg)
 						     (interactive "p")
 						     (if (region-active-p)
-							 (comment-dwim arg)
+							 (comment-dwim nil)
 						       (comment-line arg))))
   (define-key ergoemacs-light-mode-map (kbd "M-w") 'just-one-space)
   (define-key ergoemacs-light-mode-map (kbd "M--") 'string-inflection-all-cycle)
@@ -352,13 +352,18 @@
 							      (if (eq major-mode 'org-mode)
 								  (org-insert-todo-heading arg)
 								(crux-smart-open-line-above))))
-  (define-key ergoemacs-light-mode-map (kbd "C-M-f") 'crux-top-join-line)
+  (define-key ergoemacs-light-mode-map (kbd "M-F") 'crux-top-join-line)
   (define-key ergoemacs-light-mode-map (kbd "M-5") 'vr/query-replace)
   (define-key ergoemacs-light-mode-map (kbd "M-%") 'dired-do-query-replace-regexp)
   (define-key ergoemacs-light-mode-map (kbd "C-a") 'mark-whole-buffer)
 
   ;; Buffer navigation
-  (define-key ergoemacs-light-mode-map (kbd "C-f") 'swiper)
+  (define-key ergoemacs-light-mode-map (kbd "C-M-f") 'swiper)
+  (define-key ergoemacs-light-mode-map (kbd "C-f") 'isearch-forward)
+  (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
+  (define-key isearch-mode-map (kbd "C-F") 'isearch-repeat-backward)
+  (define-key isearch-mode-map (kbd "<f3>") 'isearch-repeat-forward)
+  (define-key isearch-mode-map (kbd "S-<f3>") 'isearch-repeat-backward)
   (define-key ergoemacs-light-mode-map (kbd "C-l") 'goto-line-preview)
   (define-key ergoemacs-light-mode-map (kbd "M-p") 'recenter-top-bottom)
   (defun xah-new-empty-buffer ()
@@ -379,6 +384,7 @@
   (define-key ergoemacs-light-mode-map (kbd "C--") 'text-scale-adjust)
   (define-key ergoemacs-light-mode-map (kbd "C-+") 'text-scale-adjust)
   (define-key ergoemacs-light-mode-map (kbd "C-S-n") 'make-frame)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-w") 'delete-frame)
 
   ;; Copy, paste
   (defun ergoemacs-light-kill-line-or-region ()
@@ -394,15 +400,15 @@
 						     (interactive)
 						     (ergoemacs-light-kill-line-or-region)
 						     (yank)))
-  (define-key ergoemacs-light-mode-map (kbd "C-M-c") (lambda ()
-						       (interactive)
-						       (if (region-active-p)
-							   (kill-ring-save (mark) (point))
-							 (save-excursion
-							   (end-of-line)
-							   (push-mark)
-							   (beginning-of-line)
-							   (kill-ring-save (point) (mark))))))
+  (define-key ergoemacs-light-mode-map (kbd "M-C") (lambda ()
+						     (interactive)
+						     (if (region-active-p)
+							 (kill-ring-save (mark) (point))
+						       (save-excursion
+							 (end-of-line)
+							 (push-mark)
+							 (beginning-of-line)
+							 (kill-ring-save (point) (mark))))))
   (define-key ergoemacs-light-mode-map (kbd "M-v") 'yank)
   (define-key ergoemacs-light-mode-map (kbd "M-V") 'browse-kill-ring)
   (define-key ergoemacs-light-mode-map (kbd "M-SPC") 'set-mark-command)
@@ -421,7 +427,7 @@
 
   (define-key ergoemacs-light-mode-map (kbd "M-y") 'undo-tree-undo)
   (define-key ergoemacs-light-mode-map (kbd "M-Y") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-M-y") 'undo-tree-visualize)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-y") 'undo-tree-visualize)
 
   ;; File open, save
   (define-key ergoemacs-light-mode-map (kbd "C-s") 'save-buffer)
