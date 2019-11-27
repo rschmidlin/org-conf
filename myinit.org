@@ -178,6 +178,12 @@
   ;; Do not show bold, italic and underlined markers
   (setq org-hide-emphasis-markers t)
 
+  (use-package htmlize)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t)))
+
   (custom-set-variables
    '(org-directory "~/Sync/orgfiles")
    '(org-default-notes-file (concat org-directory "/notes.org")))
