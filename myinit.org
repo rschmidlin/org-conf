@@ -664,8 +664,32 @@
   (use-package cmake-mode)
 
   (use-package cmake-font-lock
-	:init
-	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
+    :init
+    (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
+
+  (use-package rtags)
+
+  (use-package cmake-ide
+    :after rtags
+    :config
+    (require 'rtags)
+    (setq cmake-ide-flags-c '(/usr/include/c++/9
+			      /usr/include/x86_64-linux-gnu/c++/9
+			      /usr/include/c++/9/backward
+			      /usr/lib/gcc/x86_64-linux-gnu/9/include
+			      /usr/local/include
+			      /usr/lib/gcc/x86_64-linux-gnu/9/include-fixed
+			      /usr/include/x86_64-linux-gnu
+			      /usr/include)
+	  cmake-ide-flags-c++ '(/usr/include/c++/9
+				/usr/include/x86_64-linux-gnu/c++/9
+				/usr/include/c++/9/backward
+				/usr/lib/gcc/x86_64-linux-gnu/9/include
+				/usr/local/include
+				/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed
+				/usr/include/x86_64-linux-gnu
+				/usr/include))
+    (cmake-ide-setup))
 #+END_SRC
 
 *** Python mode
@@ -748,36 +772,44 @@
 * Indexer build functions
 #+BEGIN_SRC emacs-lisp
   (defun raul-find-definitions ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (anaconda-mode-find-definitions))
-     ((eq major-mode 'c++-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
-     ((eq major-mode 'c-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
-     (t (xref-find-definitions (xref--read-identifier "Find definitions of: ")))))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (anaconda-mode-find-definitions))
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-find-symbol-at-point)
+								  (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
+	 ((eq major-mode 'c-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
+	 (t (xref-find-definitions (xref--read-identifier "Find definitions of: ")))))
 
   (defun raul-find-references ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (anaconda-mode-find-references))
-     ((eq major-mode 'c++-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
-     ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
-     (t (xref-find-references (xref--read-identifier "Find references of: ")))))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (anaconda-mode-find-references))
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-find-references-at-point)
+								  (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg))))
+	 ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
+	 (t (xref-find-references (xref--read-identifier "Find references of: ")))))
 
   (defun raul-navigate-backward ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (xref-pop-marker-stack))
-     ((eq major-mode 'c++-mode) (ggtags-prev-mark))
-     ((eq major-mode 'c-mode) (ggtags-prev-mark))
-     (t (xref-pop-marker-stack))))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (xref-pop-marker-stack))
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-location-stack-back)
+								  (ggtags-prev-mark)))
+	 ((eq major-mode 'c-mode) (ggtags-prev-mark))
+	 (t (xref-pop-marker-stack))))
 
   (defun raul-navigate-forward ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) nil)
-     ((eq major-mode 'c++-mode) (ggtags-next-mark))
-     ((eq major-mode 'c-mode) (ggtags-next-mark))
-     (t nil)))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) nil)
+	 ((eq major-mode 'c++-mode) (if (not (eq system-type 'windows-nt))
+									(rtags-location-stack-front)
+								  (ggtags-next-mark)))
+	 ((eq major-mode 'c-mode) (ggtags-next-mark))
+	 (t nil)))
 
   (use-package ggtags
 	:config
