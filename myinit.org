@@ -670,45 +670,31 @@
 
 *** Python mode
 #+BEGIN_SRC emacs-lisp
-  (use-package anaconda-mode
-	:config
-	(add-hook 'python-mode-hook 'anaconda-mode)
-	(add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+  (use-package company-jedi
+    :init
+    (add-hook 'python-mode-hook (lambda()
+				  (add-to-list 'company-backends 'company-jedi)
+				  (jedi:setup))))
 
   (defun raul-send-buffer-to-python ()
-	"Send complete buffer to Python"
-	(interactive)
-	(python-shell-send-buffer t))
+    "Send complete buffer to Python"
+    (interactive)
+    (python-shell-send-buffer t))
 
   (defun python-send-buffer-with-my-args (args)
-	(interactive "sPython arguments: ")
-	(let ((source-buffer (current-buffer)))
-	  (with-temp-buffer
-		(insert "import sys; sys.argv = '''" args "'''.split()\n")
-		(insert-buffer-substring source-buffer)
-		(raul-send-buffer-to-python))))
-
-  (use-package company-anaconda
-	:config
-	(eval-after-load "company"
-	  '(add-to-list 'company-backends 'company-anaconda)))
+    (interactive "sPython arguments: ")
+    (let ((source-buffer (current-buffer)))
+      (with-temp-buffer
+	(insert "import sys; sys.argv = '''" args "'''.split()\n")
+	(insert-buffer-substring source-buffer)
+	(raul-send-buffer-to-python))))
 
   (when (eq system-type 'gnu/linux)
-	(setq python-shell-interpreter "/usr/bin/python3"))
-
-  (when url-proxy-services
-	(make-variable-buffer-local 'url-proxy-services))
-
-  (defun disable-proxy-for-python ()
-	"Disable proxy when in python-mode to allow anaconda-mode to work"
-	(when (and url-proxy-services (eq major-mode 'python-mode))
-	  (setq url-proxy-services nil)))
-
-  (add-hook 'find-file-hook 'disable-proxy-for-python)
+    (setq python-shell-interpreter "/usr/bin/python3"))
 
   (if (eq system-type 'gnu/linux)
-	  (setq python-shell-interpreter "ipython3")
-	(setq python-shell-interpreter "ipython"))
+      (setq python-shell-interpreter "ipython3")
+    (setq python-shell-interpreter "ipython"))
 
   (setq python-shell-interpreter-args "--simple-prompt -i")
 #+END_SRC
@@ -750,7 +736,7 @@
   (defun raul-find-definitions ()
     (interactive)
     (cond
-     ((eq major-mode 'python-mode) (anaconda-mode-find-definitions))
+     ((eq major-mode 'python-mode) (jedi:goto-definition))
      ((eq major-mode 'c++-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
      ((eq major-mode 'c-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
      (t (xref-find-definitions (xref--read-identifier "Find definitions of: ")))))
@@ -758,7 +744,7 @@
   (defun raul-find-references ()
     (interactive)
     (cond
-     ((eq major-mode 'python-mode) (anaconda-mode-find-references))
+     ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
      ((eq major-mode 'c++-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
      ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
      (t (xref-find-references (xref--read-identifier "Find references of: ")))))
@@ -766,7 +752,7 @@
   (defun raul-navigate-backward ()
     (interactive)
     (cond
-     ((eq major-mode 'python-mode) (xref-pop-marker-stack))
+     ((eq major-mode 'python-mode) (jedi:goto-definition-pop-marker))
      ((eq major-mode 'c++-mode) (ggtags-prev-mark))
      ((eq major-mode 'c-mode) (ggtags-prev-mark))
      (t (xref-pop-marker-stack))))
