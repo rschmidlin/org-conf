@@ -760,17 +760,17 @@
   (defun raul-navigate-forward ()
     (interactive)
     (cond
-     ((eq major-mode 'python-mode) nil)
+     ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
      ((eq major-mode 'c++-mode) (ggtags-next-mark))
      ((eq major-mode 'c-mode) (ggtags-next-mark))
      (t nil)))
 
   (use-package ggtags
-	:config
-	(add-hook 'c-mode-common-hook
-			  (lambda ()
-				(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-				  (ggtags-mode 1)))))
+    :config
+    (add-hook 'c-mode-common-hook
+	      (lambda ()
+		(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+		  (ggtags-mode 1)))))
 #+END_SRC
 
 ** Building tag files
