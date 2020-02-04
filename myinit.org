@@ -305,14 +305,14 @@
 #+BEGIN_SRC emacs-lisp
   (defvar ergoemacs-light-mode-map (make-sparse-keymap))
 
-  (global-set-key (kbd "C-M-q") 'insert-commercial-at)
-  (global-set-key (kbd "C-M-+") 'insert-tilde)
-  (global-set-key (kbd "C-M-7") 'insert-left-curly-brace)
-  (global-set-key (kbd "C-M-8") 'insert-left-squared-bracket)
-  (global-set-key (kbd "C-M-9") 'insert-right-squared-bracket)
-  (global-set-key (kbd "C-M-0") 'insert-right-curly-brace)
-  (global-set-key (kbd "C-M-ß") 'insert-backslash)
-  (global-set-key (kbd "C-M-<") 'insert-pipe)
+  ;; (global-set-key (kbd "C-M-q") 'insert-commercial-at)
+  ;; (global-set-key (kbd "C-M-+") 'insert-tilde)
+  ;; (global-set-key (kbd "C-M-7") 'insert-left-curly-brace)
+  ;; (global-set-key (kbd "C-M-8") 'insert-left-squared-bracket)
+  ;; (global-set-key (kbd "C-M-9") 'insert-right-squared-bracket)
+  ;; (global-set-key (kbd "C-M-0") 'insert-right-curly-brace)
+  ;; (global-set-key (kbd "C-M-ß") 'insert-backslash)
+  ;; (global-set-key (kbd "C-M-<") 'insert-pipe)
 
   ;; Movement command
   (define-key ergoemacs-light-mode-map (kbd "M-o") 'forward-word)
@@ -343,14 +343,14 @@
   (define-key ergoemacs-light-mode-map (kbd "M-G") (lambda ()
 						     (interactive)
 						     (kill-visual-line -1)))
-  (define-key ergoemacs-light-mode-map (kbd "M-ä") (lambda (arg)
+  (define-key ergoemacs-light-mode-map (kbd "M-\"") (lambda (arg)
 						     (interactive "p")
 						     (if (region-active-p)
 							 (comment-dwim nil)
 						       (comment-line arg))))
   (define-key ergoemacs-light-mode-map (kbd "M-w") 'just-one-space)
-  (define-key ergoemacs-light-mode-map (kbd "M--") 'string-inflection-all-cycle)
-  (define-key ergoemacs-light-mode-map (kbd "M-_") 'string-inflection-all-cycle)
+  (define-key ergoemacs-light-mode-map (kbd "M-/") 'string-inflection-all-cycle)
+  (define-key ergoemacs-light-mode-map (kbd "M-?") 'string-inflection-all-cycle)
   (define-key ergoemacs-light-mode-map (kbd "<C-return>") 'crux-smart-open-line)
   (define-key ergoemacs-light-mode-map (kbd "<C-S-return>") 'crux-smart-open-line-above)
   (define-key ergoemacs-light-mode-map (kbd "<M-return>") (lambda (arg)
@@ -389,6 +389,7 @@
   ;; Control UI
   (define-key ergoemacs-light-mode-map (kbd "C--") 'text-scale-adjust)
   (define-key ergoemacs-light-mode-map (kbd "C-+") 'text-scale-adjust)
+  (define-key ergoemacs-light-mode-map (kbd "C-=") 'text-scale-adjust)
   (define-key ergoemacs-light-mode-map (kbd "C-S-n") 'make-frame)
   (define-key ergoemacs-light-mode-map (kbd "C-S-w") 'delete-frame)
 
@@ -433,9 +434,9 @@
   (define-key ergoemacs-light-mode-map (kbd "C-y") 'undo-tree-redo)
   (define-key ergoemacs-light-mode-map (kbd "C-S-z") 'undo-tree-redo)
 
-  (define-key ergoemacs-light-mode-map (kbd "M-y") 'undo-tree-undo)
-  (define-key ergoemacs-light-mode-map (kbd "M-Y") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-y") 'undo-tree-visualize)
+  (define-key ergoemacs-light-mode-map (kbd "M-z") 'undo-tree-undo)
+  (define-key ergoemacs-light-mode-map (kbd "M-Z") 'undo-tree-redo)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-Z") 'undo-tree-visualize)
 
   ;; File open, save
   (define-key ergoemacs-light-mode-map (kbd "C-s") 'save-buffer)
@@ -449,10 +450,10 @@
   (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
 
   ;; Find files
-  (define-key ergoemacs-light-mode-map (kbd "M-ö") 'ivy-switch-buffer)
-  (define-key ergoemacs-light-mode-map (kbd "M-Ö") 'ibuffer)
-  (define-key ergoemacs-light-mode-map (kbd "C-ö") 'counsel-bookmark)
-  (define-key ergoemacs-light-mode-map (kbd "C-Ö") 'bookmark-bmenu-list)
+  (define-key ergoemacs-light-mode-map (kbd "M-;") 'ivy-switch-buffer)
+  (define-key ergoemacs-light-mode-map (kbd "M-:") 'ibuffer)
+  (define-key ergoemacs-light-mode-map (kbd "C-;") 'counsel-bookmark)
+  (define-key ergoemacs-light-mode-map (kbd "C-:") 'bookmark-bmenu-list)
 
   ;; Find symbol
   (define-key ergoemacs-light-mode-map (kbd "C-S-o") 'imenu)
