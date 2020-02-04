@@ -15,14 +15,14 @@
 #+BEGIN_SRC emacs-lisp
   ;; Configure Emacs to use find and grep from MSYS
   (when (eq system-type 'windows-nt)
-	(setenv "PATH"
-			(concat
-			 ;; Change this with your path to MSYS bin directory
-			 "C:\\msys64\\usr\\bin;"
-			 "C:\\msys64\\mingw64\\bin;"
-			 "/usr/local/bin:"
-			 (getenv "PATH")))
-	(setq ispell-program-name "C:\\msys64\\usr\\bin\\aspell.exe"))
+    (setenv "PATH"
+	    (concat
+	     ;; Change this with your path to MSYS bin directory
+	     "C:\\msys64\\usr\\bin;"
+	     "C:\\msys64\\mingw64\\bin;"
+	     "/usr/local/bin:"
+	     (getenv "PATH")))
+    (setq ispell-program-name "C:\\msys64\\usr\\bin\\aspell.exe"))
 #+END_SRC
 * Commands completion
 
@@ -531,7 +531,7 @@
   (global-set-key (kbd "C-M-p") 'projectile-invalidate-cache)
   (global-set-key (kbd "C-b") 'sr-speedbar-toggle)
 
-  (define-key ergoemacs-light-mode-map (kbd "C-;") 'flyspell-correct-wrapper)
+  (define-key ergoemacs-light-mode-map (kbd "C-'") 'flyspell-correct-wrapper)
 
   (global-set-key (kbd "<f11>") (lambda()
 				  (interactive)
