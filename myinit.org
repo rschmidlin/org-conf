@@ -22,7 +22,7 @@
 			 "C:\\msys64\\mingw64\\bin;"
 			 "/usr/local/bin:"
 			 (getenv "PATH")))
-	(setq ispell-program-name "C:\\msys64\\mingw64\\bin\\aspell.exe"))
+	(setq ispell-program-name "C:\\msys64\\usr\\bin\\aspell.exe"))
 #+END_SRC
 * Commands completion
 
@@ -129,7 +129,7 @@
     :ensure t
     :pin gnu
     :config
-    (undo-tree-mode))
+    (global-undo-tree-mode 1))
 
   (use-package browse-kill-ring)
 
@@ -217,6 +217,17 @@
     (global-aggressive-indent-mode 1)
     (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
     (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode))
+
+  (defun refill-paragraphs-to-be-one-line ()
+    "fill individual paragraphs with large fill column"
+    (interactive)
+    (let ((fill-column 100000))
+      (fill-individual-paragraphs (point-min) (point-max))))
+
+  (use-package aggressive-fill-paragraph
+    :config
+    (afp-setup-recommended-hooks)
+    (add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
 
   ;; Show trailing white spaces
   (setq-default show-trailing-whitespace t)
@@ -413,9 +424,11 @@
 							 (er/expand-region 1)
 						       (er/mark-symbol))))
 
-  ;; Undo commands
-  ;; Ensure that we are using undo-tree-undo otherwise we can't redo
-  (global-set-key [remap undo] 'undo-tree-undo)
+  ;; Undo commands Ensure that we are using undo-tree-undo otherwise we can't redo
+
+  ;; Newer versions of undo-tree do not enable if undo is remapped
+
+  ;; (global-set-key [remap undo] 'undo-tree-undo)
   (define-key ergoemacs-light-mode-map (kbd "C-z") 'undo-tree-undo)
   (define-key ergoemacs-light-mode-map (kbd "C-y") 'undo-tree-redo)
   (define-key ergoemacs-light-mode-map (kbd "C-S-z") 'undo-tree-redo)
@@ -462,13 +475,17 @@
 				  (er/mark-symbol)
 				  (mc/mark-all-like-this)))
 
+  (global-set-key (kbd "M-Q") 'refill-paragraphs-to-be-one-line)
+
   (global-set-key (kbd "<f8>") 'subword-mode)
   (global-set-key (kbd "<f10>") 'visual-line-mode)
-  (global-set-key (kbd "M-%") 'vr/query-replace)
+  ;;(global-set-key (kbd "M-%") 'vr/query-replace)
+
   (global-set-key (kbd "M-<up>") 'drag-stuff-up)
   (global-set-key (kbd "M-<down>") 'drag-stuff-down)
   (global-set-key (kbd "M-S-<right>") 'drag-stuff-right)
   (global-set-key (kbd "M-S-<left>") 'drag-stuff-left)
+
   (global-set-key (kbd "C-SPC") 'company-complete)
 
   (global-set-key (kbd "C-c c") 'org-capture)
@@ -510,7 +527,9 @@
   (global-set-key (kbd "C-S-p") 'projectile-find-dir)
   (global-set-key (kbd "C-p") 'projectile-find-file)
   (global-set-key (kbd "M-P") 'projectile-switch-project)
+  (global-set-key (kbd "C-M-p") 'projectile-invalidate-cache)
   (global-set-key (kbd "C-b") 'sr-speedbar-toggle)
+
   (define-key ergoemacs-light-mode-map (kbd "C-;") 'flyspell-correct-wrapper)
 
   (global-set-key (kbd "<f11>") (lambda()
