@@ -516,13 +516,13 @@
   (when (featurep 'org)
     (define-key org-mode-map (kbd "C-c t") 'org-edit-special))
 
-  (eval-after-load "emacs-lisp-mode" '(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer))
-  (eval-after-load "python-mode" '(define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python))
+  (eval-after-load "elisp-mode" '(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer))
+  (eval-after-load "python" '(define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python))
 
-  (eval-after-load "c" '(define-key c-mode-map (kbd "C-c C-c")
-			  'compile))
-  (eval-after-load "c++" '(define-key c++-mode-map (kbd "C-c C-c")
-			    'compile))
+  (eval-after-load "cc-mode" '(define-key c-mode-map (kbd "C-c C-c")
+				'compile))
+  (eval-after-load "cc-mode" '(define-key c++-mode-map (kbd "C-c C-c")
+				'compile))
 
   (global-set-key (kbd "C-x g") 'magit-status)
   (global-set-key (kbd "C-S-p") 'projectile-find-dir)
