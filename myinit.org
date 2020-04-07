@@ -847,7 +847,16 @@
 	  :config
 	  (require 'sr-speedbar))
 #+END_SRC
-
+* Email
+#+BEGIN_SRC emacs-lisp
+  (unless (eq system-type 'windows-nt)
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    (require 'mu4e)
+    (setq mu4e-maildir (expand-file-name "~/Maildir"))
+    (setq mu4e-drafts-folder "/[Gmail].Drafts")
+    (setq mu4e-sent-folder "/[Gmail].Sent Mail")
+    (setq mu4e-trash-folder  "/[Gmail].Trash"))
+#+END_SRC
 * Debuggers
 
 #+BEGIN_SRC emacs-lisp
