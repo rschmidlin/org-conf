@@ -343,7 +343,7 @@
   (define-key ergoemacs-light-mode-map (kbd "M-G") (lambda ()
 						     (interactive)
 						     (kill-visual-line -1)))
-  (define-key ergoemacs-light-mode-map (kbd "M-\"") (lambda (arg)
+  (define-key ergoemacs-light-mode-map (kbd "M-'") (lambda (arg)
 						     (interactive "p")
 						     (if (region-active-p)
 							 (comment-dwim nil)
