@@ -231,6 +231,7 @@
 
   ;; Show trailing white spaces
   (setq-default show-trailing-whitespace t)
+  (add-hook 'mu4e-view-mode-hook (lambda() (setq show-trailing-whitespace nil)))
 
   ;; Remove useless whitespace before saving a file
   (add-hook 'before-save-hook 'whitespace-cleanup)
