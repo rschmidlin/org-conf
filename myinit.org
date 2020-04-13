@@ -189,7 +189,7 @@
    '((dot . t)))
 
   (custom-set-variables
-   '(org-directory "~/Sync/orgfiles")
+   '(org-directory "~/Nextcloud/orgfiles")
    '(org-default-notes-file (concat org-directory "/notes.org")))
 
   (setq org-agenda-files (list org-default-notes-file))
