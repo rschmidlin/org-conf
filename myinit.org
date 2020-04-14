@@ -231,6 +231,7 @@
 
   ;; Show trailing white spaces
   (setq-default show-trailing-whitespace t)
+  (add-hook 'mu4e-view-mode-hook (lambda() (setq show-trailing-whitespace nil)))
 
   ;; Remove useless whitespace before saving a file
   (add-hook 'before-save-hook 'whitespace-cleanup)
@@ -343,7 +344,7 @@
   (define-key ergoemacs-light-mode-map (kbd "M-G") (lambda ()
 						     (interactive)
 						     (kill-visual-line -1)))
-  (define-key ergoemacs-light-mode-map (kbd "M-\"") (lambda (arg)
+  (define-key ergoemacs-light-mode-map (kbd "M-'") (lambda (arg)
 						     (interactive "p")
 						     (if (region-active-p)
 							 (comment-dwim nil)
@@ -383,7 +384,7 @@
       (switch-to-buffer $buf)
       (funcall initial-major-mode)
       (setq buffer-offer-save t)))
-  (define-key ergoemacs-light-mode-map (kbd "C-n") 'xah-new-empty-buffer)
+  ;; (define-key ergoemacs-light-mode-map (kbd "C-n") 'xah-new-empty-buffer)
   (define-key ergoemacs-light-mode-map (kbd "C-c o") 'crux-open-with)
 
   ;; Control UI
@@ -470,7 +471,7 @@
 	(mc/mark-next-like-this arg))
     (er/mark-symbol))
   (global-set-key (kbd "C-d") 'mark-and-multiple-select)
-  (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
+  ;; (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-S-l") (lambda()
 				  (interactive)
 				  (er/mark-symbol)
@@ -544,7 +545,10 @@
 				      (message "Aggressive indent mode activated")))))
   (global-set-key [remap goto-line] 'goto-line-preview)
   (global-set-key (kbd "<f9>") 'aggressive-fill-paragraph-mode)
-  (global-set-key (kbd "C-t") 'elscreen-clone)
+  (global-set-key (kbd "C-t") (lambda ()
+				(interactive)
+				(elscreen-create)
+				(xah-new-empty-buffer)))
   (global-set-key (kbd "<C-next>") 'elscreen-next)
   (global-set-key (kbd "<C-prior>") 'elscreen-previous)
   (global-set-key (kbd "C-w") 'elscreen-kill)
@@ -847,7 +851,41 @@
 	  :config
 	  (require 'sr-speedbar))
 #+END_SRC
+* Email
+#+BEGIN_SRC emacs-lisp
+  (unless (eq system-type 'windows-nt)
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    (require 'mu4e)
+    (setq mu4e-maildir (expand-file-name "~/Maildir"))
+    (setq mu4e-drafts-folder "/[Gmail].Drafts")
+    (setq mu4e-sent-folder "/[Gmail].Sent Mail")
+    (setq mu4e-trash-folder  "/[Gmail].Trash")
+    (setq mu4e-refile-folder "/[Gmail].Archive")
 
+    ;; smtp mail setting - if you DON'T want to use nullmailer, instead
+    ;; connecting to your smtp server and waiting...
+    (setq
+     message-send-mail-function 'smtpmail-send-it
+     smtpmail-starttls-credentials
+     '(("smtp.gmail.com" 587 raulschmidlin@gmail.com tmSaWi2010))
+     smtpmail-stream-type 'starttls
+     smtpmail-default-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-service 587
+
+     ;; if you need offline mode, set these -- and create the queue dir
+     ;; with 'mu mkdir', i.e.. mu mkdir /home/user/Maildir/queue
+     smtpmail-queue-mail  nil
+     smtpmail-queue-dir  "/home/user/Maildir/queue/cur")
+
+    ;; don't keep message buffers around
+    (setq message-kill-buffer-on-exit t)
+    ;; attachments go here
+    (setq mu4e-attachment-dir  "~/Downloads")
+    ;; don't save message to Sent Messages, IMAP takes care of this
+    (setq mu4e-sent-messages-behavior 'delete)
+    )
+#+END_SRC
 * Debuggers
 
 #+BEGIN_SRC emacs-lisp
