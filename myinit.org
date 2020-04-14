@@ -40,64 +40,69 @@
 
   ;; Use IVY
   (use-package counsel
-	:load-path "swiper"
-	:pin manual
-	:init
-	(require 'smex)
-	(setq ivy-use-virtual-buffers t)
-	(setq ivy-count-format "(%d/%d) ")
-	(setq projectile-completion-system 'ivy)
-	(setq ivy-re-builders-alist
-		  '((ivy-switch-buffer . ivy--regex-plus)
-			(swiper . ivy--regex-plus)
-			(counsel-M-x . ivy--regex-plus)
-			(projectile-find-file . ivy--regex-plus)
-			(projectile-find-dir . ivy--regex-plus)
-			(projectile-switch-project . ivy--regex-plus)
-			(t . ivy--regex-fuzzy)))
-	(setq ivy-initial-inputs-alist nil)
-	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
-	(setq magit-completing-read-function 'ivy-completing-read)
-	(setq projectile-completion-system 'ivy)
-	:config
-	(ivy-mode 1))
+    :load-path "swiper"
+    :pin manual
+    :init
+    (require 'smex)
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (setq projectile-completion-system 'ivy)
+    (setq ivy-re-builders-alist
+	  '((ivy-switch-buffer . ivy--regex-plus)
+	    (swiper . ivy--regex-plus)
+	    (counsel-M-x . ivy--regex-plus)
+	    (projectile-find-file . ivy--regex-plus)
+	    (projectile-find-dir . ivy--regex-plus)
+	    (projectile-switch-project . ivy--regex-plus)
+	    (t . ivy--regex-fuzzy)))
+    (setq ivy-initial-inputs-alist nil)
+    (setq ivy-ignore-buffers '("\\` " "\\`\\*"))
+    (setq magit-completing-read-function 'ivy-completing-read)
+    (setq projectile-completion-system 'ivy)
+    :config
+    (ivy-mode 1))
+#+END_SRC
+* Navigation
+#+BEGIN_SRC emacs-lisp
+  (use-package deadgrep)
+  (use-package dumb-jump)
 #+END_SRC
 
 ** Complete searchs with symbol under point and rebind history keybindings
 
-#+BEGIN_SRC emacs-lisp
-  (delete-selection-mode 1)
+ #+BEGIN_SRC emacs-lisp
+   (delete-selection-mode 1)
 
-  (defvar auto-insert-search-or-replace-commands
-    '(query-replace query-replace-regexp swiper grep-find)
-    "Commands to automatically insert selected \"symbol-at-point\".")
+   (defvar auto-insert-search-or-replace-commands
+     '(query-replace query-replace-regexp swiper grep-find)
+     "Commands to automatically insert selected \"symbol-at-point\".")
 
-  (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
-    "String of commands to automatically insert selected \"symbol-at-point\".")
+   (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
+     "String of commands to automatically insert selected \"symbol-at-point\".")
 
-  (defun auto-insert-search-or-replace-insert-symbol-at-point-hook ()
-    "Insert symbol at point and select it to be immediately substitutable by the user."
-    (when (and (symbolp this-command) (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings))
-      (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
+   (defun auto-insert-search-or-replace-insert-symbol-at-point-hook ()
+     "Insert symbol at point and select it to be immediately substitutable by the user."
+     (when (and (symbolp this-command) (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings))
+       (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
 
-  (defun auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer ()
-    "Get word at point in original buffer and insert it to minibuffer."
-    (interactive)
-    (let ((symbol nil))
-      (with-current-buffer (window-buffer (minibuffer-selected-window))
-	(setq symbol (thing-at-point 'symbol t)))
-      (insert-and-select symbol)))
+   (defun auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer ()
+     "Get word at point in original buffer and insert it to minibuffer."
+     (interactive)
+     (let ((symbol nil))
+       (with-current-buffer (window-buffer (minibuffer-selected-window))
+	 (setq symbol (thing-at-point 'symbol t)))
+       (insert-and-select symbol)))
 
-  (defun insert-and-select (text)
-  "Insert TEXT and selects it."
-  (when text
-    (let ((begin (point)))
-      (insert text)
-      (set-mark begin)
-      (setq deactivate-mark nil))))
+   (defun insert-and-select (text)
+   "Insert TEXT and selects it."
+   (when text
+     (let ((begin (point)))
+       (insert text)
+       (set-mark begin)
+       (setq deactivate-mark nil))))
 
-  (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
-#+END_SRC
+   (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
+ #+END_SRC
 * Text correction and completion
 #+BEGIN_SRC emacs-lisp
   (dolist (hook '(text-mode-hook))
@@ -260,7 +265,7 @@
     (require 'smartparens-config)
     (smartparens-global-mode))
 #+END_SRC
-* Create AltGr alternatives
+* Deal with locale
 #+BEGIN_SRC emacs-lisp
   (defun insert-commercial-at()
 	"Insert a commercial at before point."
@@ -298,9 +303,37 @@
 	(insert "\\"))
 
   (defun insert-pipe()
-	"Insert a pipe before point."
-	(interactive)
-	(insert "|"))
+    "Insert a pipe before point."
+    (interactive)
+    (insert "|"))
+
+  (defun insert-ae()
+    (interactive)
+    (insert "ä"))
+
+  (defun insert-AE()
+    (interactive)
+    (insert "Ä"))
+
+  (defun insert-oe()
+    (interactive)
+    (insert "ö"))
+
+  (defun insert-OE()
+    (interactive)
+    (insert "Ö"))
+
+  (defun insert-ue()
+    (interactive)
+    (insert "ü"))
+
+  (defun insert-UE()
+    (interactive)
+    (insert "Ü"))
+
+  (defun insert-scharfes-s()
+    (interactive)
+    (insert "ß"))
 #+END_SRC
 * Keybindings
 #+BEGIN_SRC emacs-lisp
@@ -314,6 +347,14 @@
   ;; (global-set-key (kbd "C-M-0") 'insert-right-curly-brace)
   ;; (global-set-key (kbd "C-M-ß") 'insert-backslash)
   ;; (global-set-key (kbd "C-M-<") 'insert-pipe)
+
+  (global-set-key (kbd "s-[") 'insert-ue)
+  (global-set-key (kbd "s-{") 'insert-UE)
+  (global-set-key (kbd "s-;") 'insert-oe)
+  (global-set-key (kbd "s-:") 'insert-OE)
+  (global-set-key (kbd "s-'") 'insert-ae)
+  (global-set-key (kbd "s-\"") 'insert-AE)
+  (global-set-key (kbd "s--") 'insert-scharfes-s)
 
   ;; Movement command
   (define-key ergoemacs-light-mode-map (kbd "M-o") 'forward-word)
@@ -370,7 +411,11 @@
   (define-key ergoemacs-light-mode-map (kbd "C-a") 'mark-whole-buffer)
 
   ;; Buffer navigation
-  (define-key ergoemacs-light-mode-map (kbd "C-f") 'swiper)
+  (define-key ergoemacs-light-mode-map (kbd "C-f") 'isearch-forward)
+  (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
+  (define-key isearch-mode-map (kbd "<f3>") 'isearch-repeat-forward)
+  (define-key isearch-mode-map (kbd "S-<f3>") 'isearch-repeat-backward)
+  (define-key ergoemacs-light-mode-map (kbd "s-f") 'swiper)
   (define-key ergoemacs-light-mode-map (kbd "C-l") 'goto-line-preview)
   (define-key ergoemacs-light-mode-map (kbd "M-p") 'recenter-top-bottom)
   (defun xah-new-empty-buffer ()
@@ -458,8 +503,8 @@
 
   ;; Find symbol
   (define-key ergoemacs-light-mode-map (kbd "C-S-o") 'imenu)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-f") 'grep-find)
-
+  (define-key ergoemacs-light-mode-map (kbd "s-F") 'grep-find)
+  (define-key ergoemacs-light-mode-map (kbd "C-S-f") 'deadgrep)
   (define-key ergoemacs-light-mode-map (kbd "M-a") 'counsel-M-x)
 
   ;; Multiple cursors
@@ -761,9 +806,20 @@
     (interactive)
     (cond
      ((eq major-mode 'python-mode) (jedi:goto-definition))
-     ((eq major-mode 'c++-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
-     ((eq major-mode 'c-mode) (ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg)))
-     (t (xref-find-definitions (xref--read-identifier "Find definitions of: ")))))
+     ((eq major-mode 'c++-mode)
+      (if (dumb-jump-rg-installed?)
+	  (dumb-jump-go)
+	(ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
+     ((eq major-mode 'c-mode)
+      (if (dumb-jump-rg-installed?)
+	  (dumb-jump-go)
+	(ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
+     ((eq major-mode 'emacs-lisp-mode)
+      (xref-find-definitions (xref--read-identifier "Find definitions of: ")))
+     (t
+      (if (dumb-jump-rg-installed?)
+	  (dumb-jump-go)
+	(xref-find-definitions (xref--read-identifier "Find definitions of: "))))))
 
   (defun raul-find-references ()
     (interactive)
@@ -777,9 +833,19 @@
     (interactive)
     (cond
      ((eq major-mode 'python-mode) (jedi:goto-definition-pop-marker))
-     ((eq major-mode 'c++-mode) (ggtags-prev-mark))
-     ((eq major-mode 'c-mode) (ggtags-prev-mark))
-     (t (xref-pop-marker-stack))))
+     ((eq major-mode 'c++-mode)
+      (if (dumb-jump-rg-installed?)
+	  (dumb-jump-back)
+	(ggtags-prev-mark)))
+     ((eq major-mode 'c-mode)
+      (if (dumb-jump-rg-installed?)
+	  (dumb-jump-back)
+	(ggtags-prev-mark)))
+     ((eq major-mode 'emacs-lisp-mode)
+      (xref-pop-marker-stack))
+     (t (if (dumb-jump-rg-installed?)
+	    (dumb-jump-back)
+	  (xref-pop-marker-stack)))))
 
   (defun raul-navigate-forward ()
     (interactive)
