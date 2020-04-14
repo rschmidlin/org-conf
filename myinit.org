@@ -102,6 +102,7 @@
        (setq deactivate-mark nil))))
 
    (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
+
  #+END_SRC
 * Text correction and completion
 #+BEGIN_SRC emacs-lisp
@@ -411,7 +412,7 @@
   (define-key ergoemacs-light-mode-map (kbd "C-a") 'mark-whole-buffer)
 
   ;; Buffer navigation
-  (define-key ergoemacs-light-mode-map (kbd "C-f") 'isearch-forward)
+  (define-key ergoemacs-light-mode-map (kbd "C-c f") 'isearch-forward)
   (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
   (define-key isearch-mode-map (kbd "<f3>") 'isearch-repeat-forward)
   (define-key isearch-mode-map (kbd "S-<f3>") 'isearch-repeat-backward)
@@ -551,6 +552,9 @@
   (define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
   (define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
   (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element)
+  (define-key isearch-mode-map (kbd "M-I") 'isearch-ring-retreat)
+  (define-key isearch-mode-map (kbd "M-K") 'isearch-ring-advance)
+
 
   (when (featurep 'company)
     (define-key company-active-map (kbd "M-K") 'company-select-next)
@@ -605,6 +609,11 @@
     :keymap ergoemacs-light-mode-map)
 
   (ergoemacs-light-mode t)
+
+  ;; Dokey for isearch
+  (add-to-list 'load-path "~/.emacs.d/emacs-dokey")
+  (require 'dokey)
+  (global-set-key (kbd "C-f") (dokey "M-8 M-C C-c f C-y"))
 #+END_SRC
 * Buffer configuration
 #+BEGIN_SRC emacs-lisp
