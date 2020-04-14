@@ -189,7 +189,7 @@
    '((dot . t)))
 
   (custom-set-variables
-   '(org-directory "~/Sync/orgfiles")
+   '(org-directory "~/Nextcloud/orgfiles")
    '(org-default-notes-file (concat org-directory "/notes.org")))
 
   (setq org-agenda-files (list org-default-notes-file))
@@ -857,6 +857,11 @@
 
 #+BEGIN_SRC emacs-lisp
   (load "server")
+  (when (and (>= emacs-major-version 23)
+	   (equal window-system 'w32))
+  (defun server-ensure-safe-dir (dir) "Noop" t)) ; Suppress error "directory
+						 ; ~/.emacs.d/server is unsafe"
+						 ; on windows.
   (unless (server-running-p) (server-start))
 #+END_SRC
 ** Adapt for Emacs server
