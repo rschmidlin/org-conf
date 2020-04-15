@@ -10,3 +10,4 @@ projectile*
 .mc-lists.el
 myinit.el
 anaconda-mode
+.python-environments
