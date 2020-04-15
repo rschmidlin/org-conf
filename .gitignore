@@ -11,3 +11,6 @@ projectile*
 myinit.el
 anaconda-mode
 .python-environments
+eshell
+smex-items
+transient
