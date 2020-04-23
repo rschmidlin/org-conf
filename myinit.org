@@ -75,7 +75,7 @@
    (delete-selection-mode 1)
 
    (defvar auto-insert-search-or-replace-commands
-     '(query-replace query-replace-regexp swiper grep-find)
+     '(vr/query-replace swiper grep-find)
      "Commands to automatically insert selected \"symbol-at-point\".")
 
    (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
