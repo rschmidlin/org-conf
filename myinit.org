@@ -614,7 +614,12 @@
   ;; Dokey for isearch
   (add-to-list 'load-path "~/.emacs.d/emacs-dokey")
   (require 'dokey)
-  (global-set-key (kbd "C-f") (dokey "M-8 M-C C-c f C-y"))
+  (global-set-key (kbd "C-c C-0") (lambda ()
+				    (interactive)
+				    (if (region-active-p)
+					(kill-ring-save (mark) (point))
+				      (kill-ring-save (point) (point)))))
+  (global-set-key (kbd "C-f") (dokey "M-8 C-c C-0 C-c f C-y"))
 #+END_SRC
 * Buffer configuration
 #+BEGIN_SRC emacs-lisp
