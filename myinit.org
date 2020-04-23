@@ -66,6 +66,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package deadgrep)
   (use-package dumb-jump)
+  (setq dumb-jump-selector 'ivy)
 #+END_SRC
 
 ** Complete searchs with symbol under point and rebind history keybindings
