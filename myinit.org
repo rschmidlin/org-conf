@@ -441,6 +441,7 @@
   (define-key ergoemacs-light-mode-map (kbd "C-S-w") 'delete-frame)
 
   ;; Copy, paste
+  (cua-mode)
   (defun ergoemacs-light-kill-line-or-region ()
     (interactive)
     (if (region-active-p)
@@ -525,6 +526,7 @@
 
   (global-set-key (kbd "M-Q") 'refill-paragraphs-to-be-one-line)
 
+  (global-set-key (kbd "<f7>") 'cua-mode)
   (global-set-key (kbd "<f8>") 'subword-mode)
   (global-set-key (kbd "<f10>") 'visual-line-mode)
   ;;(global-set-key (kbd "M-%") 'vr/query-replace)
