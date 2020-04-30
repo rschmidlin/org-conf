@@ -66,6 +66,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package deadgrep)
   (use-package dumb-jump)
+  (setq dumb-jump-selector 'ivy)
 #+END_SRC
 
 ** Complete searchs with symbol under point and rebind history keybindings
@@ -74,7 +75,7 @@
    (delete-selection-mode 1)
 
    (defvar auto-insert-search-or-replace-commands
-     '(query-replace query-replace-regexp swiper grep-find)
+     '(vr/query-replace swiper grep-find)
      "Commands to automatically insert selected \"symbol-at-point\".")
 
    (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
@@ -220,9 +221,7 @@
     :init
     (setq-default fill-column 100)
     :config
-    (global-aggressive-indent-mode 1)
-    (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-    (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode))
+    (add-hook 'prog-mode-hook #'aggressive-indent-mode))
 
   (defun refill-paragraphs-to-be-one-line ()
     "fill individual paragraphs with large fill column"
@@ -615,7 +614,12 @@
   ;; Dokey for isearch
   (add-to-list 'load-path "~/.emacs.d/emacs-dokey")
   (require 'dokey)
-  (global-set-key (kbd "C-f") (dokey "M-8 M-C C-c f C-y"))
+  (global-set-key (kbd "C-c C-0") (lambda ()
+				    (interactive)
+				    (if (region-active-p)
+					(kill-ring-save (mark) (point))
+				      (kill-ring-save (point) (point)))))
+  (global-set-key (kbd "C-f") (dokey "M-8 C-c C-0 C-c f C-y"))
 #+END_SRC
 * Buffer configuration
 #+BEGIN_SRC emacs-lisp
