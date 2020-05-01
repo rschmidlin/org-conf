@@ -138,8 +138,6 @@
     :config
     (global-undo-tree-mode 1))
 
-  (use-package browse-kill-ring)
-
   (use-package visual-regexp
     :config
     (require 'visual-regexp))
@@ -464,7 +462,7 @@
 							 (beginning-of-line)
 							 (kill-ring-save (point) (mark))))))
   (define-key ergoemacs-light-mode-map (kbd "M-v") 'yank)
-  (define-key ergoemacs-light-mode-map (kbd "M-V") 'browse-kill-ring)
+  (define-key ergoemacs-light-mode-map (kbd "M-V") 'counsel-yank-pop)
   (define-key ergoemacs-light-mode-map (kbd "M-SPC") 'set-mark-command)
   (define-key ergoemacs-light-mode-map (kbd "M-8") (lambda ()
 						     (interactive)
