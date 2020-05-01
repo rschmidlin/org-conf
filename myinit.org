@@ -481,7 +481,7 @@
 
   (define-key ergoemacs-light-mode-map (kbd "M-z") 'undo-tree-undo)
   (define-key ergoemacs-light-mode-map (kbd "M-Z") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-Z") 'undo-tree-visualize)
+  (define-key ergoemacs-light-mode-map (kbd "C-M-z") 'undo-tree-visualize)
 
   ;; File open, save
   (define-key ergoemacs-light-mode-map (kbd "C-s") 'save-buffer)
