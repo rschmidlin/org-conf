@@ -439,6 +439,7 @@
 
   ;; Copy, paste
   (cua-mode)
+  (define-key cua--cua-keys-keymap (kbd "M-v") nil)
   (defun ergoemacs-light-kill-line-or-region ()
     (interactive)
     (if (region-active-p)
