@@ -1,3 +1,6 @@
 [submodule "swiper"]
 	path = swiper
 	url = https://github.com/abo-abo/swiper.git
+[submodule "popwin"]
+	path = popwin
+	url = https://github.com/emacsorphanage/popwin.git

@@ -494,6 +494,7 @@
   (define-key ergoemacs-light-mode-map (kbd "M-3") 'delete-other-windows)
   (define-key ergoemacs-light-mode-map (kbd "M-2") 'delete-window)
   (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
+  (windmove-default-keybindings)
 
   ;; Find files
   (define-key ergoemacs-light-mode-map (kbd "M-;") 'ivy-switch-buffer)
@@ -576,6 +577,7 @@
   (global-set-key (kbd "M-P") 'projectile-switch-project)
   (global-set-key (kbd "C-M-p") 'projectile-invalidate-cache)
   (global-set-key (kbd "C-b") 'sr-speedbar-toggle)
+  (global-set-key (kbd "C-x ;") 'popwin-term:term)
 
   (define-key ergoemacs-light-mode-map (kbd "C-'") 'flyspell-correct-wrapper)
 
@@ -616,9 +618,18 @@
 
   ;; Popwin takes care that helper buffers do not take much space
   (use-package popwin
-	:init
-	(require 'popwin)
-	(popwin-mode 1))
+    :load-path "popwin"
+    :pin manual
+    :init
+    (require 'popwin)
+    (popwin-mode 1))
+
+  (use-package popwin-term
+    :load-path "popwin/misc"
+    :pin manual
+    :init
+    (require 'popwin-term)
+    (push '(term-mode :position :bottom :height 10 :stick t) popwin:special-display-config))
 
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'forward)
