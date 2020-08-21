@@ -494,7 +494,6 @@
   (define-key ergoemacs-light-mode-map (kbd "M-3") 'delete-other-windows)
   (define-key ergoemacs-light-mode-map (kbd "M-2") 'delete-window)
   (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
-  (windmove-default-keybindings)
 
   ;; Find files
   (define-key ergoemacs-light-mode-map (kbd "M-;") 'ivy-switch-buffer)
