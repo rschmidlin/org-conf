@@ -66,6 +66,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package deadgrep)
   (use-package dumb-jump)
+  (setq dumb-jump-selector 'ivy)
 #+END_SRC
 
 ** Complete searchs with symbol under point and rebind history keybindings
@@ -74,7 +75,7 @@
    (delete-selection-mode 1)
 
    (defvar auto-insert-search-or-replace-commands
-     '(query-replace query-replace-regexp swiper grep-find)
+     '(vr/query-replace swiper grep-find)
      "Commands to automatically insert selected \"symbol-at-point\".")
 
    (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
@@ -102,6 +103,7 @@
        (setq deactivate-mark nil))))
 
    (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
+
  #+END_SRC
 * Text correction and completion
 #+BEGIN_SRC emacs-lisp
@@ -135,8 +137,6 @@
     :pin gnu
     :config
     (global-undo-tree-mode 1))
-
-  (use-package browse-kill-ring)
 
   (use-package visual-regexp
     :config
@@ -219,9 +219,7 @@
     :init
     (setq-default fill-column 100)
     :config
-    (global-aggressive-indent-mode 1)
-    (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-    (add-to-list 'aggressive-indent-excluded-modes 'fundamental-mode))
+    (add-hook 'prog-mode-hook #'aggressive-indent-mode))
 
   (defun refill-paragraphs-to-be-one-line ()
     "fill individual paragraphs with large fill column"
@@ -411,7 +409,7 @@
   (define-key ergoemacs-light-mode-map (kbd "C-a") 'mark-whole-buffer)
 
   ;; Buffer navigation
-  (define-key ergoemacs-light-mode-map (kbd "C-f") 'isearch-forward)
+  (define-key ergoemacs-light-mode-map (kbd "C-c f") 'isearch-forward)
   (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
   (define-key isearch-mode-map (kbd "<f3>") 'isearch-repeat-forward)
   (define-key isearch-mode-map (kbd "S-<f3>") 'isearch-repeat-backward)
@@ -440,6 +438,8 @@
   (define-key ergoemacs-light-mode-map (kbd "C-S-w") 'delete-frame)
 
   ;; Copy, paste
+  (cua-mode)
+  (define-key cua--cua-keys-keymap (kbd "M-v") nil)
   (defun ergoemacs-light-kill-line-or-region ()
     (interactive)
     (if (region-active-p)
@@ -463,7 +463,7 @@
 							 (beginning-of-line)
 							 (kill-ring-save (point) (mark))))))
   (define-key ergoemacs-light-mode-map (kbd "M-v") 'yank)
-  (define-key ergoemacs-light-mode-map (kbd "M-V") 'browse-kill-ring)
+  (define-key ergoemacs-light-mode-map (kbd "M-V") 'counsel-yank-pop)
   (define-key ergoemacs-light-mode-map (kbd "M-SPC") 'set-mark-command)
   (define-key ergoemacs-light-mode-map (kbd "M-8") (lambda ()
 						     (interactive)
@@ -482,7 +482,7 @@
 
   (define-key ergoemacs-light-mode-map (kbd "M-z") 'undo-tree-undo)
   (define-key ergoemacs-light-mode-map (kbd "M-Z") 'undo-tree-redo)
-  (define-key ergoemacs-light-mode-map (kbd "C-S-Z") 'undo-tree-visualize)
+  (define-key ergoemacs-light-mode-map (kbd "C-M-z") 'undo-tree-visualize)
 
   ;; File open, save
   (define-key ergoemacs-light-mode-map (kbd "C-s") 'save-buffer)
@@ -524,6 +524,7 @@
 
   (global-set-key (kbd "M-Q") 'refill-paragraphs-to-be-one-line)
 
+  (global-set-key (kbd "<f7>") 'cua-mode)
   (global-set-key (kbd "<f8>") 'subword-mode)
   (global-set-key (kbd "<f10>") 'visual-line-mode)
   ;;(global-set-key (kbd "M-%") 'vr/query-replace)
@@ -551,6 +552,9 @@
   (define-key vr/minibuffer-keymap (kbd "M-K") 'next-history-element)
   (define-key ivy-minibuffer-map (kbd "M-I") 'ivy-previous-history-element)
   (define-key ivy-minibuffer-map (kbd "M-K") 'ivy-next-history-element)
+  (define-key isearch-mode-map (kbd "M-I") 'isearch-ring-retreat)
+  (define-key isearch-mode-map (kbd "M-K") 'isearch-ring-advance)
+
 
   (when (featurep 'company)
     (define-key company-active-map (kbd "M-K") 'company-select-next)
@@ -606,6 +610,16 @@
     :keymap ergoemacs-light-mode-map)
 
   (ergoemacs-light-mode t)
+
+  ;; Dokey for isearch
+  (add-to-list 'load-path "~/.emacs.d/emacs-dokey")
+  (require 'dokey)
+  (global-set-key (kbd "C-c C-0") (lambda ()
+				    (interactive)
+				    (if (region-active-p)
+					(kill-ring-save (mark) (point))
+				      (kill-ring-save (point) (point)))))
+  (global-set-key (kbd "C-f") (dokey "M-8 C-c C-0 C-c f C-y"))
 #+END_SRC
 * Buffer configuration
 #+BEGIN_SRC emacs-lisp
