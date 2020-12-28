@@ -992,8 +992,8 @@
 #+BEGIN_SRC emacs-lisp
   (load "server")
   (when (and (>= emacs-major-version 23)
-	     (eq system-type 'windows-nt)
-	     (defun server-ensure-safe-dir (dir) "Noop" t))) ; Suppress error "directory
+	     (eq system-type 'windows-nt))
+    (defun server-ensure-safe-dir (dir) "Noop" t)) ; Suppress error "directory
 					  ; ~/.emacs.d/server is unsafe"
 					  ; on windows.
   (unless (server-running-p) (server-start))
