@@ -107,28 +107,29 @@
  #+END_SRC
 * Text correction and completion
 #+BEGIN_SRC emacs-lisp
-  (dolist (hook '(text-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode 1))))
+  (unless (eq system-type 'windows-nt)
+    (dolist (hook '(text-mode-hook))
+      (add-hook hook (lambda () (flyspell-mode 1))))
 
-  (use-package flyspell-correct-ivy
-    :init
-    (setq flyspell-correct-interface #'flyspell-correct-ivy))
+    (use-package flyspell-correct-ivy
+      :init
+      (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
-  (setq ispell-extra-args '("--sug-mode=ultra"))
+    (setq ispell-extra-args '("--sug-mode=ultra")))
 
   (use-package flycheck
     :config (global-flycheck-mode))
 
   ;; Enable text completion
   (use-package company
-	:init
-	(add-hook 'after-init-hook 'global-company-mode)
-	(setq-default company-dabbrev-other-buffers 'all
-				  company-tooltip-align-annotations t))
+    :init
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq-default company-dabbrev-other-buffers 'all
+		  company-tooltip-align-annotations t))
 
   (use-package company-quickhelp
-	:init
-	(add-hook 'after-init-hook 'company-quickhelp-mode))
+    :init
+    (add-hook 'after-init-hook 'company-quickhelp-mode))
 #+END_SRC
 * Editing utilities
 #+BEGIN_SRC emacs-lisp
@@ -186,6 +187,11 @@
 
   ;; Do not show bold, italic and underlined markers
   (setq org-hide-emphasis-markers t)
+
+  ;; Disable aggressive fill and visual line mode for org-mode
+  (add-hook 'org-mode-hook (lambda()
+			     (aggressive-fill-paragraph-mode -1)
+			     (visual-line-mode -1)))
 
   (use-package htmlize)
 
