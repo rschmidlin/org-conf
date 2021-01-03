@@ -257,6 +257,10 @@
   (global-hl-line-mode 1)
   (set-face-background hl-line-face "grey95")
 
+  ;; ensure that it does not conflict with region
+  (custom-set-faces
+   '(region ((t (:background "gold")))))
+
   ;; Mark all words under cursor in current viewport of buffer
   (use-package symbol-overlay
     :config
