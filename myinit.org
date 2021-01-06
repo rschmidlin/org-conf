@@ -419,7 +419,7 @@
   (define-key ergoemacs-light-mode-map (kbd "C-a") 'mark-whole-buffer)
 
   ;; Buffer navigation
-  (define-key ergoemacs-light-mode-map (kbd "C-c f") 'isearch-forward)
+  (define-key ergoemacs-light-mode-map (kbd "C-f") 'isearch-forward)
   (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
   (define-key isearch-mode-map (kbd "<f3>") 'isearch-repeat-forward)
   (define-key isearch-mode-map (kbd "S-<f3>") 'isearch-repeat-backward)
@@ -624,12 +624,12 @@
   ;; Dokey for isearch
   (add-to-list 'load-path "~/.emacs.d/emacs-dokey")
   (require 'dokey)
-  (global-set-key (kbd "C-c C-0") (lambda ()
-				    (interactive)
-				    (if (region-active-p)
-					(kill-ring-save (mark) (point))
-				      (kill-ring-save (point) (point)))))
-  (global-set-key (kbd "C-f") (dokey "M-8 C-c C-0 C-c f C-y"))
+  ;; (global-set-key (kbd "C-c C-0") (lambda ()
+  ;;				  (interactive)
+  ;;				  (if (region-active-p)
+  ;;				      (kill-ring-save (mark) (point))
+  ;;				    (kill-ring-save (point) (point)))))
+  ;; (global-set-key (kbd "C-f") (dokey "M-8 C-c C-0 C-c f C-y"))
 #+END_SRC
 * Buffer configuration
 #+BEGIN_SRC emacs-lisp
@@ -701,6 +701,7 @@
   (add-to-list 'default-frame-alist (cons 'width 100))
   (add-to-list 'default-frame-alist (cons 'height 40))
 
+  (set-face-attribute 'default nil :height 140)
   ;; (if (version<= "26.3" emacs-version)
   ;;     (progn
   ;;       (pixel-scroll-mode)
