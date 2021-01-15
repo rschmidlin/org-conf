@@ -219,6 +219,7 @@
 * Text format - enforce and visualize
 #+BEGIN_SRC emacs-lisp
   ;; Word wrap without fringe (the arrows) and without changing the file
+  (set-default 'truncate-lines t)
   (global-visual-line-mode 1)
 
   (use-package aggressive-indent
