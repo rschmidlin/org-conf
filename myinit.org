@@ -15,14 +15,14 @@
 #+BEGIN_SRC emacs-lisp
   ;; Configure Emacs to use find and grep from MSYS
   (when (eq system-type 'windows-nt)
-    (setenv "PATH"
-	    (concat
-	     ;; Change this with your path to MSYS bin directory
-	     "C:\\msys64\\usr\\bin;"
-	     "C:\\msys64\\mingw64\\bin;"
-	     "/usr/local/bin:"
-	     (getenv "PATH")))
-    (setq ispell-program-name "C:\\msys64\\usr\\bin\\aspell.exe"))
+	(setenv "PATH"
+		(concat
+		 ;; Change this with your path to MSYS bin directory
+		 "C:\\msys64\\usr\\bin;"
+		 "C:\\msys64\\mingw64\\bin;"
+		 "/usr/local/bin:"
+		 (getenv "PATH")))
+	(setq ispell-program-name "C:\\msys64\\usr\\bin\\aspell.exe"))
 #+END_SRC
 * Commands completion
 
@@ -40,27 +40,27 @@
 
   ;; Use IVY
   (use-package counsel
-    :load-path "swiper"
-    :pin manual
-    :init
-    (require 'smex)
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-count-format "(%d/%d) ")
-    (setq projectile-completion-system 'ivy)
-    (setq ivy-re-builders-alist
+	:load-path "swiper"
+	:pin manual
+	:init
+	(require 'smex)
+	(setq ivy-use-virtual-buffers t)
+	(setq ivy-count-format "(%d/%d) ")
+	(setq projectile-completion-system 'ivy)
+	(setq ivy-re-builders-alist
 	  '((ivy-switch-buffer . ivy--regex-plus)
-	    (swiper . ivy--regex-plus)
-	    (counsel-M-x . ivy--regex-plus)
-	    (projectile-find-file . ivy--regex-plus)
-	    (projectile-find-dir . ivy--regex-plus)
-	    (projectile-switch-project . ivy--regex-plus)
-	    (t . ivy--regex-fuzzy)))
-    (setq ivy-initial-inputs-alist nil)
-    (setq ivy-ignore-buffers '("\\` " "\\`\\*"))
-    (setq magit-completing-read-function 'ivy-completing-read)
-    (setq projectile-completion-system 'ivy)
-    :config
-    (ivy-mode 1))
+		(swiper . ivy--regex-plus)
+		(counsel-M-x . ivy--regex-plus)
+		(projectile-find-file . ivy--regex-plus)
+		(projectile-find-dir . ivy--regex-plus)
+		(projectile-switch-project . ivy--regex-plus)
+		(t . ivy--regex-fuzzy)))
+	(setq ivy-initial-inputs-alist nil)
+	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
+	(setq magit-completing-read-function 'ivy-completing-read)
+	(setq projectile-completion-system 'ivy)
+	:config
+	(ivy-mode 1))
 #+END_SRC
 * Navigation
 #+BEGIN_SRC emacs-lisp
@@ -75,32 +75,32 @@
    (delete-selection-mode 1)
 
    (defvar auto-insert-search-or-replace-commands
-     '(vr/query-replace swiper grep-find)
-     "Commands to automatically insert selected \"symbol-at-point\".")
+	 '(vr/query-replace swiper grep-find)
+	 "Commands to automatically insert selected \"symbol-at-point\".")
 
    (defvar auto-insert-search-or-replace-command-strings (mapcar #'symbol-name auto-insert-search-or-replace-commands)
-     "String of commands to automatically insert selected \"symbol-at-point\".")
+	 "String of commands to automatically insert selected \"symbol-at-point\".")
 
    (defun auto-insert-search-or-replace-insert-symbol-at-point-hook ()
-     "Insert symbol at point and select it to be immediately substitutable by the user."
-     (when (and (symbolp this-command) (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings))
-       (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
+	 "Insert symbol at point and select it to be immediately substitutable by the user."
+	 (when (and (symbolp this-command) (memq (symbol-name this-command) auto-insert-search-or-replace-command-strings))
+	   (auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer)))
 
    (defun auto-insert-search-or-replace-insert-symbol-at-point-to-minibuffer ()
-     "Get word at point in original buffer and insert it to minibuffer."
-     (interactive)
-     (let ((symbol nil))
-       (with-current-buffer (window-buffer (minibuffer-selected-window))
+	 "Get word at point in original buffer and insert it to minibuffer."
+	 (interactive)
+	 (let ((symbol nil))
+	   (with-current-buffer (window-buffer (minibuffer-selected-window))
 	 (setq symbol (thing-at-point 'symbol t)))
-       (insert-and-select symbol)))
+	   (insert-and-select symbol)))
 
    (defun insert-and-select (text)
    "Insert TEXT and selects it."
    (when text
-     (let ((begin (point)))
-       (insert text)
-       (set-mark begin)
-       (setq deactivate-mark nil))))
+	 (let ((begin (point)))
+	   (insert text)
+	   (set-mark begin)
+	   (setq deactivate-mark nil))))
 
    (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
 
@@ -108,54 +108,54 @@
 * Text correction and completion
 #+BEGIN_SRC emacs-lisp
   (unless (eq system-type 'windows-nt)
-    (dolist (hook '(text-mode-hook))
-      (add-hook hook (lambda () (flyspell-mode 1))))
+	(dolist (hook '(text-mode-hook))
+	  (add-hook hook (lambda () (flyspell-mode 1))))
 
-    (use-package flyspell-correct-ivy
-      :init
-      (setq flyspell-correct-interface #'flyspell-correct-ivy))
+	(use-package flyspell-correct-ivy
+	  :init
+	  (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
-    (setq ispell-extra-args '("--sug-mode=ultra")))
+	(setq ispell-extra-args '("--sug-mode=ultra")))
 
   (use-package flycheck
-    :config (global-flycheck-mode))
+	:config (global-flycheck-mode))
 
   ;; Enable text completion
   (use-package company
-    :init
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq-default company-dabbrev-other-buffers 'all
+	:init
+	(add-hook 'after-init-hook 'global-company-mode)
+	(setq-default company-dabbrev-other-buffers 'all
 		  company-tooltip-align-annotations t))
 
   (use-package company-quickhelp
-    :init
-    (add-hook 'after-init-hook 'company-quickhelp-mode))
+	:init
+	(add-hook 'after-init-hook 'company-quickhelp-mode))
 #+END_SRC
 * Editing utilities
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
-    :ensure t
-    :pin gnu
-    :config
-    (global-undo-tree-mode 1))
+	:ensure t
+	:pin gnu
+	:config
+	(global-undo-tree-mode 1))
 
   (use-package visual-regexp
-    :config
-    (require 'visual-regexp))
+	:config
+	(require 'visual-regexp))
 
   (use-package expand-region
-    :config
-    (require 'expand-region))
+	:config
+	(require 'expand-region))
 
   (use-package goto-line-preview)
 
   (use-package drag-stuff
-    :init
-    (drag-stuff-global-mode 1))
+	:init
+	(drag-stuff-global-mode 1))
 
   (use-package string-inflection
-    :config
-    (require 'string-inflection))
+	:config
+	(require 'string-inflection))
 
   (use-package crux)
 
@@ -181,6 +181,14 @@
 
 ** Org mode
 #+BEGIN_SRC emacs-lisp
+  (use-package org-plus-contrib
+	:ensure t
+	:pin org
+	:init
+	(require 'org))
+
+  (customize-push-and-save 'org-export-backends (list 'taskjuggler))
+
   (use-package org-bullets
 	:config
 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
@@ -190,8 +198,8 @@
 
   ;; Disable aggressive fill and visual line mode for org-mode
   (add-hook 'org-mode-hook (lambda()
-			     (aggressive-fill-paragraph-mode -1)
-			     (visual-line-mode -1)))
+				 (aggressive-fill-paragraph-mode -1)
+				 (visual-line-mode -1)))
 
   (use-package htmlize)
 
@@ -223,21 +231,21 @@
   (global-visual-line-mode 1)
 
   (use-package aggressive-indent
-    :init
-    (setq-default fill-column 100)
-    :config
-    (add-hook 'prog-mode-hook #'aggressive-indent-mode))
+	:init
+	(setq-default fill-column 100)
+	:config
+	(add-hook 'prog-mode-hook #'aggressive-indent-mode))
 
   (defun refill-paragraphs-to-be-one-line ()
-    "fill individual paragraphs with large fill column"
-    (interactive)
-    (let ((fill-column 100000))
-      (fill-individual-paragraphs (point-min) (point-max))))
+	"fill individual paragraphs with large fill column"
+	(interactive)
+	(let ((fill-column 100000))
+	  (fill-individual-paragraphs (point-min) (point-max))))
 
   (use-package aggressive-fill-paragraph
-    :config
-    (afp-setup-recommended-hooks)
-    (add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
+	:config
+	(afp-setup-recommended-hooks)
+	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
 
   ;; Show trailing white spaces
   (setq-default show-trailing-whitespace t)
@@ -249,10 +257,10 @@
 
   ;; Show visual markings about indentation
   (use-package highlight-indent-guides
-    :init
-    (setq highlight-indent-guides-method 'character)
-    :config
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+	:init
+	(setq highlight-indent-guides-method 'character)
+	:config
+	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 
   ;; Mark horizontal line where cursor is
   (global-hl-line-mode 1)
@@ -264,15 +272,15 @@
 
   ;; Mark all words under cursor in current viewport of buffer
   (use-package symbol-overlay
-    :config
-    (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-      (add-hook hook 'symbol-overlay-mode)))
+	:config
+	(dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+	  (add-hook hook 'symbol-overlay-mode)))
 
   (use-package smartparens
-    :config
-    ;; Fix single-quotes being automatically ended on lisp
-    (require 'smartparens-config)
-    (smartparens-global-mode))
+	:config
+	;; Fix single-quotes being automatically ended on lisp
+	(require 'smartparens-config)
+	(smartparens-global-mode))
 #+END_SRC
 * Deal with locale
 #+BEGIN_SRC emacs-lisp
@@ -312,37 +320,37 @@
 	(insert "\\"))
 
   (defun insert-pipe()
-    "Insert a pipe before point."
-    (interactive)
-    (insert "|"))
+	"Insert a pipe before point."
+	(interactive)
+	(insert "|"))
 
   (defun insert-ae()
-    (interactive)
-    (insert "ä"))
+	(interactive)
+	(insert "ä"))
 
   (defun insert-AE()
-    (interactive)
-    (insert "Ä"))
+	(interactive)
+	(insert "Ä"))
 
   (defun insert-oe()
-    (interactive)
-    (insert "ö"))
+	(interactive)
+	(insert "ö"))
 
   (defun insert-OE()
-    (interactive)
-    (insert "Ö"))
+	(interactive)
+	(insert "Ö"))
 
   (defun insert-ue()
-    (interactive)
-    (insert "ü"))
+	(interactive)
+	(insert "ü"))
 
   (defun insert-UE()
-    (interactive)
-    (insert "Ü"))
+	(interactive)
+	(insert "Ü"))
 
   (defun insert-scharfes-s()
-    (interactive)
-    (insert "ß"))
+	(interactive)
+	(insert "ß"))
 #+END_SRC
 * Keybindings
 #+BEGIN_SRC emacs-lisp
@@ -392,26 +400,26 @@
   (define-key ergoemacs-light-mode-map (kbd "M-d") 'delete-backward-char)
   (define-key ergoemacs-light-mode-map (kbd "M-g") 'kill-visual-line)
   (define-key ergoemacs-light-mode-map (kbd "M-G") (lambda ()
-						     (interactive)
-						     (kill-visual-line -1)))
+							 (interactive)
+							 (kill-visual-line -1)))
   (define-key ergoemacs-light-mode-map (kbd "M-'") (lambda (arg)
-						     (interactive "p")
-						     (if (region-active-p)
+							 (interactive "p")
+							 (if (region-active-p)
 							 (comment-dwim nil)
-						       (comment-line arg))))
+							   (comment-line arg))))
   (define-key ergoemacs-light-mode-map (kbd "M-w") 'just-one-space)
   (define-key ergoemacs-light-mode-map (kbd "M-/") 'string-inflection-all-cycle)
   (define-key ergoemacs-light-mode-map (kbd "M-?") 'string-inflection-all-cycle)
   (define-key ergoemacs-light-mode-map (kbd "<C-return>") 'crux-smart-open-line)
   (define-key ergoemacs-light-mode-map (kbd "<C-S-return>") 'crux-smart-open-line-above)
   (define-key ergoemacs-light-mode-map (kbd "<M-return>") (lambda (arg)
-							    (interactive "P")
-							    (if (eq major-mode 'org-mode)
+								(interactive "P")
+								(if (eq major-mode 'org-mode)
 								(org-meta-return arg)
-							      (crux-smart-open-line arg))))
+								  (crux-smart-open-line arg))))
   (define-key ergoemacs-light-mode-map (kbd "<M-S-return>") (lambda (arg)
-							      (interactive "P")
-							      (if (eq major-mode 'org-mode)
+								  (interactive "P")
+								  (if (eq major-mode 'org-mode)
 								  (org-insert-todo-heading arg)
 								(crux-smart-open-line-above))))
   (define-key ergoemacs-light-mode-map (kbd "M-F") 'crux-top-join-line)
@@ -428,16 +436,16 @@
   (define-key ergoemacs-light-mode-map (kbd "C-l") 'goto-line-preview)
   (define-key ergoemacs-light-mode-map (kbd "M-p") 'recenter-top-bottom)
   (defun xah-new-empty-buffer ()
-    "Create a new empty buffer.
-       New buffer will be named untitled or untitled<2>,
-       untitled<3>, etc.
-       URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
-       Version 2016-12-27"
-    (interactive)
-    (let (($buf (generate-new-buffer "untitled")))
-      (switch-to-buffer $buf)
-      (funcall initial-major-mode)
-      (setq buffer-offer-save t)))
+	"Create a new empty buffer.
+	   New buffer will be named untitled or untitled<2>,
+	   untitled<3>, etc.
+	   URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
+	   Version 2016-12-27"
+	(interactive)
+	(let (($buf (generate-new-buffer "untitled")))
+	  (switch-to-buffer $buf)
+	  (funcall initial-major-mode)
+	  (setq buffer-offer-save t)))
   ;; (define-key ergoemacs-light-mode-map (kbd "C-n") 'xah-new-empty-buffer)
   (define-key ergoemacs-light-mode-map (kbd "C-c o") 'crux-open-with)
 
@@ -452,23 +460,23 @@
   (cua-mode)
   (define-key cua--cua-keys-keymap (kbd "M-v") nil)
   (defun ergoemacs-light-kill-line-or-region ()
-    (interactive)
-    (if (region-active-p)
+	(interactive)
+	(if (region-active-p)
 	(kill-region (mark) (point))
-      (progn
+	  (progn
 	(beginning-of-line)
 	(kill-visual-line 1))))
 
   (define-key ergoemacs-light-mode-map (kbd "M-x") 'ergoemacs-light-kill-line-or-region)
   (define-key ergoemacs-light-mode-map (kbd "M-c") (lambda ()
-						     (interactive)
-						     (ergoemacs-light-kill-line-or-region)
-						     (yank)))
+							 (interactive)
+							 (ergoemacs-light-kill-line-or-region)
+							 (yank)))
   (define-key ergoemacs-light-mode-map (kbd "M-C") (lambda ()
-						     (interactive)
-						     (if (region-active-p)
+							 (interactive)
+							 (if (region-active-p)
 							 (kill-ring-save (mark) (point))
-						       (save-excursion
+							   (save-excursion
 							 (end-of-line)
 							 (push-mark)
 							 (beginning-of-line)
@@ -477,10 +485,10 @@
   (define-key ergoemacs-light-mode-map (kbd "M-V") 'counsel-yank-pop)
   (define-key ergoemacs-light-mode-map (kbd "M-SPC") 'set-mark-command)
   (define-key ergoemacs-light-mode-map (kbd "M-8") (lambda ()
-						     (interactive)
-						     (if (region-active-p)
+							 (interactive)
+							 (if (region-active-p)
 							 (er/expand-region 1)
-						       (er/mark-symbol))))
+							   (er/mark-symbol))))
 
   ;; Undo commands Ensure that we are using undo-tree-undo otherwise we can't redo
 
@@ -522,10 +530,10 @@
   (global-unset-key (kbd "M-<down-mouse-1>"))
   (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
   (defun mark-and-multiple-select (arg)
-    (interactive "p")
-    (if (region-active-p)
+	(interactive "p")
+	(if (region-active-p)
 	(mc/mark-next-like-this arg))
-    (er/mark-symbol))
+	(er/mark-symbol))
   (global-set-key (kbd "C-d") 'mark-and-multiple-select)
   ;; (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-S-l") (lambda()
@@ -568,14 +576,14 @@
 
 
   (when (featurep 'company)
-    (define-key company-active-map (kbd "M-K") 'company-select-next)
-    (define-key company-active-map (kbd "M-I") 'company-select-previous)
-    (define-key company-active-map (kbd "C-f") 'company-search-candidates)
-    ;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
-    (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle))
+	(define-key company-active-map (kbd "M-K") 'company-select-next)
+	(define-key company-active-map (kbd "M-I") 'company-select-previous)
+	(define-key company-active-map (kbd "C-f") 'company-search-candidates)
+	;; Company-cancel only works once (define-key company-active-map (kbd "<escape>") 'company-cancel)
+	(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle))
 
   (when (featurep 'org)
-    (define-key org-mode-map (kbd "C-c t") 'org-edit-special))
+	(define-key org-mode-map (kbd "C-c t") 'org-edit-special))
 
   (eval-after-load "elisp-mode" '(define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer))
   (eval-after-load "python" '(define-key python-mode-map (kbd "C-c C-c") 'raul-send-buffer-to-python))
@@ -598,12 +606,12 @@
   (global-set-key (kbd "<f11>") (lambda()
 				  (interactive)
 				  (if (bound-and-true-p aggressive-indent-mode)
-				      (progn
+					  (progn
 					(aggressive-indent-mode -1)
 					(message "Aggressive indent mode deactivated"))
-				    (progn
-				      (aggressive-indent-mode 1)
-				      (message "Aggressive indent mode activated")))))
+					(progn
+					  (aggressive-indent-mode 1)
+					  (message "Aggressive indent mode activated")))))
   (global-set-key [remap goto-line] 'goto-line-preview)
   (global-set-key (kbd "<f9>") 'aggressive-fill-paragraph-mode)
   (global-set-key (kbd "C-t") (lambda ()
@@ -615,10 +623,10 @@
   (global-set-key (kbd "C-w") 'elscreen-kill)
 
   (define-minor-mode ergoemacs-light-mode
-    "Minor mode using a minimal subset of ErgoEmacs keybindings"
-    :init-value t
-    :lighter ergoemacs-light-mode " elm"
-    :keymap ergoemacs-light-mode-map)
+	"Minor mode using a minimal subset of ErgoEmacs keybindings"
+	:init-value t
+	:lighter ergoemacs-light-mode " elm"
+	:keymap ergoemacs-light-mode-map)
 
   (ergoemacs-light-mode t)
 
@@ -628,8 +636,8 @@
   ;; (global-set-key (kbd "C-c C-0") (lambda ()
   ;;				  (interactive)
   ;;				  (if (region-active-p)
-  ;;				      (kill-ring-save (mark) (point))
-  ;;				    (kill-ring-save (point) (point)))))
+  ;;					  (kill-ring-save (mark) (point))
+  ;;					(kill-ring-save (point) (point)))))
   ;; (global-set-key (kbd "C-f") (dokey "M-8 C-c C-0 C-c f C-y"))
 #+END_SRC
 * Buffer configuration
@@ -642,18 +650,18 @@
 
   ;; Popwin takes care that helper buffers do not take much space
   (use-package popwin
-    :load-path "popwin"
-    :pin manual
-    :init
-    (require 'popwin)
-    (popwin-mode 1))
+	:load-path "popwin"
+	:pin manual
+	:init
+	(require 'popwin)
+	(popwin-mode 1))
 
   (use-package popwin-term
-    :load-path "popwin/misc"
-    :pin manual
-    :init
-    (require 'popwin-term)
-    (push '(term-mode :position :bottom :height 10 :stick t) popwin:special-display-config))
+	:load-path "popwin/misc"
+	:pin manual
+	:init
+	(require 'popwin-term)
+	(push '(term-mode :position :bottom :height 10 :stick t) popwin:special-display-config))
 
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'forward)
@@ -689,8 +697,8 @@
   (column-number-mode t)
 
   (if (version<= "26.3" emacs-version)
-      (global-display-line-numbers-mode)
-    (global-linum-mode t))
+	  (global-display-line-numbers-mode)
+	(global-linum-mode t))
 
   (if (version<= "27.0.50" emacs-version)
 	  (progn
@@ -776,30 +784,30 @@
 *** Python mode
 #+BEGIN_SRC emacs-lisp
   (use-package company-jedi
-    :init
-    (add-hook 'python-mode-hook (lambda()
+	:init
+	(add-hook 'python-mode-hook (lambda()
 				  (add-to-list 'company-backends 'company-jedi)
 				  (jedi:setup))))
 
   (defun raul-send-buffer-to-python ()
-    "Send complete buffer to Python"
-    (interactive)
-    (python-shell-send-buffer t))
+	"Send complete buffer to Python"
+	(interactive)
+	(python-shell-send-buffer t))
 
   (defun python-send-buffer-with-my-args (args)
-    (interactive "sPython arguments: ")
-    (let ((source-buffer (current-buffer)))
-      (with-temp-buffer
+	(interactive "sPython arguments: ")
+	(let ((source-buffer (current-buffer)))
+	  (with-temp-buffer
 	(insert "import sys; sys.argv = '''" args "'''.split()\n")
 	(insert-buffer-substring source-buffer)
 	(raul-send-buffer-to-python))))
 
   (when (eq system-type 'gnu/linux)
-    (setq python-shell-interpreter "/usr/bin/python3"))
+	(setq python-shell-interpreter "/usr/bin/python3"))
 
   (if (eq system-type 'gnu/linux)
-      (setq python-shell-interpreter "ipython3")
-    (setq python-shell-interpreter "ipython"))
+	  (setq python-shell-interpreter "ipython3")
+	(setq python-shell-interpreter "ipython"))
 
   (setq python-shell-interpreter-args "--simple-prompt -i")
 #+END_SRC
@@ -839,62 +847,62 @@
 * Indexer build functions
 #+BEGIN_SRC emacs-lisp
   (defun raul-find-definitions ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (jedi:goto-definition))
-     ((eq major-mode 'c++-mode)
-      (if (dumb-jump-rg-installed?)
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (jedi:goto-definition))
+	 ((eq major-mode 'c++-mode)
+	  (if (dumb-jump-rg-installed?)
 	  (dumb-jump-go)
 	(ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
-     ((eq major-mode 'c-mode)
-      (if (dumb-jump-rg-installed?)
+	 ((eq major-mode 'c-mode)
+	  (if (dumb-jump-rg-installed?)
 	  (dumb-jump-go)
 	(ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
-     ((eq major-mode 'emacs-lisp-mode)
-      (xref-find-definitions (xref--read-identifier "Find definitions of: ")))
-     (t
-      (if (dumb-jump-rg-installed?)
+	 ((eq major-mode 'emacs-lisp-mode)
+	  (xref-find-definitions (xref--read-identifier "Find definitions of: ")))
+	 (t
+	  (if (dumb-jump-rg-installed?)
 	  (dumb-jump-go)
 	(xref-find-definitions (xref--read-identifier "Find definitions of: "))))))
 
   (defun raul-find-references ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
-     ((eq major-mode 'c++-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
-     ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
-     (t (xref-find-references (xref--read-identifier "Find references of: ")))))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
+	 ((eq major-mode 'c++-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
+	 ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
+	 (t (xref-find-references (xref--read-identifier "Find references of: ")))))
 
   (defun raul-navigate-backward ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (jedi:goto-definition-pop-marker))
-     ((eq major-mode 'c++-mode)
-      (if (dumb-jump-rg-installed?)
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (jedi:goto-definition-pop-marker))
+	 ((eq major-mode 'c++-mode)
+	  (if (dumb-jump-rg-installed?)
 	  (dumb-jump-back)
 	(ggtags-prev-mark)))
-     ((eq major-mode 'c-mode)
-      (if (dumb-jump-rg-installed?)
+	 ((eq major-mode 'c-mode)
+	  (if (dumb-jump-rg-installed?)
 	  (dumb-jump-back)
 	(ggtags-prev-mark)))
-     ((eq major-mode 'emacs-lisp-mode)
-      (xref-pop-marker-stack))
-     (t (if (dumb-jump-rg-installed?)
-	    (dumb-jump-back)
+	 ((eq major-mode 'emacs-lisp-mode)
+	  (xref-pop-marker-stack))
+	 (t (if (dumb-jump-rg-installed?)
+		(dumb-jump-back)
 	  (xref-pop-marker-stack)))))
 
   (defun raul-navigate-forward ()
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
-     ((eq major-mode 'c++-mode) (ggtags-next-mark))
-     ((eq major-mode 'c-mode) (ggtags-next-mark))
-     (t nil)))
+	(interactive)
+	(cond
+	 ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
+	 ((eq major-mode 'c++-mode) (ggtags-next-mark))
+	 ((eq major-mode 'c-mode) (ggtags-next-mark))
+	 (t nil)))
 
   (use-package ggtags
-    :config
-    (add-hook 'c-mode-common-hook
-	      (lambda ()
+	:config
+	(add-hook 'c-mode-common-hook
+		  (lambda ()
 		(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
 		  (ggtags-mode 1)))))
 #+END_SRC
@@ -956,39 +964,39 @@
 * Email
 #+BEGIN_SRC emacs-lisp
   (unless (eq system-type 'windows-nt)
-    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-    (require 'mu4e)
-    (setq mu4e-get-mail-command "mbsync -c ~/.emacs.d/mu4e/.mbsyncrc -a")
-    (setq user-mail-address "raulschmidlin@gmail.com")
-    (setq mu4e-maildir (expand-file-name "~/Maildir"))
-    (setq mu4e-drafts-folder "/raulschmidlin-gmail/[raulschmidlin].Drafts")
-    (setq mu4e-sent-folder "/raulschmidlin-gmail/[raulschmidlin].Sent Mail")
-    (setq mu4e-trash-folder  "/raulschmidlin-gmail/[raulschmidlin].Trash")
-    (setq mu4e-refile-folder "/raulschmidlin-gmail/[raulschmidlin].Archive")
+	(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+	(require 'mu4e)
+	(setq mu4e-get-mail-command "mbsync -c ~/.emacs.d/mu4e/.mbsyncrc -a")
+	(setq user-mail-address "raulschmidlin@gmail.com")
+	(setq mu4e-maildir (expand-file-name "~/Maildir"))
+	(setq mu4e-drafts-folder "/raulschmidlin-gmail/[raulschmidlin].Drafts")
+	(setq mu4e-sent-folder "/raulschmidlin-gmail/[raulschmidlin].Sent Mail")
+	(setq mu4e-trash-folder  "/raulschmidlin-gmail/[raulschmidlin].Trash")
+	(setq mu4e-refile-folder "/raulschmidlin-gmail/[raulschmidlin].Archive")
 
-    ;; smtp mail setting - if you DON'T want to use nullmailer, instead
-    ;; connecting to your smtp server and waiting...
-    (setq
-     message-send-mail-function 'smtpmail-send-it
-     smtpmail-starttls-credentials
-     '(("smtp.gmail.com" 587 raulschmidlin@gmail.com tmSaWi2010))
-     smtpmail-stream-type 'starttls
-     smtpmail-default-smtp-server "smtp.gmail.com"
-     smtpmail-smtp-server "smtp.gmail.com"
-     smtpmail-smtp-service 587
+	;; smtp mail setting - if you DON'T want to use nullmailer, instead
+	;; connecting to your smtp server and waiting...
+	(setq
+	 message-send-mail-function 'smtpmail-send-it
+	 smtpmail-starttls-credentials
+	 '(("smtp.gmail.com" 587 raulschmidlin@gmail.com tmSaWi2010))
+	 smtpmail-stream-type 'starttls
+	 smtpmail-default-smtp-server "smtp.gmail.com"
+	 smtpmail-smtp-server "smtp.gmail.com"
+	 smtpmail-smtp-service 587
 
-     ;; if you need offline mode, set these -- and create the queue dir
-     ;; with 'mu mkdir', i.e.. mu mkdir /home/user/Maildir/queue
-     smtpmail-queue-mail  nil
-     smtpmail-queue-dir  "/home/user/Maildir/raulschmidlin-gmail/queue/cur")
+	 ;; if you need offline mode, set these -- and create the queue dir
+	 ;; with 'mu mkdir', i.e.. mu mkdir /home/user/Maildir/queue
+	 smtpmail-queue-mail  nil
+	 smtpmail-queue-dir  "/home/user/Maildir/raulschmidlin-gmail/queue/cur")
 
-    ;; don't keep message buffers around
-    (setq message-kill-buffer-on-exit t)
-    ;; attachments go here
-    (setq mu4e-attachment-dir  "~/Downloads")
-    ;; don't save message to Sent Messages, IMAP takes care of this
-    (setq mu4e-sent-messages-behavior 'delete)
-    )
+	;; don't keep message buffers around
+	(setq message-kill-buffer-on-exit t)
+	;; attachments go here
+	(setq mu4e-attachment-dir  "~/Downloads")
+	;; don't save message to Sent Messages, IMAP takes care of this
+	(setq mu4e-sent-messages-behavior 'delete)
+	)
 #+END_SRC
 * Debuggers
 
@@ -1000,8 +1008,8 @@
 #+BEGIN_SRC emacs-lisp
   (load "server")
   (when (and (>= emacs-major-version 23)
-	     (eq system-type 'windows-nt))
-    (defun server-ensure-safe-dir (dir) "Noop" t)) ; Suppress error "directory
+		 (eq system-type 'windows-nt))
+	(defun server-ensure-safe-dir (dir) "Noop" t)) ; Suppress error "directory
 					  ; ~/.emacs.d/server is unsafe"
 					  ; on windows.
   (unless (server-running-p) (server-start))
