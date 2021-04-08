@@ -179,50 +179,91 @@
   (add-hook 'fundamental-mode (lambda() (electric-indent-mode -1)))
 #+END_SRC
 
-** Org mode
+** Task juggler
 #+BEGIN_SRC emacs-lisp
   (use-package org-plus-contrib
-	:ensure t
-	:pin org
-	:init
-	(require 'org))
+    :ensure t
+    :pin org
+    :init
+    (require 'org))
 
   (customize-push-and-save 'org-export-backends (list 'taskjuggler))
 
-  (use-package org-bullets
-	:config
-	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (setq org-taskjuggler-default-project-duration 999)
+  (setq org-taskjuggler-valid-task-attributes
+	'(account start note duration endbuffer endcredit end
+		  flags journalentry length limits maxend maxstart minend
+		  minstart period reference responsible scheduling
+		  startbuffer startcredit statusnote chargeset charge booking))
 
-  ;; Do not show bold, italic and underlined markers
-  (setq org-hide-emphasis-markers t)
+  (setq org-taskjuggler-default-reports
+	'("textreport report \"Plan\" {
+  formats html
+  header '== %title =='
+  center -8<-
+  [#Plan Plan] | [#Resource_Allocation Resource Allocation]
+  ----
+  === Plan ===
+  <[report id=\"plan\"]>
+  ----
+  === Resource Allocation ===
+  <[report id=\"resourceGraph\"]>
+  ->8-
+  }
+  # A traditional Gantt chart with a project overview.
+  taskreport plan \"\" {
+  headline \"Project Plan\"
+  columns bsi, name, start, end, effort, effortdone, effortleft, chart { width 1000 }
+  loadunit shortauto
+  hideresource 1
+  }
+  # A graph showing resource allocation. It identifies whether each
+  # resource is under- or over-allocated for.
+  resourcereport resourceGraph \"\" {
+  headline \"Resource Allocation Graph\"
+  columns no, name, effort, weekly { width 1000 }
+  loadunit shortauto
+  hidetask ~(isleaf() & isleaf_())
+  sorttasks plan.start.up
+  }")
+	)
+#+END_SRC
+** Org mode
+#+BEGIN_SRC emacs-lisp
+    (use-package org-bullets
+	  :config
+	  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-  ;; Disable aggressive fill and visual line mode for org-mode
-  (add-hook 'org-mode-hook (lambda()
-				 (aggressive-fill-paragraph-mode -1)
-				 (visual-line-mode -1)))
+    ;; Do not show bold, italic and underlined markers
+    (setq org-hide-emphasis-markers t)
 
-  (use-package htmlize)
+    ;; Disable aggressive fill and visual line mode for org-mode
+    (add-hook 'org-mode-hook (lambda()
+				   (aggressive-fill-paragraph-mode -1)
+				   (visual-line-mode -1)))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((dot . t)))
+    (use-package htmlize)
 
-  (custom-set-variables
-   '(org-directory "~/Nextcloud/orgfiles")
-   '(org-default-notes-file (concat org-directory "/notes.org")))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((dot . t)))
 
-  (setq org-agenda-files (list org-default-notes-file))
+    (custom-set-variables
+     '(org-directory "~/Nextcloud/orgfiles")
+     '(org-default-notes-file (concat org-directory "/notes.org")))
 
-  (setq
-   org-capture-templates
-   '(
-	 ("t" "To Do Item" entry (file+headline "" "To Do and Notes") "* TODO %?\n%u" :prepend t)
-	 ("n" "Note" entry (file+headline "" "Notes") "* %u %? " :prepend t)
-	 ("p" "Personal development" entry (file+headline "" "Personal development") "* TODO %? \n%T" :prepend t)
-	 ("s" "Team forming" entry (file+headline "" "Team forming") "* TODO %? \n%T" :prepend t)
-	 ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
-	 ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
-	 ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
+    (setq org-agenda-files (list org-default-notes-file))
+
+    (setq
+     org-capture-templates
+     '(
+	   ("t" "To Do Item" entry (file+headline "" "To Do and Notes") "* TODO %?\n%u" :prepend t)
+	   ("n" "Note" entry (file+headline "" "Notes") "* %u %? " :prepend t)
+	   ("p" "Personal development" entry (file+headline "" "Personal development") "* TODO %? \n%T" :prepend t)
+	   ("s" "Team forming" entry (file+headline "" "Team forming") "* TODO %? \n%T" :prepend t)
+	   ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
+	   ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
+	   ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
 #+END_SRC
 * Text format - enforce and visualize
 #+BEGIN_SRC emacs-lisp
@@ -696,16 +737,17 @@
 
   (column-number-mode t)
 
-  (if (version<= "26.3" emacs-version)
-	  (global-display-line-numbers-mode)
-	(global-linum-mode t))
+  ;; (if (version<= "26.3" emacs-version)
+  ;;     (global-display-line-numbers-mode)
+  ;;   (global-linum-mode t)
+  ;;   )
 
   (if (version<= "27.0.50" emacs-version)
-	  (progn
-		(global-tab-line-mode))
-	(use-package elscreen
-	  :config
-	  (elscreen-start)))
+      (progn
+	(global-tab-line-mode))
+    (use-package elscreen
+      :config
+      (elscreen-start)))
 
   (add-to-list 'default-frame-alist (cons 'width 100))
   (add-to-list 'default-frame-alist (cons 'height 40))
