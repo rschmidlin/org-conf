@@ -105,32 +105,6 @@
    (add-hook 'minibuffer-setup-hook 'auto-insert-search-or-replace-insert-symbol-at-point-hook)
 
  #+END_SRC
-* Text correction and completion
-#+BEGIN_SRC emacs-lisp
-  (unless (eq system-type 'windows-nt)
-	(dolist (hook '(text-mode-hook))
-	  (add-hook hook (lambda () (flyspell-mode 1))))
-
-	(use-package flyspell-correct-ivy
-	  :init
-	  (setq flyspell-correct-interface #'flyspell-correct-ivy))
-
-	(setq ispell-extra-args '("--sug-mode=ultra")))
-
-  (use-package flycheck
-	:config (global-flycheck-mode))
-
-  ;; Enable text completion
-  (use-package company
-	:init
-	(add-hook 'after-init-hook 'global-company-mode)
-	(setq-default company-dabbrev-other-buffers 'all
-		  company-tooltip-align-annotations t))
-
-  (use-package company-quickhelp
-	:init
-	(add-hook 'after-init-hook 'company-quickhelp-mode))
-#+END_SRC
 * Editing utilities
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
@@ -181,11 +155,11 @@
 
 ** Task juggler
 #+BEGIN_SRC emacs-lisp
-  (use-package org-plus-contrib
-    :ensure t
-    :pin org
-    :init
-    (require 'org))
+  ;; (use-package org-plus-contrib
+  ;;   :ensure t
+  ;;   :pin org
+  ;;   :init
+  ;;   (require 'org))
 
   (customize-push-and-save 'org-export-backends (list 'taskjuggler))
 
@@ -264,64 +238,6 @@
 	   ("d" "Project development" entry (file+headline "" "Project development") "* TODO %? \n%T" :prepend t)
 	   ("i" "Improvements" entry (file+headline "" "Improvements") "* TODO %? \n%T" :prepend t)
 	   ("e" "Emacs adaptation" entry (file+headline "" "Emacs adaptation")  "* TODO %? \n%T" :prepend t)))
-#+END_SRC
-* Text format - enforce and visualize
-#+BEGIN_SRC emacs-lisp
-  ;; Word wrap without fringe (the arrows) and without changing the file
-  (set-default 'truncate-lines t)
-  (global-visual-line-mode 1)
-
-  (use-package aggressive-indent
-	:init
-	(setq-default fill-column 100)
-	:config
-	(add-hook 'prog-mode-hook #'aggressive-indent-mode))
-
-  (defun refill-paragraphs-to-be-one-line ()
-	"fill individual paragraphs with large fill column"
-	(interactive)
-	(let ((fill-column 100000))
-	  (fill-individual-paragraphs (point-min) (point-max))))
-
-  (use-package aggressive-fill-paragraph
-	:config
-	(afp-setup-recommended-hooks)
-	(add-to-list 'afp-fill-comments-only-mode-list 'python-mode))
-
-  ;; Show trailing white spaces
-  (setq-default show-trailing-whitespace t)
-  (add-hook 'mu4e-view-mode-hook (lambda() (setq show-trailing-whitespace nil)))
-
-  ;; Remove useless whitespace before saving a file
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-  (add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
-
-  ;; Show visual markings about indentation
-  (use-package highlight-indent-guides
-	:init
-	(setq highlight-indent-guides-method 'character)
-	:config
-	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-
-  ;; Mark horizontal line where cursor is
-  (global-hl-line-mode 1)
-  (set-face-background hl-line-face "grey95")
-
-  ;; ensure that it does not conflict with region
-  (custom-set-faces
-   '(region ((t (:background "gold")))))
-
-  ;; Mark all words under cursor in current viewport of buffer
-  (use-package symbol-overlay
-	:config
-	(dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
-	  (add-hook hook 'symbol-overlay-mode)))
-
-  (use-package smartparens
-	:config
-	;; Fix single-quotes being automatically ended on lisp
-	(require 'smartparens-config)
-	(smartparens-global-mode))
 #+END_SRC
 * Deal with locale
 #+BEGIN_SRC emacs-lisp
