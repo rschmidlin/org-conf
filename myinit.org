@@ -59,6 +59,7 @@
 	(setq ivy-ignore-buffers '("\\` " "\\`\\*"))
 	(setq magit-completing-read-function 'ivy-completing-read)
 	(setq projectile-completion-system 'ivy)
+	(setq ivy-use-selectable-prompt t)
 	:config
 	(ivy-mode 1))
 #+END_SRC
@@ -976,6 +977,8 @@
 #+BEGIN_SRC emacs-lisp
   ;; Save the bookmark file every time the bookmark list changes
   (setq bookmark-save-flag 1)
+  (run-at-time nil (* 5 60) 'recentf-save-list)
+  (run-at-time nil (* 5 60) 'smex-save-to-file)
 #+END_SRC
 * Analyze Emacs usage
 #+BEGIN_SRC emacs-lisp
@@ -983,6 +986,9 @@
 	:init
 	(keyfreq-mode 1)
 	(keyfreq-autosave-mode 1))
+
+  (use-package esup)
+  (setq esup-depth 0)
 #+END_SRC
 
 * Hide minor-modes from mode-line
