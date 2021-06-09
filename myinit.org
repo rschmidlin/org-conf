@@ -891,7 +891,7 @@
 		  (lambda ()
 		    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
 		      (ggtags-mode 1)
-		      (define-key ggtags-mode-map (kbd "M-s") nil)))))
+		      (define-key ggtags-navigation-map (kbd "M-s") nil)))))
 #+END_SRC
 
 ** Building tag files
