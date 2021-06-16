@@ -495,7 +495,8 @@
   (define-key ergoemacs-light-mode-map (kbd "M-$") 'split-window-right)
   (define-key ergoemacs-light-mode-map (kbd "M-3") 'delete-other-windows)
   (define-key ergoemacs-light-mode-map (kbd "M-2") 'delete-window)
-  (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
+  ;; (define-key ergoemacs-light-mode-map (kbd "M-s") 'other-window)
+  (eval-after-load "ace-window-mode" (define-key ergoemacs-light-mode-map (kbd "M-s") 'ace-window))
 
   ;; Find files
   (define-key ergoemacs-light-mode-map (kbd "M-;") 'ivy-switch-buffer)
@@ -685,6 +686,8 @@
   ;;     (global-display-line-numbers-mode)
   ;;   (global-linum-mode t)
   ;;   )
+
+  (use-package ace-window)
 
   (if (version<= "27.0.50" emacs-version)
       (progn
