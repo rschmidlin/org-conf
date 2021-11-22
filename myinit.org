@@ -546,6 +546,8 @@
   (global-set-key (kbd "S-<f12>") 'raul-find-references)
   (global-set-key (kbd "M-<left>") 'raul-navigate-backward)
   (global-set-key (kbd "M-<right>") 'raul-navigate-forward)
+  (global-set-key (kbd "<f3>") 'dump-jump-back)
+  (global-set-key (kbd "<f4>") 'dumb-jump-go)
 
   (define-key minibuffer-local-map (kbd "M-I") 'previous-history-element)
   (define-key minibuffer-local-map (kbd "M-K") 'next-history-element)
@@ -822,65 +824,60 @@
 * Indexer build functions
 #+BEGIN_SRC emacs-lisp
   (defun raul-find-definitions ()
-	(interactive)
-	(cond
-	 ((eq major-mode 'python-mode) (jedi:goto-definition))
-	 ((eq major-mode 'c++-mode)
-	  (if (dumb-jump-rg-installed?)
-	  (dumb-jump-go)
-	(ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
-	 ((eq major-mode 'c-mode)
-	  (if (dumb-jump-rg-installed?)
-	  (dumb-jump-go)
-	(ggtags-find-tag-dwim (ggtags-read-tag 'definition current-prefix-arg))))
-	 ((eq major-mode 'emacs-lisp-mode)
-	  (xref-find-definitions (xref--read-identifier "Find definitions of: ")))
-	 (t
-	  (if (dumb-jump-rg-installed?)
-	  (dumb-jump-go)
-	(xref-find-definitions (xref--read-identifier "Find definitions of: "))))))
+    (interactive)
+    (cond
+     ((eq major-mode 'python-mode) (jedi:goto-definition))
+     ((eq major-mode 'c++-mode)
+      (counsel-gtags-dwim))
+     ((eq major-mode 'c-mode)
+      (counsel-gtags-dwim))
+     ((eq major-mode 'emacs-lisp-mode)
+      (xref-find-definitions (xref--read-identifier "Find definitions of: ")))
+     (t
+	(xref-find-definitions (xref--read-identifier "Find definitions of: ")))))
 
   (defun raul-find-references ()
-	(interactive)
-	(cond
-	 ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
-	 ((eq major-mode 'c++-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
-	 ((eq major-mode 'c-mode) (ggtags-find-reference (ggtags-read-tag 'reference current-prefix-arg)))
-	 (t (xref-find-references (xref--read-identifier "Find references of: ")))))
+    (interactive)
+    (cond
+     ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
+     ((eq major-mode 'c++-mode) (counsel-gtags-dwim))
+     ((eq major-mode 'c-mode) (counsel-gtags-dwim))
+     (t (xref-find-references (xref--read-identifier "Find references of: ")))))
 
   (defun raul-navigate-backward ()
-	(interactive)
-	(cond
-	 ((eq major-mode 'python-mode) (jedi:goto-definition-pop-marker))
-	 ((eq major-mode 'c++-mode)
-	  (if (dumb-jump-rg-installed?)
-	  (dumb-jump-back)
-	(ggtags-prev-mark)))
-	 ((eq major-mode 'c-mode)
-	  (if (dumb-jump-rg-installed?)
-	  (dumb-jump-back)
-	(ggtags-prev-mark)))
-	 ((eq major-mode 'emacs-lisp-mode)
-	  (xref-pop-marker-stack))
-	 (t (if (dumb-jump-rg-installed?)
-		(dumb-jump-back)
-	  (xref-pop-marker-stack)))))
+    (interactive)
+    (cond
+     ((eq major-mode 'python-mode) (jedi:goto-definition-pop-marker))
+     ((eq major-mode 'c++-mode)
+	(counsel-gtags-go-backward))
+     ((eq major-mode 'c-mode)
+	(counsel-gtags-go-backward))
+     ((eq major-mode 'emacs-lisp-mode)
+      (xref-pop-marker-stack))
+     (t 
+      (xref-pop-marker-stack))))
 
   (defun raul-navigate-forward ()
-	(interactive)
-	(cond
-	 ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
-	 ((eq major-mode 'c++-mode) (ggtags-next-mark))
-	 ((eq major-mode 'c-mode) (ggtags-next-mark))
-	 (t nil)))
+    (interactive)
+    (cond
+     ((eq major-mode 'python-mode) (message "Not supported in Jedi"))
+     ((eq major-mode 'c++-mode) (counsel-gtags-go-forward))
+     ((eq major-mode 'c-mode) (counsel-gtags-go-forward))
+     (t nil)))
 
-  (use-package ggtags
-	:config
-	(add-hook 'c-mode-common-hook
-		  (lambda ()
-		    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-		      (ggtags-mode 1)
-		      (define-key ggtags-navigation-map (kbd "M-s") nil)))))
+  ;; (use-package ggtags
+  ;;       :config
+  ;;       (add-hook 'c-mode-common-hook
+  ;; 		(lambda ()
+  ;; 		  (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+  ;; 		    (ggtags-mode 1)
+  ;; 		    (define-key ggtags-navigation-map (kbd "M-s") nil)))))
+  (use-package counsel-gtags
+    :config
+    (add-hook 'c-mode-common-hook
+	      (lambda ()
+		(when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+		  (counsel-gtags-mode)))))
 #+END_SRC
 
 ** Building tag files
