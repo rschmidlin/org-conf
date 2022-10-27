@@ -367,8 +367,8 @@
   (define-key ergoemacs-light-mode-map (kbd "M-U") 'backward-sexp)
 
   ;; Additional movement commands
-  (define-key ergoemacs-light-mode-map (kbd "M-I") 'scroll-down)
-  (define-key ergoemacs-light-mode-map (kbd "M-K") 'scroll-up)
+  (global-set-key (kbd "M-I") 'scroll-down) ;; collides with minibuffer otherwise
+  (global-set-key (kbd "M-K") 'scroll-up) ;; collides with minibuffer otherwise
   (define-key ergoemacs-light-mode-map (kbd "M-H") 'end-of-line)
   (define-key ergoemacs-light-mode-map (kbd "M-h") 'crux-move-beginning-of-line)
   (define-key ergoemacs-light-mode-map (kbd "M-n") 'beginning-of-buffer)

@@ -8,6 +8,10 @@
 			 '("org" . "https://orgmode.org/elpa/"))
 (package-initialize)
 
+;; Bug fix for bad request on emacs below 27
+(when (version<= emacs-version "27.0.50")
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
+
 ;; Avoid that package signing fails Elpa also reported as bug
 ;; because (474F05837FBDEF9B) is indeed not published
 (setq package-check-signature nil)
