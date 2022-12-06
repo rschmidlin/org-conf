@@ -248,7 +248,8 @@
 
   (custom-set-variables
    '(org-directory "~/Nextcloud/orgfiles")
-   '(org-default-notes-file (concat org-directory "/notes.org")))
+   '(org-default-notes-file (concat org-directory "/notes.org"))
+   '(org-agenda-archives-mode t))
 
   (setq org-agenda-files (list org-default-notes-file))
 
