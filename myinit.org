@@ -59,7 +59,8 @@
 	(setq projectile-completion-system 'ivy)
 	(setq ivy-use-selectable-prompt t)
 	:config
-	(ivy-mode 1))
+	(ivy-mode 1)
+	(define-key minibuffer-inactive-mode-map (kbd "<tab>") 'ivy-alt-done))
 #+END_SRC
 * Navigation
 #+BEGIN_SRC emacs-lisp
